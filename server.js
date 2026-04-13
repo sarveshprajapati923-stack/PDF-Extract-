@@ -13,10 +13,10 @@ app.use(fileUpload());
 if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
 if (!fs.existsSync("files")) fs.mkdirSync("files");
 
-// ✅ static public folder (index.html)
+// ✅ static public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ ROOT FIX (important)
+// ✅ ROOT route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 // ✅ Upload API
 app.post("/upload", async (req, res) => {
   if (!req.files || !req.files.file) {
-    return res.json({ success: false, message: "No file uploaded" });
+    return res.json({ success: false });
   }
 
   const file = req.files.file;
@@ -67,7 +67,9 @@ app.post("/zip", async (req, res) => {
 // ✅ files access
 app.use("/files", express.static(path.join(__dirname, "files")));
 
-// ✅ server start
+// ✅ START SERVER (FIXED)
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log("Server running on port " + Preturn});
+  console.log("Server running on port " + PORT);
+});
