@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All-in-One File Tools Pro</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:#0d1729;
+      --panel-2:#101c33;
+      --text:#ecf4ff;
+      --muted:#8ea6c5;
+      --accent:#33b5ff;
+      --accent-2:#22c55e;
+      --danger:#ff5b6e;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --radius:22px;
+      --line:rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(circle at top, #10304f 0%, var(--bg) 42%, #050b14 100%);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    body{min-height:100vh}.header{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(14px);
+  background:rgba(6,14,26,.72);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:14px 16px;
+}
+.brand{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1200px;margin:0 auto;
+}
+.brand h1{margin:0;font-size:18px;line-height:1.1;font-weight:800;letter-spacing:.2px}
+.brand small{display:block;color:var(--muted);margin-top:4px;font-size:12px}
+.pill{
+  padding:10px 12px;border:1px solid rgba(51,181,255,.35);
+  border-radius:999px;background:rgba(51,181,255,.08);
+  color:#cfeeff;font-size:12px;font-weight:700;white-space:nowrap
+}
+
+.wrap{max-width:1200px;margin:0 auto;padding:14px 14px 28px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+@media (max-width:900px){.hero{grid-template-columns:1fr}}
+
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:16px;
+}
+
+.title{margin:0 0 6px;font-size:22px;line-height:1.2}
+.sub{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.6}
+
+.grid-categories{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:520px){.grid-categories{grid-template-columns:1fr}}
+.cat{
+  padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);cursor:pointer;transition:.2s transform ease,.2s background ease;
+}
+.cat:hover{transform:translateY(-2px);background:rgba(51,181,255,.08)}
+.cat.active{background:rgba(51,181,255,.14);border-color:rgba(51,181,255,.35)}
+.cat b{display:block;font-size:14px;margin-bottom:4px}
+.cat span{color:var(--muted);font-size:12px;line-height:1.4}
+
+.row{display:grid;grid-template-columns:1fr auto;gap:10px}
+@media (max-width:700px){.row{grid-template-columns:1fr}}
+.input{
+  width:100%;border:1px solid rgba(255,255,255,.09);background:rgba(7,17,31,.75);color:var(--text);
+  padding:14px 14px;border-radius:16px;outline:none;font-size:15px;
+}
+.input::placeholder{color:#6e86a4}
+
+.btn{
+  appearance:none;border:none;cursor:pointer;
+  background:linear-gradient(135deg, var(--accent), #1d87ff);color:#04111d;font-weight:800;
+  padding:14px 16px;border-radius:16px;min-height:48px;
+  transition:.18s transform ease, .18s opacity ease, .18s box-shadow ease;
+  box-shadow:0 10px 22px rgba(51,181,255,.22);
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.12);box-shadow:none}
+.btn.green{background:linear-gradient(135deg, #3de08b, #10b981);color:#02120a}
+.btn.small{padding:10px 12px;border-radius:14px;min-height:40px;font-size:13px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:var(--text);padding:9px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer}
+.chip.active{background:rgba(51,181,255,.18);border-color:rgba(51,181,255,.35)}
+
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:12px 0;flex-wrap:wrap}
+.section-head h2{margin:0;font-size:16px}
+.section-head span{color:var(--muted);font-size:12px}
+
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:900px){.feature-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.feature-grid{grid-template-columns:1fr}}
+.tool-card{
+  border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.tool-card h3{margin:0;font-size:15px}
+.tool-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+
+.panel{display:none;margin-top:14px}
+.panel.active{display:block}
+
+.drop{
+  border:1px dashed rgba(51,181,255,.35);
+  background:rgba(51,181,255,.06);
+  border-radius:18px;
+  padding:18px;
+  text-align:center;
+  color:#d8eeff;
+  font-size:13px;
+  font-weight:700;
+  transition:.2s ease;
+}
+.drop.dragover{background:rgba(51,181,255,.16);transform:scale(1.01)}
+
+.files{
+  margin-top:12px;display:flex;flex-direction:column;gap:8px;
+  max-height:360px;overflow:auto;padding-right:2px;
+}
+.file-item{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.03)
+}
+.file-item code{font-size:12px;color:#b9d7ff;word-break:break-all}
+.file-meta{font-size:11px;color:var(--muted);margin-top:2px}
+
+.progress-wrap{height:10px;background:#122238;border-radius:999px;overflow:hidden;margin-top:12px;border:1px solid rgba(255,255,255,.06)}
+.bar{width:0;height:100%;background:linear-gradient(90deg, var(--accent-2), #7cf6a5);transition:width .25s ease}
+
+.msg{margin-top:10px;font-size:13px;min-height:20px;color:var(--muted)}
+.msg.ok{color:#8df7c2}
+.msg.err{color:var(--danger)}
+
+.ad{
+  margin:14px 0;padding:18px;text-align:center;border:1px dashed rgba(51,181,255,.35);
+  border-radius:18px;background:rgba(51,181,255,.06);color:#d8eeff;font-size:13px;font-weight:700;
+}
+
+.preview{
+  display:none;margin-top:12px;border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;background:#050b14
+}
+.preview.active{display:block}
+.preview video,.preview embed{width:100%;display:block;min-height:360px;background:#000}
+
+.history{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.histItem{
+  padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.03);
+  font-size:12px;word-break:break-all;display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+.histItem code{color:#b9d7ff;font-size:12px;word-break:break-all}
+
+.footer-note{color:var(--muted);font-size:12px;line-height:1.6;margin-top:10px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+  </style>
+</head>
+<body><div class="header">
+  <div class="brand">
+    <div>
+      <h1>All-in-One File Tools Pro</h1>
+      <small>PDF • ZIP • Images • Compress • Merge • Convert • Mobile first</small>
+    </div>
+    <div class="pill">EARNING READY</div>
+  </div>
+</div><div class="wrap">
+  <div class="hero">
+    <div class="card">
+      <h2 class="title">Choose a tool category</h2>
+      <p class="sub">One website, many file utilities. Built for daily use, fast mobile browsing, and ads placement.</p><div class="grid-categories" id="categories"></div>
+
+  <div class="ad" style="margin-top:14px">Ad Space — Top Banner</div>
+
+  <div class="topline">
+    <div>
+      <h2 id="toolTitle" style="margin:0;font-size:16px">PDF Tools</h2>
+      <div class="sub" id="toolSub" style="margin:4px 0 0">Merge, split, compress, convert, and manage PDF files.</div>
+    </div>
+    <button class="btn small ghost" id="downloadSampleBtn" onclick="downloadSample()">Sample File</button>
+  </div>
+
+  <div id="panel-pdf" class="panel active">
+    <div class="drop" id="pdfDrop">Drop PDF files here or choose files below</div>
+    <div style="height:10px"></div>
+    <input id="pdfInput" class="input" type="file" accept="application/pdf" multiple />
+    <div class="chips">
+      <button class="chip" onclick="pdfAction('merge')">Merge PDF</button>
+      <button class="chip" onclick="pdfAction('split')">Split PDF</button>
+      <button class="chip" onclick="pdfAction('compress')">Compress PDF</button>
+      <button class="chip" onclick="pdfAction('rotate')">Rotate 90°</button>
+      <button class="chip" onclick="pdfAction('preview')">Preview</button>
+      <button class="chip" onclick="pdfAction('clear')">Clear</button>
+    </div>
+    <div class="progress-wrap"><div id="pdfBar" class="bar"></div></div>
+    <div id="pdfMsg" class="msg">Upload PDF files to start.</div>
+    <div id="pdfList" class="files"></div>
+  </div>
+
+  <div id="panel-zip" class="panel">
+    <div class="drop" id="zipDrop">Drop any files here to create a ZIP</div>
+    <div style="height:10px"></div>
+    <input id="zipInput" class="input" type="file" multiple />
+    <div class="chips">
+      <button class="chip" onclick="zipAction('zip')">Create ZIP</button>
+      <button class="chip" onclick="zipAction('estimate')">Estimate Size</button>
+      <button class="chip" onclick="zipAction('clear')">Clear</button>
+    </div>
+    <div class="progress-wrap"><div id="zipBar" class="bar"></div></div>
+    <div id="zipMsg" class="msg">Select files to compress into ZIP.</div>
+    <div id="zipList" class="files"></div>
+  </div>
+
+  <div id="panel-image" class="panel">
+    <div class="drop" id="imgDrop">Drop images here to compress or convert</div>
+    <div style="height:10px"></div>
+    <input id="imgInput" class="input" type="file" accept="image/*" multiple />
+    <div class="chips">
+      <button class="chip" onclick="imgAction('compress')">Compress</button>
+      <button class="chip" onclick="imgAction('convertWebp')">To WEBP</button>
+      <button class="chip" onclick="imgAction('convertJpg')">To JPG</button>
+      <button class="chip" onclick="imgAction('clear')">Clear</button>
+    </div>
+    <div class="progress-wrap"><div id="imgBar" class="bar"></div></div>
+    <div id="imgMsg" class="msg">Image tools work in-browser.</div>
+    <div id="imgList" class="files"></div>
+  </div>
+
+  <div id="panel-utility" class="panel">
+    <div class="drop">More tools can be added here: PDF to text, image resize, watermark, HTML to PDF, etc.</div>
+    <div class="footer-note">This category is ready for future upgrades and more ad slots.</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="title">Monetization layout</h2>
+  <p class="sub">Three ad places are already built in. Add AdSense code when approved.</p>
+
+  <div class="feature-grid">
+    <div class="tool-card">
+      <h3>Daily Use Traffic</h3>
+      <p>PDF, ZIP, and image tools are searched every day by students, office users, and creators.</p>
+    </div>
+    <div class="tool-card">
+      <h3>Mobile Friendly</h3>
+      <p>Big buttons, clean cards, and quick actions for mobile users.</p>
+    </div>
+    <div class="tool-card">
+      <h3>Ad Ready</h3>
+      <p>Top banner, middle banner, and bottom banner slots are placed in the layout.</p>
+    </div>
+  </div>
+
+  <div class="ad">Ad Space — Side Banner</div>
+
+  <div class="section-head">
+    <h2>Recent Actions</h2>
+    <span>saved locally</span>
+  </div>
+  <div class="history" id="history"></div>
+
+  <div class="section-head" style="margin-top:16px">
+    <h2>Quick Tips</h2>
+    <span>earnings friendly</span>
+  </div>
+  <div class="tool-card">
+    <p>Use SEO titles like <b>PDF Compressor</b>, <b>ZIP Maker</b>, <b>Image Converter</b>, and <b>Merge PDF</b>. These are useful keywords and attract search traffic.</p>
+  </div>
+</div>
+
+  </div>  <div class="ad">Ad Space — Top Middle Banner</div>
+  <div class="ad">Ad Space — Footer Banner</div>
+</div><!-- Libraries --><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script><script>
+  const categories = [
+    { id: 'pdf', title: 'PDF Tools', sub: 'Merge, split, compress, rotate, preview PDF files.' },
+    { id: 'zip', title: 'ZIP Tools', sub: 'Create ZIP archives from any file type in-browser.' },
+    { id: 'image', title: 'Image Tools', sub: 'Compress and convert images to WEBP or JPG.' },
+    { id: 'utility', title: 'More Utilities', sub: 'Add more tools later: watermark, resize, text tools.' }
+  ];
+
+  const state = {
+    pdfFiles: [],
+    zipFiles: [],
+    imgFiles: [],
+    category: 'pdf'
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function addHistory(text){
+    const key = 'aft_history';
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    const next = [text, ...list.filter(x => x !== text)].slice(0, 12);
+    localStorage.setItem(key, JSON.stringify(next));
+    renderHistory();
+  }
+
+  function renderHistory(){
+    const list = JSON.parse(localStorage.getItem('aft_history') || '[]');
+    $('history').innerHTML = list.length ? list.map(t => `
+      <div class="histItem"><code>${escapeHtml(t)}</code></div>
+    `).join('') : '<div style="color:var(--muted);font-size:13px">No actions yet</div>';
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#39;');
+  }
+
+  function setBar(id, val){ $(id).style.width = Math.max(0, Math.min(100, val)) + '%'; }
+  function setMsg(id, text, type=''){ $(id).className = 'msg ' + (type || ''); $(id).textContent = text; }
+
+  function renderCategories(){
+    $('categories').innerHTML = categories.map(c => `
+      <div class="cat ${state.category === c.id ? 'active' : ''}" onclick="selectCategory('${c.id}')">
+        <b>${c.title}</b>
+        <span>${c.sub}</span>
+      </div>
+    `).join('');
+  }
+
+  function selectCategory(cat){
+    state.category = cat;
+    renderCategories();
+    $('toolTitle').textContent = categories.find(c => c.id === cat).title;
+    $('toolSub').textContent = categories.find(c => c.id === cat).sub;
+
+    $('panel-pdf').classList.toggle('active', cat === 'pdf');
+    $('panel-zip').classList.toggle('active', cat === 'zip');
+    $('panel-image').classList.toggle('active', cat === 'image');
+    $('panel-utility').classList.toggle('active', cat === 'utility');
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  function readFileAsArrayBuffer(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  function readFileAsDataURL(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function clearPanel(kind){
+    state[kind + 'Files'] = [];
+    $(`${kind}Input`).value = '';
+    $(`${kind}List`).innerHTML = '';
+    setMsg(`${kind}Msg`, 'Cleared.');
+    setBar(`${kind}Bar`, 0);
+    addHistory(`${kind.toUpperCase()} cleared`);
+  }
+
+  // ---------- PDF tools ----------
+  async function pdfAction(action){
+    const files = state.pdfFiles;
+
+    if(action === 'clear') return clearPanel('pdf');
+    if(!files.length){
+      setMsg('pdfMsg', 'Please select PDF files first.', 'err');
+      return;
+    }
+
+    if(action === 'preview'){
+      const file = files[0];
+      const url = URL.createObjectURL(file);
+      $('preview').classList.add('active');
+      $('preview').innerHTML = `<embed src="${url}#toolbar=1&navpanes=0&scrollbar=1" type="application/pdf">`;
+      setMsg('pdfMsg', `Previewing: ${file.name}`, 'ok');
+      addHistory(`PDF preview: ${file.name}`);
+      return;
+    }
+
+    if(action === 'merge'){
+      if(files.length < 2){
+        setMsg('pdfMsg', 'Select at least 2 PDF files to merge.', 'err');
+        return;
+      }
+      setBar('pdfBar', 10);
+      const { PDFDocument } = PDFLib;
+      const mergedPdf = await PDFDocument.create();
+      for(let i=0;i<files.length;i++){
+        setBar('pdfBar', 15 + (i / files.length) * 70);
+        const src = await PDFDocument.load(await readFileAsArrayBuffer(files[i]));
+        const copiedPages = await mergedPdf.copyPages(src, src.getPageIndices());
+        copiedPages.forEach(p => mergedPdf.addPage(p));
+      }
+      const bytes = await mergedPdf.save();
+      downloadBlob(new Blob([bytes], {type:'application/pdf'}), 'merged.pdf');
+      setBar('pdfBar', 100);
+      setMsg('pdfMsg', 'Merged PDF downloaded.', 'ok');
+      addHistory(`PDF merged (${files.length} files)`);
+      return;
+    }
+
+    if(action === 'split'){
+      const file = files[0];
+      setBar('pdfBar', 10);
+      const { PDFDocument } = PDFLib;
+      const src = await PDFDocument.load(await readFileAsArrayBuffer(file));
+      const count = src.getPageCount();
+      for(let i=0;i<count;i++){
+        setBar('pdfBar', 10 + ((i+1)/count)*80);
+        const pdf = await PDFDocument.create();
+        const [page] = await pdf.copyPages(src, [i]);
+        pdf.addPage(page);
+        const bytes = await pdf.save();
+        downloadBlob(new Blob([bytes], {type:'application/pdf'}), `${file.name.replace(/\.pdf$/i,'')}_page_${i+1}.pdf`);
+      }
+      setBar('pdfBar', 100);
+      setMsg('pdfMsg', `Split into ${count} file(s).`, 'ok');
+      addHistory(`PDF split: ${file.name}`);
+      return;
+    }
+
+    if(action === 'rotate'){
+      const file = files[0];
+      setBar('pdfBar', 10);
+      const { PDFDocument, degrees } = PDFLib;
+      const src = await PDFDocument.load(await readFileAsArrayBuffer(file));
+      const pages = src.getPages();
+      pages.forEach(page => page.setRotation(degrees(90)));
+      const bytes = await src.save();
+      downloadBlob(new Blob([bytes], {type:'application/pdf'}), `${file.name.replace(/\.pdf$/i,'')}_rotated.pdf`);
+      setBar('pdfBar', 100);
+      setMsg('pdfMsg', 'Rotated PDF downloaded.', 'ok');
+      addHistory(`PDF rotated: ${file.name}`);
+      return;
+    }
+
+    if(action === 'compress'){
+      // Browser-only PDF “compress” is limited. This resaves the PDF to potentially reduce overhead,
+      // but it will not guarantee a smaller file for every document.
+      const file = files[0];
+      setBar('pdfBar', 10);
+      const { PDFDocument } = PDFLib;
+      const src = await PDFDocument.load(await readFileAsArrayBuffer(file));
+      const bytes = await src.save({ useObjectStreams: true });
+      downloadBlob(new Blob([bytes], {type:'application/pdf'}), `${file.name.replace(/\.pdf$/i,'')}_optimized.pdf`);
+      setBar('pdfBar', 100);
+      setMsg('pdfMsg', 'Optimized PDF downloaded.', 'ok');
+      addHistory(`PDF optimized: ${file.name}`);
+      return;
+    }
+  }
+
+  // ---------- ZIP tools ----------
+  async function zipAction(action){
+    const files = state.zipFiles;
+    if(action === 'clear') return clearPanel('zip');
+
+    if(action === 'estimate'){
+      if(!files.length){ setMsg('zipMsg', 'Select files first.', 'err'); return; }
+      const total = files.reduce((a,f) => a + f.size, 0);
+      setMsg('zipMsg', `Selected ${files.length} file(s). Total size: ${(total/1024/1024).toFixed(2)} MB.`, 'ok');
+      addHistory(`ZIP estimate: ${files.length} files`);
+      return;
+    }
+
+    if(!files.length){
+      setMsg('zipMsg', 'Please select files first.', 'err');
+      return;
+    }
+    setBar('zipBar', 10);
+    const zip = new JSZip();
+    files.forEach((file, idx) => {
+      zip.file(file.name, file);
+      setBar('zipBar', 20 + ((idx+1)/files.length)*60);
+    });
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }, (meta) => {
+      setBar('zipBar', 20 + meta.percent * 0.8);
+    });
+    downloadBlob(blob, 'files.zip');
+    setBar('zipBar', 100);
+    setMsg('zipMsg', 'ZIP file downloaded.', 'ok');
+    addHistory(`ZIP created (${files.length} files)`);
+  }
+
+  // ---------- Image tools ----------
+  async function imgAction(action){
+    const files = state.imgFiles;
+    if(action === 'clear') return clearPanel('image');
+    if(!files.length){
+      setMsg('imgMsg', 'Please select image files first.', 'err');
+      return;
+    }
+
+    if(action === 'compress'){
+      setBar('imgBar', 10);
+      for(let i=0;i<files.length;i++){
+        const file = files[i];
+        const img = new Image();
+        const dataUrl = await readFileAsDataURL(file);
+        img.src = dataUrl;
+        await new Promise((resolve) => { img.onload = resolve; });
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const maxW = 1600;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.7));
+        downloadBlob(blob, file.name.replace(/\.[^.]+$/, '') + '_compressed.jpg');
+        setBar('imgBar', 20 + ((i+1)/files.length)*70);
+      }
+      setBar('imgBar', 100);
+      setMsg('imgMsg', 'Compressed image(s) downloaded.', 'ok');
+      addHistory(`Images compressed (${files.length} files)`);
+      return;
+    }
+
+    async function convertTo(format){
+      setBar('imgBar', 10);
+      for(let i=0;i<files.length;i++){
+        const file = files[i];
+        const img = new Image();
+        const dataUrl = await readFileAsDataURL(file);
+        img.src = dataUrl;
+        await new Promise((resolve) => { img.onload = resolve; });
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const mime = format === 'webp' ? 'image/webp' : 'image/jpeg';
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, mime, 0.9));
+        const ext = format === 'webp' ? 'webp' : 'jpg';
+        downloadBlob(blob, file.name.replace(/\.[^.]+$/, '') + `.${ext}`);
+        setBar('imgBar', 20 + ((i+1)/files.length)*70);
+      }
+      setBar('imgBar', 100);
+      setMsg('imgMsg', `Converted to ${format.toUpperCase()} and downloaded.`, 'ok');
+      addHistory(`Images converted to ${format.toUpperCase()} (${files.length} files)`);
+    }
+
+    if(action === 'convertWebp') return convertTo('webp');
+    if(action === 'convertJpg') return convertTo('jpg');
+  }
+
+  function showFileList(kind){
+    const files = state[kind + 'Files'];
+    const listEl = $(`${kind}List`);
+    if(!files.length){
+      listEl.innerHTML = '';
+      return;
+    }
+    listEl.innerHTML = files.map((f, idx) => `
+      <div class="file-item">
+        <div style="min-width:0">
+          <code>${escapeHtml(f.name)}</code>
+          <div class="file-meta">${(f.size/1024/1024).toFixed(2)} MB</div>
+        </div>
+        <button class="btn small ghost" onclick="removeFile('${kind}', ${idx})">Remove</button>
+      </div>
+    `).join('');
+  }
+
+  function removeFile(kind, idx){
+    state[kind + 'Files'].splice(idx, 1);
+    showFileList(kind);
+    setMsg(`${kind}Msg`, `${kind.toUpperCase()} list updated.`);
+  }
+
+  function bindInput(kind, selector, accept){
+    const input = $(selector);
+    input.addEventListener('change', () => {
+      state[kind + 'Files'] = [...input.files];
+      showFileList(kind);
+      setMsg(`${kind}Msg`, `${state[kind + 'Files'].length} file(s) selected.`, 'ok');
+      addHistory(`${kind.toUpperCase()} selected (${state[kind + 'Files'].length})`);
+    });
+
+    const drop = $(`${kind}Drop`);
+    if(drop){
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.classList.remove('dragover');
+        const files = [...e.dataTransfer.files];
+        if(accept === 'pdf') state[kind + 'Files'] = files.filter(f => f.type === 'application/pdf');
+        else if(accept === 'image') state[kind + 'Files'] = files.filter(f => f.type.startsWith('image/'));
+        else state[kind + 'Files'] = files;
+        showFileList(kind);
+        setMsg(`${kind}Msg`, `${state[kind + 'Files'].length} file(s) selected.`, 'ok');
+        addHistory(`${kind.toUpperCase()} dropped (${state[kind + 'Files'].length})`);
+      });
+    }
+  }
+
+  function downloadSample(){
+    const sample = new Blob([`All-in-One File Tools Pro\nSample file for testing.`], {type:'text/plain'});
+    downloadBlob(sample, 'sample.txt');
+    addHistory('Sample file downloaded');
+  }
+
+  // init
+  bindInput('pdf', 'pdfInput', 'pdf');
+  bindInput('zip', 'zipInput', 'all');
+  bindInput('img', 'imgInput', 'image');
+  renderCategories();
+  renderHistory();
+  selectCategory('pdf');
+  addHistory('Website opened');
+</script></body>
+  </html>
