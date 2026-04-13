@@ -8,14 +8,23 @@ const archiver = require("archiver");
 const app = express();
 app.use(cors());
 app.use(fileUpload());
-app.use(express.static("public"));
 
-const PORT = process.env.PORT || 3000;
+// ✅ folders auto create
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+if (!fs.existsSync("files")) fs.mkdirSync("files");
 
-// Upload + Process
+// ✅ static public folder (index.html)
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ ROOT FIX (important)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ✅ Upload API
 app.post("/upload", async (req, res) => {
   if (!req.files || !req.files.file) {
-    return res.json({ success: false });
+    return res.json({ success: false, message: "No file uploaded" });
   }
 
   const file = req.files.file;
@@ -29,14 +38,14 @@ app.post("/upload", async (req, res) => {
   });
 });
 
-// ZIP convert
+// ✅ ZIP API
 app.post("/zip", async (req, res) => {
   if (!req.files || !req.files.file) {
     return res.json({ success: false });
   }
 
   const file = req.files.file;
-  const zipName = file.name + ".zip";
+  const zipName = Date.now() + "-" + file.name + ".zip";
   const zipPath = path.join(__dirname, "files", zipName);
 
   const output = fs.createWriteStream(zipPath);
@@ -44,16 +53,21 @@ app.post("/zip", async (req, res) => {
 
   archive.pipe(output);
   archive.append(file.data, { name: file.name });
-  await archive.finalize();
 
-  res.json({
-    success: true,
-    file: "/files/" + zipName
+  archive.finalize();
+
+  output.on("close", () => {
+    res.json({
+      success: true,
+      file: "/files/" + zipName
+    });
   });
 });
 
-app.use("/files", express.static("files"));
+// ✅ files access
+app.use("/files", express.static(path.join(__dirname, "files")));
 
+// ✅ server start
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
+  console.log("Server running on port " + Preturn});
