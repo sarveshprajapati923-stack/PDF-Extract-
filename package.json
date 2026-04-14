@@ -1,24 +1,15 @@
 {
-  "name": "fileforge",
-  "version": "4.0.0",
-  "description": "Startup-style PDF tools SaaS with real processing and upload rules",
+  "name": "pdf-extract-pro",
+  "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
     "archiver": "^7.0.1",
-    "cors": "^2.8.5",
-    "docx": "^9.5.1",
-    "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
     "pdf-lib": "^1.17.1",
-    "pdf-parse": "^1.1.1",
-    "pptxgenjs": "^3.12.0",
-    "tesseract.js": "^5.1.1"
+    "pdf-parse": "^1.1.1"
   }
 }
