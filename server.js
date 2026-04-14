@@ -1,815 +1,260 @@
-const express = require("express");
-const multer = require("multer");
-const cors = require("cors");
-const fs = require("fs");
-const fsp = require("fs/promises");
-const os = require("os");
-const path = require("path");
-const util = require("util");
-const archiver = require("archiver");
-const pdfParse = require("pdf-parse");
-const Tesseract = require("tesseract.js");
-const { execFile } = require("child_process");
+const express = require('express'); const multer = require('multer'); const crypto = require('crypto'); const { PDFDocument, rgb, StandardFonts, degrees } = require('pdf-lib'); const pdfParse = require('pdf-parse'); const archiver = require('archiver'); const fs = require('fs'); const path = require('path'); const os = require('os');
 
-const {
-  PDFDocument,
-  StandardFonts,
-  rgb,
-  degrees
-} = require("pdf-lib");
+const app = express(); const PORT = process.env.PORT || 3000; const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024, files: 20 } });
 
-const {
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-  HeadingLevel,
-  AlignmentType
-} = require("docx");
+app.use(express.json()); app.use(express.urlencoded({ extended: true })); app.use(express.static('public'));
 
-const ExcelJS = require("exceljs");
-const PptxGenJS = require("pptxgenjs");
+const RATE_WINDOW_MS = 5 * 60 * 1000; const RATE_MAX = 40; const rateStore = new Map();
 
-const execFileAsync = util.promisify(execFile);
+function rateLimit(req, res, next) { const ip = req.ip || req.connection?.remoteAddress || 'unknown'; const now = Date.now(); const hit = rateStore.get(ip) || []; const fresh = hit.filter(ts => now - ts < RATE_WINDOW_MS); if (fresh.length >= RATE_MAX) { return res.status(429).json({ ok: false, error: 'Too many requests. Try again later.' }); } fresh.push(now); rateStore.set(ip, fresh); next(); }
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+setInterval(() => { const now = Date.now(); for (const [ip, hits] of rateStore.entries()) { const fresh = hits.filter(ts => now - ts < RATE_WINDOW_MS); if (fresh.length) rateStore.set(ip, fresh); else rateStore.delete(ip); } }, RATE_WINDOW_MS).unref();
 
-const PUBLIC_DIR = path.join(__dirname, "public");
-const UPLOAD_DIR = path.join(__dirname, "uploads");
-const TMP_DIR = path.join(os.tmpdir(), "fileforge-work");
+app.use(rateLimit);
 
-for (const dir of [UPLOAD_DIR, TMP_DIR]) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+function badRequest(res, msg) { return res.status(400).json({ ok: false, error: msg }); }
+
+function sanitizeName(name) { return String(name || 'file') .replace(/[^a-z0-9.-]+/gi, '') .replace(/+/g, '') .slice(0, 80); }
+
+function parsePages(input, maxPages) { const text = String(input || '').trim(); if (!text) return []; const out = new Set();
+
+for (const part of text.split(',')) { const p = part.trim(); if (!p) continue;
+
+if (p.includes('-')) {
+  const [aRaw, bRaw] = p.split('-');
+  const a = Number(aRaw);
+  const b = Number(bRaw);
+  if (!Number.isInteger(a) || !Number.isInteger(b)) continue;
+  const start = Math.max(1, Math.min(a, b));
+  const end = Math.min(maxPages, Math.max(a, b));
+  for (let i = start; i <= end; i++) out.add(i);
+} else {
+  const n = Number(p);
+  if (Number.isInteger(n) && n >= 1 && n <= maxPages) out.add(n);
 }
 
-app.use(cors());
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(PUBLIC_DIR));
-
-const MAX_SINGLE_FILE = 10 * 1024 * 1024; // 10 MB
-const MAX_MULTI_FILE = 10 * 1024 * 1024;  // per file
-const MAX_FILES = 10;
-
-const allowedMimeTypes = new Set([
-  "application/pdf",
-  "image/jpeg",
-  "image/png"
-]);
-
-const upload = multer({
-  dest: UPLOAD_DIR,
-  limits: {
-    fileSize: MAX_MULTI_FILE,
-    files: MAX_FILES
-  },
-  fileFilter: (_req, file, cb) => {
-    if (allowedMimeTypes.has(file.mimetype)) return cb(null, true);
-    cb(new Error("Only PDF, JPG, JPEG, and PNG files are allowed."));
-  }
-});
-
-function createWorkDir() {
-  const dir = fs.mkdtempSync(path.join(TMP_DIR, "job-"));
-  return dir;
 }
 
-function cleanupFiles(files = []) {
-  for (const file of files) {
-    if (!file || !file.path) continue;
-    try {
-      fs.unlinkSync(file.path);
-    } catch (_) {}
-  }
+return [...out].sort((a, b) => a - b); }
+
+function sha256(buffer) { return crypto.createHash('sha256').update(buffer).digest('hex'); }
+
+function uniqByHash(files) { const seen = new Set(); const out = []; for (const file of files) { const hash = sha256(file.buffer); if (!seen.has(hash)) { seen.add(hash); out.push(file); } } return out; }
+
+function isPdf(file) { return file?.mimetype === 'application/pdf' || String(file?.originalname || '').toLowerCase().endsWith('.pdf'); }
+
+function isImage(file) { return ['image/png', 'image/jpeg', 'image/jpg'].includes(file?.mimetype); }
+
+async function bytesToPdf(bytes) { return PDFDocument.load(bytes, { ignoreEncryption: false }); }
+
+async function makePdfFromSinglePage(sourcePdf, pageIndex) { const out = await PDFDocument.create(); const [page] = await out.copyPages(sourcePdf, [pageIndex]); out.addPage(page); return out.save(); }
+
+async function zipDirectory(sourceDir, zipPath) { return new Promise((resolve, reject) => { const output = fs.createWriteStream(zipPath); const archive = archiver('zip', { zlib: { level: 9 } });
+
+output.on('close', resolve);
+output.on('error', reject);
+archive.on('error', reject);
+
+archive.pipe(output);
+archive.directory(sourceDir, false);
+archive.finalize();
+
+}); }
+
+function sendPdf(res, bytes, filename) { res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', attachment; filename="${filename}"); res.setHeader('x-filename', filename); return res.send(Buffer.from(bytes)); }
+
+function cleanupDir(dir) { try { fs.rmSync(dir, { recursive: true, force: true }); } catch {} }
+
+app.get('/health', (req, res) => { res.json({ ok: true, name: 'PDF Extract Pro', rules: 'enabled' }); });
+
+app.get('/api/rules', (req, res) => { res.json({ ok: true, maxUploadSizeMB: 25, maxFilesPerRequest: 20, rateLimit: ${RATE_MAX} requests / ${Math.round(RATE_WINDOW_MS / 60000)} min, allowedPdfTools: ['merge', 'split', 'rotate', 'watermark', 'extract-text', 'delete-pages', 'extract-pages', 'page-number', 'compress'], allowedImageTools: ['image-to-pdf'] }); });
+
+app.post('/api/merge', upload.array('files', 20), async (req, res) => { try { let files = req.files || []; files = files.filter(isPdf); files = uniqByHash(files);
+
+if (files.length < 2) return badRequest(res, 'Upload at least 2 unique PDF files.');
+
+const out = await PDFDocument.create();
+for (const file of files) {
+  const pdf = await bytesToPdf(file.buffer);
+  const pages = await out.copyPages(pdf, pdf.getPageIndices());
+  pages.forEach(page => out.addPage(page));
 }
 
-function cleanupDir(dir) {
-  try {
-    fs.rmSync(dir, { recursive: true, force: true });
-  } catch (_) {}
+const bytes = await out.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'merged.pdf');
+
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Merge failed' }); } });
+
+app.post('/api/split', upload.single('file'), async (req, res) => { const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-split-')); const zipPath = path.join(tempDir, 'split_pages.zip');
+
+try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const pdf = await bytesToPdf(file.buffer);
+const maxPages = pdf.getPageCount();
+const wanted = parsePages(req.body.pages, maxPages);
+const selected = wanted.length ? wanted : pdf.getPageIndices().map(i => i + 1);
+
+if (!selected.length) return badRequest(res, 'No valid pages found.');
+if (selected.length > 200) return badRequest(res, 'Too many pages requested.');
+
+for (const pageNumber of selected) {
+  const single = await makePdfFromSinglePage(pdf, pageNumber - 1);
+  const base = sanitizeName(path.parse(file.originalname || 'page.pdf').name);
+  const outPath = path.join(tempDir, `${base}_page_${pageNumber}.pdf`);
+  fs.writeFileSync(outPath, Buffer.from(single));
 }
 
-function sendDownload(res, filePath, downloadName, workDir, uploadedFiles = []) {
-  res.download(filePath, downloadName, (err) => {
-    cleanupFiles(uploadedFiles);
-    cleanupDir(workDir);
-    if (err) console.error(err);
+await zipDirectory(tempDir, zipPath);
+return res.download(zipPath, 'split_pages.zip', () => cleanupDir(tempDir));
+
+} catch (err) { cleanupDir(tempDir); return res.status(500).json({ ok: false, error: err.message || 'Split failed' }); } });
+
+app.post('/api/rotate', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const degreesValue = Number(req.body.degrees);
+const allowed = new Set([0, 90, 180, 270]);
+const rotation = allowed.has(degreesValue) ? degreesValue : 90;
+
+const pdf = await bytesToPdf(file.buffer);
+pdf.getPages().forEach(page => page.setRotation(degrees(rotation)));
+
+const bytes = await pdf.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'rotated.pdf');
+
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Rotate failed' }); } });
+
+app.post('/api/watermark', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const text = String(req.body.text || 'CONFIDENTIAL').trim().slice(0, 60) || 'CONFIDENTIAL';
+const pdf = await bytesToPdf(file.buffer);
+const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+for (const page of pdf.getPages()) {
+  const { width, height } = page.getSize();
+  page.drawText(text, {
+    x: width * 0.12,
+    y: height * 0.5,
+    size: Math.max(24, Math.min(width, height) / 10),
+    font,
+    color: rgb(0.82, 0.2, 0.28),
+    rotate: degrees(30),
+    opacity: 0.18
   });
 }
 
-function isPdf(file) {
-  return file && file.mimetype === "application/pdf";
+const bytes = await pdf.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'watermarked.pdf');
+
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Watermark failed' }); } });
+
+app.post('/api/extract-text', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const data = await pdfParse(file.buffer);
+return res.json({
+  ok: true,
+  pages: data.numpages,
+  text: (data.text || '').trim(),
+  info: data.info || {}
+});
+
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Text extraction failed' }); } });
+
+app.post('/api/delete-pages', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const pdf = await bytesToPdf(file.buffer);
+const maxPages = pdf.getPageCount();
+const toDelete = parsePages(req.body.pages, maxPages);
+
+if (!toDelete.length) return badRequest(res, 'Enter pages to delete like 2,4-6.');
+
+const keep = pdf.getPageIndices().map(i => i + 1).filter(n => !toDelete.includes(n));
+if (!keep.length) return badRequest(res, 'All pages cannot be deleted.');
+
+const out = await PDFDocument.create();
+for (const pageNumber of keep) {
+  const [copied] = await out.copyPages(pdf, [pageNumber - 1]);
+  out.addPage(copied);
 }
 
-function isImage(file) {
-  return file && (file.mimetype === "image/jpeg" || file.mimetype === "image/png");
+const bytes = await out.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'pages_deleted.pdf');
+
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Delete pages failed' }); } });
+
+app.post('/api/extract-pages', upload.single('file'), async (req, res) => { const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-extract-')); const zipPath = path.join(tempDir, 'extracted_pages.zip');
+
+try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+
+const pdf = await bytesToPdf(file.buffer);
+const maxPages = pdf.getPageCount();
+const selected = parsePages(req.body.pages, maxPages);
+
+if (!selected.length) return badRequest(res, 'Enter pages like 1,3-5.');
+if (selected.length > 200) return badRequest(res, 'Too many pages requested.');
+
+for (const pageNumber of selected) {
+  const single = await makePdfFromSinglePage(pdf, pageNumber - 1);
+  const base = sanitizeName(path.parse(file.originalname || 'page.pdf').name);
+  const outPath = path.join(tempDir, `${base}_page_${pageNumber}.pdf`);
+  fs.writeFileSync(outPath, Buffer.from(single));
 }
 
-function safeBaseName(name) {
-  return path.parse(name || "file").name.replace(/[^\w\-]+/g, "_");
+await zipDirectory(tempDir, zipPath);
+return res.download(zipPath, 'extracted_pages.zip', () => cleanupDir(tempDir));
+
+} catch (err) { cleanupDir(tempDir); return res.status(500).json({ ok: false, error: err.message || 'Extract pages failed' }); } });
+
+app.post('/api/image-to-pdf', upload.array('files', 20), async (req, res) => { try { const files = (req.files || []).filter(isImage); if (!files.length) return badRequest(res, 'Upload PNG or JPG image files.');
+
+const out = await PDFDocument.create();
+for (const file of files) {
+  const img = file.mimetype === 'image/png'
+    ? await out.embedPng(file.buffer)
+    : await out.embedJpg(file.buffer);
+
+  const page = out.addPage([img.width, img.height]);
+  page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
 }
 
-function parsePageList(input, maxPages) {
-  if (!input || !String(input).trim()) {
-    return [];
-  }
+const bytes = await out.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'images_to_pdf.pdf');
 
-  const result = new Set();
-  const parts = String(input)
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean);
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Image to PDF failed' }); } });
 
-  for (const part of parts) {
-    if (part.includes("-")) {
-      const [aRaw, bRaw] = part.split("-").map(s => s.trim());
-      const a = Number(aRaw);
-      const b = Number(bRaw);
-      if (Number.isInteger(a) && Number.isInteger(b) && a > 0 && b >= a) {
-        for (let i = a; i <= b; i++) result.add(i);
-      }
-    } else {
-      const n = Number(part);
-      if (Number.isInteger(n) && n > 0) result.add(n);
-    }
-  }
+app.post('/api/page-number', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
 
-  return [...result]
-    .filter(n => n >= 1 && n <= maxPages)
-    .sort((a, b) => a - b);
-}
+const pdf = await bytesToPdf(file.buffer);
+const font = await pdf.embedFont(StandardFonts.Helvetica);
+const pages = pdf.getPages();
 
-function requireAtLeastOneFile(req, res) {
-  if (!req.file && !(req.files && req.files.length)) {
-    res.status(400).json({ error: "File is required." });
-    return false;
-  }
-  return true;
-}
-
-async function fileExists(cmd) {
-  try {
-    await execFileAsync(cmd, ["--version"], { maxBuffer: 1024 * 1024 });
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-async function savePdf(pdfDoc, outPath) {
-  const bytes = await pdfDoc.save({ useObjectStreams: true });
-  await fsp.writeFile(outPath, bytes);
-}
-
-async function zipFiles(fileList, zipPath) {
-  await new Promise((resolve, reject) => {
-    const output = fs.createWriteStream(zipPath);
-    const archive = archiver("zip", { zlib: { level: 9 } });
-
-    output.on("close", resolve);
-    output.on("end", resolve);
-    archive.on("error", reject);
-
-    archive.pipe(output);
-    for (const item of fileList) {
-      archive.file(item.path, { name: item.name });
-    }
-    archive.finalize();
+for (let i = 0; i < pages.length; i++) {
+  const page = pages[i];
+  const { width } = page.getSize();
+  page.drawText(String(i + 1), {
+    x: width - 40,
+    y: 18,
+    size: 10,
+    font,
+    color: rgb(0.25, 0.25, 0.25),
+    opacity: 0.85
   });
 }
 
-async function extractTextFromPdf(filePath) {
-  const buffer = await fsp.readFile(filePath);
-  const data = await pdfParse(buffer);
-  return (data.text || "").trim();
-}
+const bytes = await pdf.save({ useObjectStreams: true });
+return sendPdf(res, bytes, 'numbered.pdf');
 
-async function makeDocx(title, text) {
-  const lines = String(text || "")
-    .split(/\r?\n/)
-    .map(s => s.trimEnd());
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Page number failed' }); } });
 
-  const children = [
-    new Paragraph({
-      text: title,
-      heading: HeadingLevel.TITLE,
-      alignment: AlignmentType.CENTER
-    }),
-    new Paragraph(" ")
-  ];
+app.post('/api/compress', upload.single('file'), async (req, res) => { try { const file = req.file; if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
 
-  for (const line of lines) {
-    if (!line.trim()) {
-      children.push(new Paragraph(" "));
-    } else {
-      children.push(
-        new Paragraph({
-          children: [new TextRun(line)]
-        })
-      );
-    }
-  }
+const pdf = await bytesToPdf(file.buffer);
+const bytes = await pdf.save({ useObjectStreams: true, addDefaultPage: false, updateFieldAppearances: false });
+return sendPdf(res, bytes, 'compressed.pdf');
 
-  const doc = new Document({
-    sections: [{ children }]
-  });
+} catch (err) { return res.status(500).json({ ok: false, error: err.message || 'Compress failed' }); } });
 
-  return Packer.toBuffer(doc);
-}
+app.use((err, req, res, next) => { if (err?.code === 'LIMIT_FILE_SIZE') { return res.status(413).json({ ok: false, error: 'File too large. Max size is 25MB.' }); } if (err?.code === 'LIMIT_FILE_COUNT') { return res.status(413).json({ ok: false, error: 'Too many files uploaded.' }); } return next(err); });
 
-async function makeXlsx(outPath, title, text) {
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Extracted Text");
+app.use((req, res) => { res.status(404).json({ ok: false, error: 'Route not found' }); });
 
-  sheet.columns = [
-    { header: "#", key: "n", width: 8 },
-    { header: "Text", key: "text", width: 120 }
-  ];
-
-  const lines = String(text || "")
-    .split(/\r?\n/)
-    .map(s => s.trimEnd())
-    .filter(Boolean);
-
-  sheet.addRow({ n: 1, text: title });
-
-  let rowNo = 2;
-  for (const line of lines) {
-    sheet.addRow({ n: rowNo, text: line });
-    rowNo++;
-  }
-
-  await workbook.xlsx.writeFile(outPath);
-}
-
-async function makePptx(outPath, title, text) {
-  const pptx = new PptxGenJS();
-  pptx.layout = "LAYOUT_WIDE";
-
-  const lines = String(text || "")
-    .split(/\r?\n/)
-    .map(s => s.trimEnd())
-    .filter(Boolean);
-
-  const chunkSize = 14;
-  const chunks = [];
-  for (let i = 0; i < lines.length; i += chunkSize) {
-    chunks.push(lines.slice(i, i + chunkSize));
-  }
-  if (!chunks.length) chunks.push(["No extractable text found."]);
-
-  chunks.forEach((chunk, idx) => {
-    const slide = pptx.addSlide();
-    slide.background = { color: "0B1220" };
-    slide.addText(title, {
-      x: 0.5,
-      y: 0.3,
-      w: 12,
-      h: 0.6,
-      fontSize: 22,
-      bold: true,
-      color: "FFFFFF"
-    });
-    slide.addText(idx === 0 ? "Converted from PDF" : `Part ${idx + 1}`, {
-      x: 0.5,
-      y: 0.9,
-      w: 12,
-      h: 0.3,
-      fontSize: 11,
-      color: "94A3B8"
-    });
-    slide.addText(chunk.join("\n"), {
-      x: 0.6,
-      y: 1.3,
-      w: 12,
-      h: 5.4,
-      fontSize: 16,
-      color: "E2E8F0",
-      margin: 0.08,
-      fit: "shrink",
-      valign: "top"
-    });
-  });
-
-  await pptx.writeFile({ fileName: outPath });
-}
-
-async function pdfToImagesViaPdftoppm(pdfPath, outDir, format = "png") {
-  const prefix = path.join(outDir, "page");
-  const args = format === "jpg"
-    ? ["-jpeg", pdfPath, prefix]
-    : ["-png", pdfPath, prefix];
-
-  await execFileAsync("pdftoppm", args, { maxBuffer: 1024 * 1024 * 20 });
-
-  const files = fs
-    .readdirSync(outDir)
-    .filter(f => f.startsWith("page-") && (f.endsWith(".png") || f.endsWith(".jpg") || f.endsWith(".jpeg")))
-    .sort((a, b) => {
-      const na = Number(a.match(/page-(\d+)/)?.[1] || 0);
-      const nb = Number(b.match(/page-(\d+)/)?.[1] || 0);
-      return na - nb;
-    });
-
-  return files.map(name => path.join(outDir, name));
-}
-
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, name: "FileForge" });
-});
-
-/* MERGE PDF */
-app.post("/api/merge", upload.array("files", 10), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.files || req.files.length < 2) {
-      return res.status(400).json({ error: "Upload at least 2 PDF files." });
-    }
-
-    for (const file of req.files) {
-      if (!isPdf(file)) {
-        return res.status(400).json({ error: "Merge accepts only PDF files." });
-      }
-    }
-
-    const merged = await PDFDocument.create();
-
-    for (const file of req.files) {
-      const bytes = await fsp.readFile(file.path);
-      const pdf = await PDFDocument.load(bytes);
-      const pages = await merged.copyPages(pdf, pdf.getPageIndices());
-      pages.forEach(p => merged.addPage(p));
-    }
-
-    const outPath = path.join(workDir, "merged.pdf");
-    await savePdf(merged, outPath);
-    sendDownload(res, outPath, "merged.pdf", workDir, req.files);
-  } catch (err) {
-    cleanupFiles(req.files);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Merge failed." });
-  }
-});
-
-/* SPLIT PDF */
-app.post("/api/split", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Split accepts only PDF files." });
-
-    const bytes = await fsp.readFile(req.file.path);
-    const pdf = await PDFDocument.load(bytes);
-    const totalPages = pdf.getPageCount();
-    const selectedPages = parsePageList(req.body.pages, totalPages);
-
-    const pagesToSplit = selectedPages.length ? selectedPages : [...Array(totalPages)].map((_, i) => i + 1);
-    const pageFiles = [];
-
-    for (const pageNum of pagesToSplit) {
-      const doc = await PDFDocument.create();
-      const [page] = await doc.copyPages(pdf, [pageNum - 1]);
-      doc.addPage(page);
-
-      const pagePath = path.join(workDir, `page-${pageNum}.pdf`);
-      await savePdf(doc, pagePath);
-      pageFiles.push({ path: pagePath, name: `page-${pageNum}.pdf` });
-    }
-
-    const zipPath = path.join(workDir, "split-pages.zip");
-    await zipFiles(pageFiles, zipPath);
-    sendDownload(res, zipPath, "split-pages.zip", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Split failed." });
-  }
-});
-
-/* COMPRESS PDF */
-app.post("/api/compress", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Compress accepts only PDF files." });
-
-    const pdf = await PDFDocument.load(await fsp.readFile(req.file.path));
-    const outPath = path.join(workDir, "compressed.pdf");
-    await savePdf(pdf, outPath);
-
-    sendDownload(res, outPath, "compressed.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Compress failed." });
-  }
-});
-
-/* JPG/PNG → PDF */
-app.post("/api/jpg-to-pdf", upload.array("files", 10), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.files || !req.files.length) {
-      return res.status(400).json({ error: "Image files are required." });
-    }
-
-    for (const file of req.files) {
-      if (!isImage(file)) {
-        return res.status(400).json({ error: "JPG to PDF accepts only JPG, JPEG, or PNG images." });
-      }
-    }
-
-    const pdf = await PDFDocument.create();
-    for (const file of req.files) {
-      const buffer = await fsp.readFile(file.path);
-      let img;
-      if (file.mimetype === "image/png") {
-        img = await pdf.embedPng(buffer);
-      } else {
-        img = await pdf.embedJpg(buffer);
-      }
-
-      const page = pdf.addPage([img.width, img.height]);
-      page.drawImage(img, {
-        x: 0,
-        y: 0,
-        width: img.width,
-        height: img.height
-      });
-    }
-
-    const outPath = path.join(workDir, "images-to-pdf.pdf");
-    await savePdf(pdf, outPath);
-    sendDownload(res, outPath, "images-to-pdf.pdf", workDir, req.files);
-  } catch (err) {
-    cleanupFiles(req.files);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "JPG to PDF failed." });
-  }
-});
-
-/* ROTATE PDF */
-app.post("/api/rotate", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Rotate accepts only PDF files." });
-
-    const angle = Number(req.body.angle || 90);
-    const validAngle = [90, 180, 270].includes(angle) ? angle : 90;
-    const bytes = await fsp.readFile(req.file.path);
-    const pdf = await PDFDocument.load(bytes);
-
-    const pages = parsePageList(req.body.pages, pdf.getPageCount());
-    const targets = pages.length ? pages : [...Array(pdf.getPageCount())].map((_, i) => i + 1);
-
-    for (const pageNum of targets) {
-      const page = pdf.getPage(pageNum - 1);
-      page.setRotation(degrees(validAngle));
-    }
-
-    const outPath = path.join(workDir, "rotated.pdf");
-    await savePdf(pdf, outPath);
-
-    sendDownload(res, outPath, "rotated.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Rotate failed." });
-  }
-});
-
-/* DELETE PAGES */
-app.post("/api/delete-pages", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Delete Pages accepts only PDF files." });
-
-    const bytes = await fsp.readFile(req.file.path);
-    const src = await PDFDocument.load(bytes);
-    const totalPages = src.getPageCount();
-    const deletePages = parsePageList(req.body.pages, totalPages);
-
-    if (!deletePages.length) {
-      return res.status(400).json({ error: "Provide pages to delete like 2,4 or 1-3." });
-    }
-
-    const keepIndices = src.getPageIndices().filter(i => !deletePages.includes(i + 1));
-    if (!keepIndices.length) {
-      return res.status(400).json({ error: "You cannot delete all pages." });
-    }
-
-    const outPdf = await PDFDocument.create();
-    const copied = await outPdf.copyPages(src, keepIndices);
-    copied.forEach(page => outPdf.addPage(page));
-
-    const outPath = path.join(workDir, "pages-deleted.pdf");
-    await savePdf(outPdf, outPath);
-
-    sendDownload(res, outPath, "pages-deleted.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Delete pages failed." });
-  }
-});
-
-/* REORDER PAGES */
-app.post("/api/reorder", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Reorder accepts only PDF files." });
-
-    const bytes = await fsp.readFile(req.file.path);
-    const src = await PDFDocument.load(bytes);
-    const totalPages = src.getPageCount();
-    const order = parsePageList(req.body.order, totalPages);
-
-    if (order.length !== totalPages) {
-      return res.status(400).json({
-        error: `Order must include all ${totalPages} pages exactly once. Example: 3,1,2,4`
-      });
-    }
-
-    const unique = new Set(order);
-    if (unique.size !== totalPages) {
-      return res.status(400).json({ error: "Order cannot contain duplicate page numbers." });
-    }
-
-    const outPdf = await PDFDocument.create();
-    const copied = await outPdf.copyPages(src, order.map(n => n - 1));
-    copied.forEach(page => outPdf.addPage(page));
-
-    const outPath = path.join(workDir, "reordered.pdf");
-    await savePdf(outPdf, outPath);
-
-    sendDownload(res, outPath, "reordered.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Reorder failed." });
-  }
-});
-
-/* WATERMARK */
-app.post("/api/watermark", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Watermark accepts only PDF files." });
-
-    const watermarkText = String(req.body.text || "CONFIDENTIAL").trim() || "CONFIDENTIAL";
-    const bytes = await fsp.readFile(req.file.path);
-    const pdf = await PDFDocument.load(bytes);
-    const font = await pdf.embedFont(StandardFonts.HelveticaBold);
-
-    for (const page of pdf.getPages()) {
-      const { width, height } = page.getSize();
-      page.drawText(watermarkText, {
-        x: width * 0.18,
-        y: height * 0.5,
-        size: 42,
-        font,
-        rotate: degrees(30),
-        color: rgb(0.7, 0.7, 0.7),
-        opacity: 0.22
-      });
-    }
-
-    const outPath = path.join(workDir, "watermarked.pdf");
-    await savePdf(pdf, outPath);
-
-    sendDownload(res, outPath, "watermarked.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Watermark failed." });
-  }
-});
-
-/* PAGE NUMBERS */
-app.post("/api/page-numbers", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Page Numbers accepts only PDF files." });
-
-    const bytes = await fsp.readFile(req.file.path);
-    const pdf = await PDFDocument.load(bytes);
-    const font = await pdf.embedFont(StandardFonts.Helvetica);
-
-    const total = pdf.getPageCount();
-    for (const [index, page] of pdf.getPages().entries()) {
-      const { width } = page.getSize();
-      const text = `${index + 1} / ${total}`;
-      const textWidth = font.widthOfTextAtSize(text, 10);
-      page.drawText(text, {
-        x: width - textWidth - 24,
-        y: 18,
-        size: 10,
-        font,
-        color: rgb(0.4, 0.4, 0.4)
-      });
-    }
-
-    const outPath = path.join(workDir, "numbered.pdf");
-    await savePdf(pdf, outPath);
-
-    sendDownload(res, outPath, "numbered.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Page numbers failed." });
-  }
-});
-
-/* PROTECT PDF */
-app.post("/api/protect", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Protect accepts only PDF files." });
-
-    const password = String(req.body.password || "").trim();
-    if (!password) return res.status(400).json({ error: "Password is required." });
-
-    const qpdfExists = await fileExists("qpdf");
-    if (!qpdfExists) {
-      return res.status(500).json({ error: "qpdf is not installed on the server." });
-    }
-
-    const outPath = path.join(workDir, "protected.pdf");
-    await execFileAsync("qpdf", [
-      "--encrypt",
-      password,
-      password,
-      "256",
-      "--",
-      req.file.path,
-      outPath
-    ]);
-
-    sendDownload(res, outPath, "protected.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Protect failed." });
-  }
-});
-
-/* UNLOCK PDF */
-app.post("/api/unlock", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "Unlock accepts only PDF files." });
-
-    const password = String(req.body.password || "").trim();
-    if (!password) return res.status(400).json({ error: "Password is required." });
-
-    const qpdfExists = await fileExists("qpdf");
-    if (!qpdfExists) {
-      return res.status(500).json({ error: "qpdf is not installed on the server." });
-    }
-
-    const outPath = path.join(workDir, "unlocked.pdf");
-    await execFileAsync("qpdf", [
-      `--password=${password}`,
-      "--decrypt",
-      req.file.path,
-      outPath
-    ]);
-
-    sendDownload(res, outPath, "unlocked.pdf", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Unlock failed." });
-  }
-});
-
-/* PDF → DOCX / XLSX / PPTX / TXT / JPG / PNG */
-app.post("/api/convert/:format", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "PDF is required for conversion." });
-
-    const format = String(req.params.format || "").toLowerCase();
-    const base = safeBaseName(req.file.originalname);
-    const text = await extractTextFromPdf(req.file.path);
-    const title = base.replace(/_/g, " ");
-
-    if (format === "txt") {
-      const outPath = path.join(workDir, `${base}.txt`);
-      await fsp.writeFile(outPath, text || "No extractable text found.", "utf8");
-      return sendDownload(res, outPath, `${base}.txt`, workDir, [req.file]);
-    }
-
-    if (format === "docx") {
-      const outPath = path.join(workDir, `${base}.docx`);
-      const buffer = await makeDocx(title, text || "No extractable text found.");
-      await fsp.writeFile(outPath, buffer);
-      return sendDownload(res, outPath, `${base}.docx`, workDir, [req.file]);
-    }
-
-    if (format === "xlsx") {
-      const outPath = path.join(workDir, `${base}.xlsx`);
-      await makeXlsx(outPath, title, text || "No extractable text found.");
-      return sendDownload(res, outPath, `${base}.xlsx`, workDir, [req.file]);
-    }
-
-    if (format === "pptx") {
-      const outPath = path.join(workDir, `${base}.pptx`);
-      await makePptx(outPath, title, text || "No extractable text found.");
-      return sendDownload(res, outPath, `${base}.pptx`, workDir, [req.file]);
-    }
-
-    if (format === "png" || format === "jpg") {
-      const pdftoppmExists = await fileExists("pdftoppm");
-      if (!pdftoppmExists) {
-        return res.status(500).json({ error: "pdftoppm is not installed on the server." });
-      }
-
-      const imagesDir = path.join(workDir, "images");
-      fs.mkdirSync(imagesDir, { recursive: true });
-
-      const images = await pdfToImagesViaPdftoppm(req.file.path, imagesDir, format);
-      if (!images.length) {
-        return res.status(500).json({ error: "No pages were converted to images." });
-      }
-
-      const zipPath = path.join(workDir, `${base}-${format}.zip`);
-      await zipFiles(
-        images.map(p => ({ path: p, name: path.basename(p) })),
-        zipPath
-      );
-
-      return sendDownload(res, zipPath, `${base}-${format}.zip`, workDir, [req.file]);
-    }
-
-    return res.status(400).json({
-      error: "Unsupported format. Use docx, xlsx, pptx, txt, png, or jpg."
-    });
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "Conversion failed." });
-  }
-});
-
-/* OCR */
-app.post("/api/ocr", upload.single("file"), async (req, res) => {
-  const workDir = createWorkDir();
-  try {
-    if (!req.file) return res.status(400).json({ error: "PDF file is required." });
-    if (!isPdf(req.file)) return res.status(400).json({ error: "OCR accepts only PDF files." });
-
-    const pdftoppmExists = await fileExists("pdftoppm");
-    if (!pdftoppmExists) {
-      return res.status(500).json({ error: "pdftoppm is not installed on the server." });
-    }
-
-    const maxPages = Math.max(1, Math.min(10, Number(req.body.maxPages || 3)));
-    const imagesDir = path.join(workDir, "ocr-images");
-    fs.mkdirSync(imagesDir, { recursive: true });
-
-    const images = await pdfToImagesViaPdftoppm(req.file.path, imagesDir, "png");
-    const selected = images.slice(0, maxPages);
-
-    let text = "";
-    for (let i = 0; i < selected.length; i++) {
-      const result = await Tesseract.recognize(selected[i], "eng");
-      text += `\n\n--- Page ${i + 1} ---\n`;
-      text += (result.data.text || "").trim();
-    }
-
-    const outPath = path.join(workDir, "ocr-text.txt");
-    await fsp.writeFile(outPath, text.trim() || "No OCR text found.", "utf8");
-
-    sendDownload(res, outPath, "ocr-text.txt", workDir, [req.file]);
-  } catch (err) {
-    cleanupFiles([req.file]);
-    cleanupDir(workDir);
-    res.status(500).json({ error: err.message || "OCR failed." });
-  }
-});
-
-app.use((err, _req, res, _next) => {
-  if (err && err.code === "LIMIT_FILE_SIZE") {
-    return res.status(413).json({
-      error: "File too large. Maximum allowed size is 10 MB per file."
-    });
-  }
-  if (err && err.message) {
-    return res.status(400).json({ error: err.message });
-  }
-  return res.status(500).json({ error: "Unexpected server error." });
-});
-
-app.listen(PORT, () => {
-  console.log(`FileForge running on port ${PORT}`);
-});
+app.listen(PORT, () => { console.log(PDF Extract Pro running on http://localhost:${PORT}); });
