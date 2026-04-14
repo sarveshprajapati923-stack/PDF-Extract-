@@ -168,9 +168,7 @@
           Competitor-style PDF suite
         </span>
         <h2>Real working website.</h2>
-        <p>
-          Modern dashboard + real backend processing. No fake buttons.
-        </p>
+        <p>Modern dashboard + real backend processing. No fake buttons.</p>
         <div class="actions">
           <button class="btn solid" onclick="jump('tools')">Open tools</button>
           <button class="btn" onclick="jump('upload')">Upload file</button>
@@ -262,6 +260,10 @@
           <div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div>
           <div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div>
         </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div>
+          <div class="btns"><button class="btn" onclick="run('compress')">Run</button></div>
+        </div>
       </div>
     </section>
 
@@ -299,12 +301,13 @@
     });
   }
 
-  ;['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
+  ['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
     e.preventDefault();
     e.stopPropagation();
     dropzone.classList.add('drag');
   }));
-  ;['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+
+  ['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => {
     e.preventDefault();
     e.stopPropagation();
     dropzone.classList.remove('drag');
@@ -366,13 +369,12 @@
       const filename = res.headers.get('x-filename') || 'output.pdf';
 
       setStatus('Done', tool + ' completed successfully.');
-      setOutput(
-        '<a href="' + url + '" download="' + filename + '">Download ' + filename + '</a>'
-      );
+      setOutput('<a href="' + url + '" download="' + filename + '">Download ' + filename + '</a>');
     } catch (err) {
       setStatus('Error', err.message);
       setOutput('<pre>' + err.message + '</pre>');
     }
   }
 </script>
-</boscripthtml>
+</body>
+</html>
