@@ -3,776 +3,376 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FileForge</title>
+<title>PDF Extract Pro</title>
 <style>
   :root{
     --bg:#08111f;
-    --panel:#0e1a31;
-    --panel2:#12213f;
-    --line:rgba(255,255,255,.08);
-    --text:#ecf3ff;
-    --muted:#90a4c8;
-    --accent:#4cc9f0;
-    --accent2:#8b5cf6;
-    --good:#22c55e;
-    --danger:#ef4444;
-    --shadow:0 18px 50px rgba(0,0,0,.38);
-    --r:22px;
+    --bg2:#0d1729;
+    --panel:rgba(15,23,42,.78);
+    --line:rgba(148,163,184,.16);
+    --text:#e5eefc;
+    --muted:#91a5c5;
+    --p:#4f8cff;
+    --p2:#7c5cff;
+    --radius:22px;
+    --shadow:0 20px 60px rgba(0,0,0,.3);
   }
   *{box-sizing:border-box}
   body{
     margin:0;
     font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:
-      radial-gradient(circle at top left, rgba(76,201,240,.16), transparent 28%),
-      radial-gradient(circle at top right, rgba(139,92,246,.14), transparent 26%),
-      var(--bg);
+    background:linear-gradient(180deg,var(--bg),var(--bg2));
     color:var(--text);
   }
-  .app{display:flex; min-height:100vh}
+  .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
   .sidebar{
-    width:270px;
-    padding:24px;
-    background:rgba(8,17,31,.75);
+    padding:18px;
     border-right:1px solid var(--line);
-    backdrop-filter: blur(16px);
-    position:sticky;
-    top:0;
-    height:100vh;
+    background:rgba(7,12,24,.92);
+    position:sticky;top:0;height:100vh;
   }
-  .brand{display:flex; gap:12px; align-items:center; margin-bottom:28px}
-  .logo{
-    width:44px;height:44px;border-radius:14px;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow:0 10px 30px rgba(76,201,240,.22);
+  .brand{
+    padding:16px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:rgba(255,255,255,.03);
+    margin-bottom:14px;
   }
-  .brand h1{margin:0;font-size:18px}
-  .brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
-  .nav a{
-    display:block;
-    text-decoration:none;
+  .brand h1{margin:0 0 6px;font-size:1.15rem}
+  .brand p{margin:0;color:var(--muted);font-size:.9rem}
+  .nav{display:grid;gap:10px}
+  .nav button,.btn,.chip{
+    border:1px solid rgba(148,163,184,.24);
+    background:transparent;
     color:var(--text);
     padding:12px 14px;
-    border:1px solid transparent;
-    border-radius:16px;
-    margin:8px 0;
-    transition:.25s ease;
-    background:transparent;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.18s ease;
   }
-  .nav a:hover,.nav a.active{
-    transform:translateX(3px);
-    background:rgba(76,201,240,.08);
-    border-color:rgba(76,201,240,.22);
-  }
-  .main{flex:1; padding:24px; max-width:1450px; width:100%}
-  .topbar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    margin-bottom:20px;
-  }
-  .title h2{margin:0;font-size:30px}
-  .title p{margin:6px 0 0;color:var(--muted)}
-  .badge{
-    padding:10px 14px;
-    border-radius:999px;
-    border:1px solid rgba(76,201,240,.22);
-    background:rgba(76,201,240,.08);
-    color:#d8f7ff;
-    font-size:13px;
-  }
-  .stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:18px;
-  }
-  .stat,.panel,.workspace,.tool-card{
-    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  .nav button:hover,.btn:hover,.chip:hover{transform:translateY(-1px);border-color:rgba(79,140,255,.35)}
+  .nav button:active,.btn:active,.chip:active{transform:scale(.98)}
+  main{padding:18px}
+  .hero,.card{
+    border-radius:24px;
     border:1px solid var(--line);
-    border-radius:var(--r);
+    background:var(--panel);
     box-shadow:var(--shadow);
   }
-  .stat{padding:18px}
-  .k{font-size:12px;color:var(--muted);margin-bottom:8px}
-  .v{font-size:26px;font-weight:800}
-  .grid{
+  .hero{
+    padding:22px;
     display:grid;
-    grid-template-columns:1.2fr .92fr;
+    grid-template-columns:1.2fr .8fr;
     gap:16px;
-    align-items:start;
-  }
-  .panel,.workspace{padding:18px}
-  .panel h3,.workspace h3{margin:0 0 10px}
-  .panel p,.workspace p{margin:0 0 14px;color:var(--muted)}
-  .tools-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-  }
-  .tool-card{
-    padding:16px;
-    cursor:pointer;
-    transition:.22s ease;
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .tool-card:hover{
-    transform:translateY(-2px);
-    border-color:rgba(76,201,240,.26);
-    background:rgba(76,201,240,.06);
-  }
-  .tool-card.active{
-    background:linear-gradient(135deg, rgba(76,201,240,.10), rgba(139,92,246,.08));
-    border-color:rgba(76,201,240,.34);
-  }
-  .tool-card b{display:block;font-size:15px;margin-bottom:6px}
-  .tool-card small{color:var(--muted);line-height:1.35}
-  .workspace-head{
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    align-items:flex-start;
     margin-bottom:16px;
   }
-  .workspace-head span{
-    padding:6px 10px;
-    border-radius:999px;
-    background:rgba(139,92,246,.12);
-    border:1px solid rgba(139,92,246,.22);
-    color:#dfd1ff;
-    font-size:12px;
-    white-space:nowrap;
+  .hero h2{
+    margin:0 0 10px;
+    font-size:clamp(2rem,4vw,3.4rem);
+    line-height:.98;
   }
-  .field{margin-bottom:12px}
-  .field label{
-    display:block;
-    font-size:13px;
-    color:#d8e3f8;
-    margin-bottom:6px;
-  }
-  .field input,.field select,.field textarea{
-    width:100%;
-    padding:14px 14px;
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.1);
-    background:rgba(9,15,29,.75);
-    color:var(--text);
-    outline:none;
-    font-size:14px;
-  }
-  .field textarea{min-height:110px; resize:vertical}
-  .drop{
-    border:1.4px dashed rgba(76,201,240,.34);
-    background:rgba(76,201,240,.06);
-    border-radius:18px;
-    padding:18px;
-    text-align:center;
-  }
-  .drop strong{display:block;margin-bottom:6px}
-  .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
-  button{
-    border:none;
-    outline:none;
-    padding:13px 16px;
-    border-radius:16px;
+  .hero p{margin:0;color:#c2d1e9;line-height:1.6}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .solid{
+    background:linear-gradient(135deg,var(--p),var(--p2));
+    border-color:transparent;
     font-weight:700;
-    cursor:pointer;
-    color:#09101f;
-    background:linear-gradient(135deg,var(--accent),#89e9ff);
-    box-shadow:0 12px 30px rgba(76,201,240,.2);
-    transition:.2s ease;
   }
-  button:hover{transform:translateY(-2px)}
-  button.secondary{
-    background:transparent;
-    color:var(--text);
-    border:1px solid rgba(255,255,255,.12);
-    box-shadow:none;
+  .section{padding:18px}
+  .upload{
+    border:1.5px dashed rgba(148,163,184,.28);
+    border-radius:22px;
+    padding:20px;
+    text-align:center;
+    background:rgba(255,255,255,.02);
   }
-  .status{
-    margin-top:14px;
+  .upload.drag{
+    border-color:rgba(45,212,191,.55);
+    background:rgba(45,212,191,.08);
+  }
+  input[type=file],input[type=text]{
+    width:100%;
     padding:12px 14px;
-    border-radius:16px;
-    background:rgba(255,255,255,.04);
-    color:var(--muted);
-    min-height:48px;
-    display:flex;
-    align-items:center;
-  }
-  .history{
-    display:grid;
-    gap:10px;
-    max-height:470px;
-    overflow:auto;
-    padding-right:2px;
-  }
-  .hitem{
-    padding:12px 14px;
-    border-radius:16px;
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.06);
-    color:#dce7ff;
-    font-size:14px;
-  }
-  .list-lines{
-    display:grid;
-    gap:8px;
-    margin-top:10px;
-  }
-  .line{
-    padding:10px 12px;
     border-radius:14px;
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.06);
-    color:#dce7ff;
-    font-size:14px;
+    border:1px solid rgba(148,163,184,.22);
+    background:rgba(255,255,255,.03);
+    color:var(--text);
+    outline:none;
   }
-  .toast{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:99;
-    display:none;
-    min-width:250px;
-    padding:14px 16px;
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mini{color:var(--muted);font-size:.9rem}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+  }
+  .tool{
+    padding:16px;
+    border-radius:22px;
+    border:1px solid rgba(148,163,184,.16);
+    background:rgba(255,255,255,.03);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:170px;
+  }
+  .tool h3{margin:0}
+  .tool p{margin:0;color:var(--muted);line-height:1.5;font-size:.92rem}
+  .tool .top{display:flex;justify-content:space-between;gap:12px}
+  .ico{
+    width:46px;height:46px;
     border-radius:16px;
-    background:rgba(12,18,34,.95);
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:var(--shadow);
+    display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(79,140,255,.22),rgba(124,92,255,.2));
+    font-size:1.15rem;
   }
-  .toast.good{border-color:rgba(34,197,94,.25)}
-  .toast.bad{border-color:rgba(239,68,68,.25)}
-  .spinner{
-    width:18px;height:18px;border:2px solid rgba(255,255,255,.2);
-    border-top-color:#fff;border-radius:50%;
-    display:inline-block;margin-right:8px;vertical-align:middle;
-    animation:spin .8s linear infinite;
+  .tool .btns{display:flex;gap:10px;margin-top:auto}
+  .tool .btns button{flex:1}
+  .result{
+    white-space:pre-wrap;
+    background:rgba(0,0,0,.2);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+    min-height:140px;
   }
-  @keyframes spin { to { transform:rotate(360deg)} }
-  @media (max-width: 1120px){
-    .sidebar{display:none}
-    .stats{grid-template-columns:repeat(2,1fr)}
-    .grid{grid-template-columns:1fr}
-  }
-  @media (max-width: 640px){
-    .main{padding:16px}
-    .stats{grid-template-columns:1fr}
-    .tools-grid{grid-template-columns:1fr}
-    .topbar{flex-direction:column; align-items:flex-start}
-  }
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+  .footer{padding:10px 2px 18px;text-align:center;color:var(--muted)}
+  a{color:#7ab7ff}
+  @media (max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
+  @media (max-width:860px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.grid,.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="logo"></div>
-      <div>
-        <h1>FileForge</h1>
-        <p>Startup PDF suite</p>
-      </div>
+      <h1>PDF Extract Pro</h1>
+      <p>Real PDF tools. No paid API.</p>
     </div>
-
-    <nav class="nav">
-      <a class="active" href="#dashboard">Dashboard</a>
-      <a href="#tools">Tools</a>
-      <a href="#history">History</a>
-      <a href="#billing">Billing</a>
-      <a href="#settings">Settings</a>
-    </nav>
-
-    <div class="panel" style="margin-top:22px">
-      <h3>Rules</h3>
-      <div class="list-lines">
-        <div class="line">Max file size: 10 MB</div>
-        <div class="line">Max files per batch: 10</div>
-        <div class="line">Allowed: PDF, JPG, JPEG, PNG</div>
-        <div class="line">Auto cleanup after download</div>
-      </div>
+    <div class="nav">
+      <button onclick="jump('upload')">Upload</button>
+      <button onclick="jump('tools')">Tools</button>
+      <button onclick="jump('output')">Output</button>
+    </div>
+    <div class="card" style="margin-top:16px;padding:16px">
+      <h3 style="margin:0 0 8px">Real features</h3>
+      <p class="mini">Merge, split, rotate, watermark, delete pages, extract pages, image to PDF, page number, extract text.</p>
     </div>
   </aside>
 
-  <main class="main" id="dashboard">
-    <div class="topbar">
-      <div class="title">
-        <h2>FileForge</h2>
-        <p>Professional PDF tools for real work</p>
-      </div>
-      <div class="badge">16 premium live tools</div>
-    </div>
-
-    <section class="stats">
-      <div class="stat"><div class="k">Visible tools</div><div class="v">16</div></div>
-      <div class="stat"><div class="k">Upload limit</div><div class="v">10MB</div></div>
-      <div class="stat"><div class="k">Batch files</div><div class="v">10</div></div>
-      <div class="stat"><div class="k">Status</div><div class="v">Live</div></div>
-    </section>
-
-    <section class="grid" id="tools">
-      <div class="panel">
-        <h3>Tools</h3>
-        <p>Click any tool to open its dedicated page and upload section.</p>
-        <div class="tools-grid" id="toolsGrid"></div>
-      </div>
-
-      <div class="workspace">
-        <div class="workspace-head">
-          <div>
-            <h3 id="toolTitle">Select a tool</h3>
-            <p id="toolDesc">Choose one tool from the left to start.</p>
-          </div>
-          <span id="toolTag">Startup</span>
+  <main>
+    <section class="hero">
+      <div>
+        <span style="display:inline-block;padding:8px 12px;border:1px solid rgba(79,140,255,.28);border-radius:999px;background:rgba(79,140,255,.12);margin-bottom:12px">
+          Competitor-style PDF suite
+        </span>
+        <h2>Real working website.</h2>
+        <p>
+          Modern dashboard + real backend processing. No fake buttons.
+        </p>
+        <div class="actions">
+          <button class="btn solid" onclick="jump('tools')">Open tools</button>
+          <button class="btn" onclick="jump('upload')">Upload file</button>
         </div>
-
-        <div id="toolFields"></div>
-
-        <div class="btns">
-          <button id="runBtn" onclick="runTool()">
-            <span id="runText">Run Tool</span>
-          </button>
-          <button class="secondary" onclick="resetTool()">Reset</button>
-        </div>
-
-        <div class="status" id="status">Ready.</div>
       </div>
-    </section>
-
-    <section class="grid" style="margin-top:16px">
-      <div class="panel" id="history">
-        <h3>Recent activity</h3>
-        <p>Your latest conversions will appear here.</p>
-        <div class="history" id="historyList"></div>
-      </div>
-
-      <div class="panel" id="billing">
-        <h3>Included features</h3>
-        <div class="list-lines">
-          <div class="line">PDF to JPG</div>
-          <div class="line">JPG to PDF</div>
-          <div class="line">PDF to Word</div>
-          <div class="line">PDF to Excel</div>
-          <div class="line">PDF to PPT</div>
-          <div class="line">PDF to Text</div>
-          <div class="line">Merge PDF</div>
-          <div class="line">Split PDF</div>
-          <div class="line">Compress PDF</div>
-          <div class="line">Protect PDF</div>
-          <div class="line">Unlock PDF</div>
-          <div class="line">Rotate PDF</div>
-          <div class="line">Reorder Pages</div>
-          <div class="line">Delete Pages</div>
-          <div class="line">Add Watermark</div>
-          <div class="line">Add Page Numbers</div>
+      <div class="card" style="padding:16px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+          <div class="card" style="padding:14px"><b>Merge</b><div class="mini">PDF combine</div></div>
+          <div class="card" style="padding:14px"><b>Split</b><div class="mini">ZIP output</div></div>
+          <div class="card" style="padding:14px"><b>Image</b><div class="mini">To PDF</div></div>
+          <div class="card" style="padding:14px"><b>Text</b><div class="mini">Extract</div></div>
         </div>
       </div>
     </section>
 
-    <section class="panel" id="settings" style="margin-top:16px">
-      <h3>Server note</h3>
-      <p>
-        For full real features, install <b>qpdf</b> and <b>pdftoppm</b> on the server.
-        OCR uses PDF pages rendered to images.
-      </p>
+    <section class="section card" id="upload">
+      <h3 style="margin-top:0">Upload</h3>
+      <div class="upload" id="dropzone">
+        <p style="margin-top:0">Drag & drop PDF files here, or choose files.</p>
+        <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <div>
+          <div class="mini">Rotate degrees</div>
+          <input id="rotateDegrees" type="text" value="90" />
+        </div>
+        <div>
+          <div class="mini">Watermark text</div>
+          <input id="watermarkText" type="text" value="CONFIDENTIAL" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <div class="mini">Pages (split/delete/extract)</div>
+          <input id="pagesInput" type="text" placeholder="1,3-5" />
+        </div>
+        <div>
+          <div class="mini">Tip</div>
+          <input type="text" value="Use one PDF for rotate/watermark/extract" readonly />
+        </div>
+      </div>
     </section>
+
+    <section class="section card" id="tools" style="margin-top:16px">
+      <h3 style="margin-top:0">Tools</h3>
+      <div class="chips">
+        <button class="chip" onclick="showOnly('all')">All</button>
+        <button class="chip" onclick="showOnly('pdf')">PDF</button>
+        <button class="chip" onclick="showOnly('image')">Image</button>
+        <button class="chip" onclick="showOnly('text')">Text</button>
+      </div>
+
+      <div class="grid" id="toolGrid">
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div>
+          <div class="btns"><button class="btn" onclick="run('merge')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div>
+          <div class="btns"><button class="btn" onclick="run('split')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div>
+          <div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div>
+          <div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="text">
+          <div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div>
+          <div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div>
+          <div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div>
+          <div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="image">
+          <div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div>
+          <div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div>
+          <div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card" id="output" style="margin-top:16px">
+      <h3 style="margin-top:0">Output</h3>
+      <div id="status" class="mini" style="margin-bottom:10px">Waiting for action...</div>
+      <div id="result" class="result">No output yet.</div>
+    </section>
+
+    <div class="footer">PDF Extract Pro • real backend build</div>
   </main>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-  const tools = {
-    "pdf-to-jpg": {
-      label: "PDF to JPG",
-      tag: "Convert",
-      desc: "Convert each PDF page into JPG images and download as ZIP.",
-      endpoint: "/api/convert/jpg",
-      download: "pdf-to-jpg.zip",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "jpg-to-pdf": {
-      label: "JPG to PDF",
-      tag: "Convert",
-      desc: "Upload JPG or PNG images and turn them into one PDF.",
-      endpoint: "/api/jpg-to-pdf",
-      download: "images-to-pdf.pdf",
-      fields: [
-        { kind: "files", name: "files", label: "Image files", accept: ".jpg,.jpeg,.png,image/jpeg,image/png" }
-      ]
-    },
-    "pdf-to-word": {
-      label: "PDF to Word",
-      tag: "Convert",
-      desc: "Extract text and export it into a DOCX file.",
-      endpoint: "/api/convert/docx",
-      download: "pdf-to-word.docx",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "pdf-to-excel": {
-      label: "PDF to Excel",
-      tag: "Convert",
-      desc: "Export extracted text into an XLSX sheet.",
-      endpoint: "/api/convert/xlsx",
-      download: "pdf-to-excel.xlsx",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "pdf-to-ppt": {
-      label: "PDF to PPT",
-      tag: "Convert",
-      desc: "Create a PPTX presentation from extracted PDF text.",
-      endpoint: "/api/convert/pptx",
-      download: "pdf-to-ppt.pptx",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "pdf-to-text": {
-      label: "PDF to Text",
-      tag: "Convert",
-      desc: "Export PDF text content into a plain TXT file.",
-      endpoint: "/api/convert/txt",
-      download: "pdf-to-text.txt",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "merge-pdf": {
-      label: "Merge PDF",
-      tag: "Edit",
-      desc: "Combine 2 to 10 PDF files into one document.",
-      endpoint: "/api/merge",
-      download: "merged.pdf",
-      fields: [
-        { kind: "files", name: "files", label: "PDF files", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "split-pdf": {
-      label: "Split PDF",
-      tag: "Edit",
-      desc: "Split selected pages or the full PDF into separate files.",
-      endpoint: "/api/split",
-      download: "split-pages.zip",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "text", name: "pages", label: "Pages (optional)", placeholder: "1,3,5 or 2-4" }
-      ]
-    },
-    "compress-pdf": {
-      label: "Compress PDF",
-      tag: "Optimize",
-      desc: "Re-save PDF to reduce file overhead.",
-      endpoint: "/api/compress",
-      download: "compressed.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    },
-    "protect-pdf": {
-      label: "Protect PDF",
-      tag: "Security",
-      desc: "Lock PDF with a password using qpdf.",
-      endpoint: "/api/protect",
-      download: "protected.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "password", name: "password", label: "Password", placeholder: "Set password" }
-      ]
-    },
-    "unlock-pdf": {
-      label: "Unlock PDF",
-      tag: "Security",
-      desc: "Remove PDF password protection.",
-      endpoint: "/api/unlock",
-      download: "unlocked.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "Locked PDF file", accept: ".pdf,application/pdf" },
-        { kind: "password", name: "password", label: "Password", placeholder: "Current password" }
-      ]
-    },
-    "rotate-pdf": {
-      label: "Rotate PDF",
-      tag: "Edit",
-      desc: "Rotate selected pages by 90, 180, or 270 degrees.",
-      endpoint: "/api/rotate",
-      download: "rotated.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "text", name: "pages", label: "Pages (optional)", placeholder: "1,2,3 or 2-4" },
-        { kind: "select", name: "angle", label: "Angle", options: [["90","90°"],["180","180°"],["270","270°"]] }
-      ]
-    },
-    "reorder-pages": {
-      label: "Reorder Pages",
-      tag: "Edit",
-      desc: "Rewrite page order exactly as you want it.",
-      endpoint: "/api/reorder",
-      download: "reordered.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "text", name: "order", label: "Order", placeholder: "3,1,2,4" }
-      ]
-    },
-    "delete-pages": {
-      label: "Delete Pages",
-      tag: "Edit",
-      desc: "Delete selected pages from your PDF.",
-      endpoint: "/api/delete-pages",
-      download: "pages-deleted.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "text", name: "pages", label: "Delete pages", placeholder: "2,5 or 1-3" }
-      ]
-    },
-    "watermark-pdf": {
-      label: "Add Watermark",
-      tag: "Brand",
-      desc: "Add a text watermark to every page.",
-      endpoint: "/api/watermark",
-      download: "watermarked.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" },
-        { kind: "text", name: "text", label: "Watermark text", placeholder: "CONFIDENTIAL" }
-      ]
-    },
-    "page-numbers": {
-      label: "Add Page Numbers",
-      tag: "Utility",
-      desc: "Add page numbers at the bottom right of every page.",
-      endpoint: "/api/page-numbers",
-      download: "numbered.pdf",
-      fields: [
-        { kind: "file", name: "file", label: "PDF file", accept: ".pdf,application/pdf" }
-      ]
-    }
-  };
+  const fileInput = document.getElementById('fileInput');
+  const dropzone = document.getElementById('dropzone');
+  const statusEl = document.getElementById('status');
+  const resultEl = document.getElementById('result');
 
-  const order = [
-    "pdf-to-jpg",
-    "jpg-to-pdf",
-    "pdf-to-word",
-    "pdf-to-excel",
-    "pdf-to-ppt",
-    "pdf-to-text",
-    "merge-pdf",
-    "split-pdf",
-    "compress-pdf",
-    "protect-pdf",
-    "unlock-pdf",
-    "rotate-pdf",
-    "reorder-pages",
-    "delete-pages",
-    "watermark-pdf",
-    "page-numbers"
-  ];
-
-  const toolsGrid = document.getElementById("toolsGrid");
-  const toolTitle = document.getElementById("toolTitle");
-  const toolDesc = document.getElementById("toolDesc");
-  const toolTag = document.getElementById("toolTag");
-  const toolFields = document.getElementById("toolFields");
-  const statusEl = document.getElementById("status");
-  const runBtn = document.getElementById("runBtn");
-  const runText = document.getElementById("runText");
-  const historyList = document.getElementById("historyList");
-  const toast = document.getElementById("toast");
-
-  let currentKey = "";
-
-  function showToast(msg, type = "good") {
-    toast.className = `toast ${type}`;
-    toast.textContent = msg;
-    toast.style.display = "block";
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(() => {
-      toast.style.display = "none";
-    }, 2600);
+  function jump(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function setLoading(on) {
-    runBtn.disabled = on;
-    runText.innerHTML = on ? '<span class="spinner"></span>Running...' : 'Run Tool';
+  function setStatus(title, text) {
+    statusEl.textContent = title + ' — ' + text;
   }
 
-  function renderHistory() {
-    const items = JSON.parse(localStorage.getItem("fileforge_history") || "[]");
-    historyList.innerHTML = items.length
-      ? items.map(x => `<div class="hitem">${x}</div>`).join("")
-      : `<div class="hitem">No activity yet.</div>`;
+  function setOutput(html) {
+    resultEl.innerHTML = html;
   }
 
-  function pushHistory(text) {
-    const items = JSON.parse(localStorage.getItem("fileforge_history") || "[]");
-    items.unshift(`${new Date().toLocaleTimeString()} — ${text}`);
-    localStorage.setItem("fileforge_history", JSON.stringify(items.slice(0, 12)));
-    renderHistory();
+  function showOnly(cat) {
+    document.querySelectorAll('#toolGrid .tool').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+    });
   }
 
-  function activateTool(key) {
-    currentKey = key;
-    const tool = tools[key];
-    toolTitle.textContent = tool.label;
-    toolDesc.textContent = tool.desc;
-    toolTag.textContent = tool.tag;
+  ;['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.add('drag');
+  }));
+  ;['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.remove('drag');
+  }));
 
-    document.querySelectorAll(".tool-card").forEach(el => el.classList.remove("active"));
-    document.querySelector(`.tool-card[data-key="${key}"]`)?.classList.add("active");
+  dropzone.addEventListener('drop', ev => {
+    if (ev.dataTransfer.files?.length) fileInput.files = ev.dataTransfer.files;
+    setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
+  });
 
-    toolFields.innerHTML = "";
+  fileInput.addEventListener('change', () => {
+    setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
+  });
 
-    for (const field of tool.fields) {
-      const wrap = document.createElement("div");
-      wrap.className = "field";
-
-      const label = document.createElement("label");
-      label.textContent = field.label;
-      wrap.appendChild(label);
-
-      if (field.kind === "file" || field.kind === "files") {
-        const box = document.createElement("div");
-        box.className = "drop";
-        box.innerHTML = `
-          <strong>Drag & drop or choose ${field.kind === "files" ? "files" : "file"}</strong>
-          <small>Allowed: ${field.accept}</small>
-        `;
-        const input = document.createElement("input");
-        input.type = "file";
-        input.name = field.name;
-        input.accept = field.accept;
-        if (field.kind === "files") input.multiple = true;
-        input.style.marginTop = "10px";
-        box.appendChild(input);
-        wrap.appendChild(box);
-      } else if (field.kind === "select") {
-        const input = document.createElement("select");
-        input.name = field.name;
-        field.options.forEach(([value, text]) => {
-          const opt = document.createElement("option");
-          opt.value = value;
-          opt.textContent = text;
-          input.appendChild(opt);
-        });
-        wrap.appendChild(input);
-      } else if (field.kind === "text" || field.kind === "password") {
-        const input = document.createElement("input");
-        input.type = field.kind;
-        input.name = field.name;
-        input.placeholder = field.placeholder || "";
-        wrap.appendChild(input);
-      }
-
-      toolFields.appendChild(wrap);
-    }
-
-    statusEl.textContent = "Ready.";
-  }
-
-  function collectFormData() {
-    const tool = tools[currentKey];
-    if (!tool) throw new Error("Select a tool first.");
-
-    const form = new FormData();
-
-    for (const field of tool.fields) {
-      const input = toolFields.querySelector(`[name="${field.name}"]`);
-      if (!input) continue;
-
-      if (field.kind === "file") {
-        const file = input.files[0];
-        if (!file) throw new Error(`${field.label} is required.`);
-        form.append(field.name, file);
-      } else if (field.kind === "files") {
-        const files = Array.from(input.files || []);
-        if (!files.length) throw new Error(`${field.label} is required.`);
-        files.forEach(file => form.append(field.name, file));
-      } else {
-        const value = input.value.trim();
-        if ((field.name === "password" || field.name === "text" || field.name === "order" || field.name === "pages") && !value && field.name !== "pages") {
-          throw new Error(`${field.label} is required.`);
-        }
-        if (value) form.append(field.name, value);
-      }
-    }
-
-    return form;
-  }
-
-  function downloadBlob(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1200);
-  }
-
-  async function runTool() {
+  async function run(tool) {
     try {
-      if (!currentKey) {
-        showToast("Select a tool first.", "bad");
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) {
+        setStatus('Error', 'Upload files first.');
+        setOutput('Choose at least one file before running a tool.');
         return;
       }
 
-      setLoading(true);
-      statusEl.textContent = "Processing...";
+      const fd = new FormData();
 
-      const tool = tools[currentKey];
-      const form = collectFormData();
-
-      const response = await fetch(tool.endpoint, {
-        method: "POST",
-        body: form
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error || "Request failed.");
+      if (tool === 'merge' || tool === 'image-to-pdf') {
+        files.forEach(f => fd.append('files', f));
+      } else {
+        fd.append('file', files[0]);
       }
 
-      const blob = await response.blob();
-      downloadBlob(blob, tool.download);
+      fd.append('pages', document.getElementById('pagesInput').value || '');
+      fd.append('degrees', document.getElementById('rotateDegrees').value || '90');
+      fd.append('text', document.getElementById('watermarkText').value || 'CONFIDENTIAL');
 
-      statusEl.textContent = `Done. Downloaded ${tool.download}`;
-      showToast(`${tool.label} completed`, "good");
-      pushHistory(`${tool.label} → ${tool.download}`);
+      setStatus('Processing', tool + ' is running...');
+
+      const res = await fetch('/api/' + tool, {
+        method: 'POST',
+        body: fd
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Request failed');
+      }
+
+      const ct = res.headers.get('content-type') || '';
+
+      if (ct.includes('application/json')) {
+        const data = await res.json();
+        setStatus('Done', tool + ' completed successfully.');
+        setOutput('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const filename = res.headers.get('x-filename') || 'output.pdf';
+
+      setStatus('Done', tool + ' completed successfully.');
+      setOutput(
+        '<a href="' + url + '" download="' + filename + '">Download ' + filename + '</a>'
+      );
     } catch (err) {
-      statusEl.textContent = err.message || "Something went wrong.";
-      showToast(err.message || "Error", "bad");
-    } finally {
-      setLoading(false);
+      setStatus('Error', err.message);
+      setOutput('<pre>' + err.message + '</pre>');
     }
   }
-
-  function resetTool() {
-    if (!currentKey) return;
-    activateTool(currentKey);
-    showToast("Form reset", "good");
-  }
-
-  function renderTools() {
-    toolsGrid.innerHTML = order.map(key => {
-      const t = tools[key];
-      return `
-        <div class="tool-card" data-key="${key}" onclick="activateTool('${key}')">
-          <b>${t.label}</b>
-          <small>${t.desc}</small>
-        </div>
-      `;
-    }).join("");
-  }
-
-  window.activateTool = activateTool;
-  window.runTool = runTool;
-  window.resetTool = resetTool;
-
-  renderTools();
-  renderHistory();
-  activateTool(order[0]);
 </script>
-</body>
-  </html>
+</boscripthtml>
