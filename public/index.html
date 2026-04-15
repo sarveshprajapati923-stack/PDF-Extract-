@@ -3,100 +3,129 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PDF Extract Pro</title>
-<meta name="description" content="PDF Extract Pro — merge, split, rotate, watermark, extract text, delete pages, extract pages, convert images to PDF, and more." />
+<title>WePDF</title>
+<meta name="description" content="WePDF — merge, split, rotate, watermark, extract text, delete pages, extract pages, convert images to PDF, and more." />
 <style>
   :root{
-    --bg:#08111f;
-    --bg2:#0d1729;
-    --panel:rgba(15,23,42,.78);
-    --line:rgba(148,163,184,.16);
-    --text:#e5eefc;
-    --muted:#91a5c5;
-    --p:#4f8cff;
-    --p2:#7c5cff;
-    --radius:22px;
-    --shadow:0 20px 60px rgba(0,0,0,.3);
+    --bg:#f8fafc;
+    --bg2:#eef5ff;
+    --panel:#ffffff;
+    --panel2:#f8fbff;
+    --line:#dbe3ef;
+    --text:#0f172a;
+    --muted:#64748b;
+    --primary:#2563eb;
+    --primary2:#0ea5e9;
+    --success:#16a34a;
+    --shadow:0 18px 50px rgba(15,23,42,.08);
+    --radius:24px;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text)}
-  a{color:#7ab7ff;text-decoration:none}
+  html,body{
+    margin:0;
+    min-height:100%;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--text);
+  }
+  a{color:var(--primary);text-decoration:none}
   a:hover{text-decoration:underline}
-  .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+  .app{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    min-height:100vh;
+  }
   .sidebar{
     padding:18px;
     border-right:1px solid var(--line);
-    background:rgba(7,12,24,.92);
-    position:sticky;top:0;height:100vh;
+    background:rgba(255,255,255,.8);
+    backdrop-filter:blur(16px);
+    position:sticky;
+    top:0;
+    height:100vh;
   }
   .brand{
     padding:16px;
     border:1px solid var(--line);
     border-radius:20px;
-    background:rgba(255,255,255,.03);
+    background:linear-gradient(180deg,#fff,var(--panel2));
     margin-bottom:14px;
+    box-shadow:var(--shadow);
   }
-  .brand h1{margin:0 0 6px;font-size:1.15rem}
+  .brand h1{margin:0 0 6px;font-size:1.2rem;letter-spacing:-.02em}
   .brand p{margin:0;color:var(--muted);font-size:.9rem}
   .nav{display:grid;gap:10px}
   .nav button,.btn,.chip,.tool .btns button{
-    border:1px solid rgba(148,163,184,.24);
-    background:transparent;
+    border:1px solid var(--line);
+    background:#fff;
     color:var(--text);
     padding:12px 14px;
     border-radius:14px;
     cursor:pointer;
     transition:.18s ease;
+    box-shadow:0 6px 16px rgba(15,23,42,.04);
   }
-  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover{transform:translateY(-1px);border-color:rgba(79,140,255,.35)}
-  .nav button:active,.btn:active,.chip:active,.tool .btns button:active{transform:scale(.98)}
+  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover{
+    transform:translateY(-1px);
+    border-color:rgba(37,99,235,.35);
+  }
+  .nav button:active,.btn:active,.chip:active,.tool .btns button:active{
+    transform:scale(.98);
+  }
+  .nav .active{
+    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
+    border-color:rgba(37,99,235,.25);
+  }
   main{padding:18px}
   .hero,.card{
-    border-radius:24px;
+    border-radius:var(--radius);
     border:1px solid var(--line);
     background:var(--panel);
     box-shadow:var(--shadow);
   }
   .hero{
-    padding:22px;
+    padding:24px;
     display:grid;
     grid-template-columns:1.2fr .8fr;
-    gap:16px;
+    gap:18px;
     margin-bottom:16px;
   }
   .hero h2{
     margin:0 0 10px;
-    font-size:clamp(2rem,4vw,3.4rem);
+    font-size:clamp(2rem,4vw,3.5rem);
     line-height:.98;
+    letter-spacing:-.05em;
   }
-  .hero p{margin:0;color:#c2d1e9;line-height:1.6}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .hero p{margin:0;color:var(--muted);line-height:1.7;max-width:64ch}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
   .solid{
-    background:linear-gradient(135deg,var(--p),var(--p2));
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    color:#fff;
     border-color:transparent;
     font-weight:700;
   }
   .section{padding:18px}
   .upload{
-    border:1.5px dashed rgba(148,163,184,.28);
+    border:1.5px dashed rgba(37,99,235,.22);
     border-radius:22px;
-    padding:20px;
+    padding:22px;
     text-align:center;
-    background:rgba(255,255,255,.02);
+    background:linear-gradient(180deg,#fff,#f8fbff);
   }
   .upload.drag{
-    border-color:rgba(45,212,191,.55);
-    background:rgba(45,212,191,.08);
+    border-color:rgba(22,163,74,.45);
+    background:rgba(22,163,74,.06);
   }
   input[type=file],input[type=text]{
     width:100%;
     padding:12px 14px;
     border-radius:14px;
-    border:1px solid rgba(148,163,184,.22);
-    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    background:#fff;
     color:var(--text);
     outline:none;
   }
+  input[type=file]{padding:10px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .mini{color:var(--muted);font-size:.9rem}
   .grid{
@@ -107,21 +136,25 @@
   .tool{
     padding:16px;
     border-radius:22px;
-    border:1px solid rgba(148,163,184,.16);
-    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#f8fbff);
     display:flex;
     flex-direction:column;
     gap:10px;
     min-height:170px;
+    transition:.18s ease;
   }
-  .tool h3{margin:0}
+  .tool:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.08)}
+  .tool h3{margin:0;font-size:1rem}
   .tool p{margin:0;color:var(--muted);line-height:1.5;font-size:.92rem}
   .tool .top{display:flex;justify-content:space-between;gap:12px}
   .ico{
     width:46px;height:46px;
     border-radius:16px;
-    display:grid;place-items:center;
-    background:linear-gradient(135deg,rgba(79,140,255,.22),rgba(124,92,255,.2));
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
+    color:var(--primary);
     font-size:1.15rem;
     flex:0 0 auto;
   }
@@ -129,41 +162,69 @@
   .tool .btns button{flex:1}
   .result{
     white-space:pre-wrap;
-    background:rgba(0,0,0,.2);
+    background:#fff;
     border:1px solid var(--line);
     border-radius:18px;
     padding:14px;
     min-height:140px;
     overflow:auto;
+    box-shadow:var(--shadow);
   }
   .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-  .footer{padding:10px 2px 18px;text-align:center;color:var(--muted)}
+  .footer{
+    padding:10px 2px 18px;
+    text-align:center;
+    color:var(--muted);
+  }
   .notice{
     padding:12px 14px;
-    border:1px solid rgba(79,140,255,.22);
-    background:rgba(79,140,255,.08);
+    border:1px solid rgba(37,99,235,.18);
+    background:rgba(37,99,235,.06);
     border-radius:16px;
-    color:#d8e7ff;
+    color:#1e3a8a;
     margin:14px 0 0;
   }
-  @media (max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
-  @media (max-width:860px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.grid,.row{grid-template-columns:1fr}}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(37,99,235,.18);
+    background:rgba(37,99,235,.06);
+    color:#1d4ed8;
+    margin-bottom:12px;
+    font-size:.9rem;
+  }
+  .muted{color:var(--muted)}
+  @media (max-width:1100px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hero{grid-template-columns:1fr}
+  }
+  @media (max-width:860px){
+    .app{grid-template-columns:1fr}
+    .sidebar{position:relative;height:auto}
+    .grid,.row{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <h1>PDF Extract Pro</h1>
+      <h1>WePDF</h1>
       <p>Real PDF tools. No paid API.</p>
     </div>
+
     <div class="nav">
-      <button onclick="jump('upload')">Upload</button>
+      <button class="active" onclick="jump('upload')">Upload</button>
       <button onclick="jump('tools')">Tools</button>
       <button onclick="jump('output')">Output</button>
       <button onclick="openDoc('/privacy')">Privacy</button>
       <button onclick="openDoc('/terms')">Terms</button>
+      <button onclick="openDoc('/api/rules')">Rules</button>
     </div>
+
     <div class="card" style="margin-top:16px;padding:16px">
       <h3 style="margin:0 0 8px">Real features</h3>
       <p class="mini">Merge, split, rotate, watermark, delete pages, extract pages, image to PDF, page number, extract text.</p>
@@ -174,23 +235,22 @@
   <main>
     <section class="hero">
       <div>
-        <span style="display:inline-block;padding:8px 12px;border:1px solid rgba(79,140,255,.28);border-radius:999px;background:rgba(79,140,255,.12);margin-bottom:12px">
-          Competitor-style PDF suite
-        </span>
-        <h2>Real working website.</h2>
-        <p>Modern dashboard + real backend processing. No fake buttons.</p>
+        <span class="badge">Competitor-style PDF suite</span>
+        <h2>Clean, fast, and real PDF tools.</h2>
+        <p>WePDF gives you the core PDF actions people actually use. The UI is kept white and premium, with a simple workflow that works on mobile too.</p>
         <div class="actions">
           <button class="btn solid" onclick="jump('tools')">Open tools</button>
           <button class="btn" onclick="jump('upload')">Upload file</button>
-          <button class="btn" onclick="openDoc('/api/rules')">Rules</button>
+          <button class="btn" onclick="openDoc('/api/rules')">View rules</button>
         </div>
       </div>
+
       <div class="card" style="padding:16px">
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
-          <div class="card" style="padding:14px"><b>Merge</b><div class="mini">PDF combine</div></div>
-          <div class="card" style="padding:14px"><b>Split</b><div class="mini">ZIP output</div></div>
-          <div class="card" style="padding:14px"><b>Image</b><div class="mini">To PDF</div></div>
-          <div class="card" style="padding:14px"><b>Text</b><div class="mini">Extract</div></div>
+          <div class="card" style="padding:14px;background:#fff"><b>Merge</b><div class="mini">PDF combine</div></div>
+          <div class="card" style="padding:14px;background:#fff"><b>Split</b><div class="mini">ZIP output</div></div>
+          <div class="card" style="padding:14px;background:#fff"><b>Image</b><div class="mini">To PDF</div></div>
+          <div class="card" style="padding:14px;background:#fff"><b>Text</b><div class="mini">Extract</div></div>
         </div>
       </div>
     </section>
@@ -235,16 +295,46 @@
       </div>
 
       <div class="grid" id="toolGrid">
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div><div class="btns"><button class="btn" onclick="run('merge')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div><div class="btns"><button class="btn" onclick="run('split')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div><div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div><div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div></div>
-        <div class="tool" data-cat="text"><div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div><div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div><div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div><div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div></div>
-        <div class="tool" data-cat="image"><div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div><div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div><div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div></div>
-        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div><div class="btns"><button class="btn" onclick="run('compress')">Run</button></div></div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div>
+          <div class="btns"><button class="btn" onclick="run('merge')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div>
+          <div class="btns"><button class="btn" onclick="run('split')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div>
+          <div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div>
+          <div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="text">
+          <div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div>
+          <div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div>
+          <div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div>
+          <div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="image">
+          <div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div>
+          <div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div>
+          <div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div>
+        </div>
+        <div class="tool" data-cat="pdf">
+          <div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div>
+          <div class="btns"><button class="btn" onclick="run('compress')">Run</button></div>
+        </div>
       </div>
     </section>
 
@@ -256,7 +346,7 @@
 
     <div class="footer">
       <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/api/rules">Rules</a><br>
-      PDF Extract Pro • real backend build
+      WePDF • real backend build
     </div>
   </main>
 </div>
@@ -365,4 +455,4 @@
   }
 </script>
 </body>
-</html>
+      </html>
