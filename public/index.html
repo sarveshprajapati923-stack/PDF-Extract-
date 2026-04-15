@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PDF Extract Pro</title>
+<meta name="description" content="PDF Extract Pro — merge, split, rotate, watermark, extract text, delete pages, extract pages, convert images to PDF, and more." />
 <style>
   :root{
     --bg:#08111f;
@@ -18,12 +19,9 @@
     --shadow:0 20px 60px rgba(0,0,0,.3);
   }
   *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:linear-gradient(180deg,var(--bg),var(--bg2));
-    color:var(--text);
-  }
+  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text)}
+  a{color:#7ab7ff;text-decoration:none}
+  a:hover{text-decoration:underline}
   .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
   .sidebar{
     padding:18px;
@@ -41,7 +39,7 @@
   .brand h1{margin:0 0 6px;font-size:1.15rem}
   .brand p{margin:0;color:var(--muted);font-size:.9rem}
   .nav{display:grid;gap:10px}
-  .nav button,.btn,.chip{
+  .nav button,.btn,.chip,.tool .btns button{
     border:1px solid rgba(148,163,184,.24);
     background:transparent;
     color:var(--text);
@@ -50,8 +48,8 @@
     cursor:pointer;
     transition:.18s ease;
   }
-  .nav button:hover,.btn:hover,.chip:hover{transform:translateY(-1px);border-color:rgba(79,140,255,.35)}
-  .nav button:active,.btn:active,.chip:active{transform:scale(.98)}
+  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover{transform:translateY(-1px);border-color:rgba(79,140,255,.35)}
+  .nav button:active,.btn:active,.chip:active,.tool .btns button:active{transform:scale(.98)}
   main{padding:18px}
   .hero,.card{
     border-radius:24px;
@@ -125,6 +123,7 @@
     display:grid;place-items:center;
     background:linear-gradient(135deg,rgba(79,140,255,.22),rgba(124,92,255,.2));
     font-size:1.15rem;
+    flex:0 0 auto;
   }
   .tool .btns{display:flex;gap:10px;margin-top:auto}
   .tool .btns button{flex:1}
@@ -135,10 +134,18 @@
     border-radius:18px;
     padding:14px;
     min-height:140px;
+    overflow:auto;
   }
   .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
   .footer{padding:10px 2px 18px;text-align:center;color:var(--muted)}
-  a{color:#7ab7ff}
+  .notice{
+    padding:12px 14px;
+    border:1px solid rgba(79,140,255,.22);
+    background:rgba(79,140,255,.08);
+    border-radius:16px;
+    color:#d8e7ff;
+    margin:14px 0 0;
+  }
   @media (max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
   @media (max-width:860px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.grid,.row{grid-template-columns:1fr}}
 </style>
@@ -154,10 +161,13 @@
       <button onclick="jump('upload')">Upload</button>
       <button onclick="jump('tools')">Tools</button>
       <button onclick="jump('output')">Output</button>
+      <button onclick="openDoc('/privacy')">Privacy</button>
+      <button onclick="openDoc('/terms')">Terms</button>
     </div>
     <div class="card" style="margin-top:16px;padding:16px">
       <h3 style="margin:0 0 8px">Real features</h3>
       <p class="mini">Merge, split, rotate, watermark, delete pages, extract pages, image to PDF, page number, extract text.</p>
+      <div class="notice">Files are processed temporarily and are not meant for long-term storage.</div>
     </div>
   </aside>
 
@@ -172,6 +182,7 @@
         <div class="actions">
           <button class="btn solid" onclick="jump('tools')">Open tools</button>
           <button class="btn" onclick="jump('upload')">Upload file</button>
+          <button class="btn" onclick="openDoc('/api/rules')">Rules</button>
         </div>
       </div>
       <div class="card" style="padding:16px">
@@ -187,7 +198,7 @@
     <section class="section card" id="upload">
       <h3 style="margin-top:0">Upload</h3>
       <div class="upload" id="dropzone">
-        <p style="margin-top:0">Drag & drop PDF files here, or choose files.</p>
+        <p style="margin-top:0">Drag & drop files here, or choose files.</p>
         <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
       </div>
 
@@ -224,46 +235,16 @@
       </div>
 
       <div class="grid" id="toolGrid">
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div>
-          <div class="btns"><button class="btn" onclick="run('merge')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div>
-          <div class="btns"><button class="btn" onclick="run('split')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div>
-          <div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div>
-          <div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="text">
-          <div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div>
-          <div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div>
-          <div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div>
-          <div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="image">
-          <div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div>
-          <div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div>
-          <div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div>
-          <div class="btns"><button class="btn" onclick="run('compress')">Run</button></div>
-        </div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div><div class="btns"><button class="btn" onclick="run('merge')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div><div class="btns"><button class="btn" onclick="run('split')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div><div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div><div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div></div>
+        <div class="tool" data-cat="text"><div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div><div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div><div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div><div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div></div>
+        <div class="tool" data-cat="image"><div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div><div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div><div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div></div>
+        <div class="tool" data-cat="pdf"><div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div><div class="btns"><button class="btn" onclick="run('compress')">Run</button></div></div>
       </div>
     </section>
 
@@ -273,7 +254,10 @@
       <div id="result" class="result">No output yet.</div>
     </section>
 
-    <div class="footer">PDF Extract Pro • real backend build</div>
+    <div class="footer">
+      <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/api/rules">Rules</a><br>
+      PDF Extract Pro • real backend build
+    </div>
   </main>
 </div>
 
@@ -285,6 +269,10 @@
 
   function jump(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function openDoc(url) {
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   function setStatus(title, text) {
