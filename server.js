@@ -154,6 +154,35 @@ function cleanupDir(dir) {
   } catch {}
 }
 
+function renderDocPage(title, bodyHtml) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>${title}</title>
+  <style>
+    :root{--bg:#08111f;--bg2:#0d1729;--panel:rgba(255,255,255,.04);--line:rgba(148,163,184,.16);--text:#e5eefc;--muted:#91a5c5;--a:#7ab7ff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.7}
+    main{max-width:920px;margin:0 auto;padding:24px}
+    a{color:var(--a)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
+    h1,h2{line-height:1.15}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="/">← Back to home</a></p>
+  <div class="card">
+    ${bodyHtml}
+  </div>
+</main>
+</body>
+</html>`;
+}
+
 app.get('/health', (req, res) => {
   res.json({ ok: true, name: 'PDF Extract Pro', rules: 'enabled' });
 });
@@ -165,8 +194,44 @@ app.get('/api/rules', (req, res) => {
     maxFilesPerRequest: 20,
     rateLimit: `${RATE_MAX} requests / ${Math.round(RATE_WINDOW_MS / 60000)} min`,
     allowedPdfTools: ['merge', 'split', 'rotate', 'watermark', 'extract-text', 'delete-pages', 'extract-pages', 'page-number', 'compress'],
-    allowedImageTools: ['image-to-pdf']
+    allowedImageTools: ['image-to-pdf'],
+    rules: [
+      'Only PDF files for PDF tools.',
+      'PNG/JPG only for image-to-pdf.',
+      'Max upload size 25MB per file.',
+      'Up to 20 files per request.',
+      'Duplicate PDFs are ignored in merge.',
+      'Valid page syntax: 1,3-5',
+      'Rotate only accepts 0, 90, 180, 270 degrees.'
+    ]
   });
+});
+
+app.get('/privacy', (req, res) => {
+  res.type('html').send(renderDocPage(
+    'Privacy Policy',
+    `
+      <h1>Privacy Policy</h1>
+      <p class="muted">Last updated: today</p>
+      <p>Files are processed temporarily to complete the selected PDF tool request. Uploaded files are not intended for permanent storage.</p>
+      <p>We do not sell personal data. Logs may include basic technical information such as time, IP address, and request status for security and abuse prevention.</p>
+      <p>Processed files are deleted after the task finishes, except when a browser download is created during the request.</p>
+    `
+  ));
+});
+
+app.get('/terms', (req, res) => {
+  res.type('html').send(renderDocPage(
+    'Terms of Service',
+    `
+      <h1>Terms of Service</h1>
+      <p class="muted">Last updated: today</p>
+      <p>Use this service only for lawful files that you have the right to upload and process.</p>
+      <p>Do not upload malware, copyrighted files you do not own, or content that violates any law or third-party rights.</p>
+      <p>Service availability, speed, and file limits may change without notice.</p>
+      <p>We may block abusive traffic, oversized files, duplicate spam, or invalid requests.</p>
+    `
+  ));
 });
 
 app.post('/api/merge', upload.array('files', 20), async (req, res) => {
