@@ -162,13 +162,35 @@ function renderDocPage(title, bodyHtml) {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${title}</title>
   <style>
-    :root{--bg:#08111f;--bg2:#0d1729;--panel:rgba(255,255,255,.04);--line:rgba(148,163,184,.16);--text:#e5eefc;--muted:#91a5c5;--a:#7ab7ff}
+    :root{
+      --bg:#f8fafc;
+      --bg2:#eef5ff;
+      --panel:#ffffff;
+      --line:#dbe3ef;
+      --text:#0f172a;
+      --muted:#64748b;
+      --a:#2563eb;
+      --shadow:0 18px 50px rgba(15,23,42,.08);
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.7}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+      background:linear-gradient(180deg,var(--bg),var(--bg2));
+      color:var(--text);
+      line-height:1.7;
+    }
     main{max-width:920px;margin:0 auto;padding:24px}
-    a{color:var(--a)}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
-    h1,h2{line-height:1.15}
+    a{color:var(--a);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    h1,h2{line-height:1.15;margin-top:0}
     .muted{color:var(--muted)}
   </style>
 </head>
@@ -184,7 +206,7 @@ function renderDocPage(title, bodyHtml) {
 }
 
 app.get('/health', (req, res) => {
-  res.json({ ok: true, name: 'PDF Extract Pro', rules: 'enabled' });
+  res.json({ ok: true, name: 'WePDF', rules: 'enabled' });
 });
 
 app.get('/api/rules', (req, res) => {
@@ -322,9 +344,9 @@ app.post('/api/watermark', upload.single('file'), async (req, res) => {
         y: height * 0.5,
         size: Math.max(24, Math.min(width, height) / 10),
         font,
-        color: rgb(0.82, 0.2, 0.28),
+        color: rgb(0.15, 0.45, 0.95),
         rotate: degrees(30),
-        opacity: 0.18
+        opacity: 0.16
       });
     }
 
@@ -487,5 +509,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`PDF Extract Pro running on http://localhost:${PORT}`);
+  console.log(`WePDF running on http://localhost:${PORT}`);
 });
