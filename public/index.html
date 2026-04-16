@@ -17,6 +17,7 @@
     --primary:#2563eb;
     --primary2:#0ea5e9;
     --success:#16a34a;
+    --danger:#dc2626;
     --shadow:0 18px 50px rgba(15,23,42,.08);
     --radius:24px;
   }
@@ -55,7 +56,7 @@
   .brand h1{margin:0 0 6px;font-size:1.2rem;letter-spacing:-.02em}
   .brand p{margin:0;color:var(--muted);font-size:.9rem}
   .nav{display:grid;gap:10px}
-  .nav button,.btn,.chip,.tool .btns button{
+  .nav button,.btn,.chip,.tool .btns button,.download-btn{
     border:1px solid var(--line);
     background:#fff;
     color:var(--text);
@@ -65,11 +66,11 @@
     transition:.18s ease;
     box-shadow:0 6px 16px rgba(15,23,42,.04);
   }
-  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover{
+  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover,.download-btn:hover{
     transform:translateY(-1px);
     border-color:rgba(37,99,235,.35);
   }
-  .nav button:active,.btn:active,.chip:active,.tool .btns button:active{
+  .nav button:active,.btn:active,.chip:active,.tool .btns button:active,.download-btn:active{
     transform:scale(.98);
   }
   .nav .active{
@@ -196,7 +197,43 @@
     margin-bottom:12px;
     font-size:.9rem;
   }
+  .download-box{
+    display:none;
+    margin-top:16px;
+    padding:16px;
+    border:1px solid rgba(22,163,74,.18);
+    background:rgba(22,163,74,.06);
+    border-radius:18px;
+    text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .download-box.show{display:block}
+  .download-title{
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .download-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-width:220px;
+    padding:14px 18px;
+    background:linear-gradient(135deg,var(--success),#22c55e);
+    color:#fff;
+    border-color:transparent;
+    font-weight:800;
+  }
+  .download-btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    transform:none;
+  }
   .muted{color:var(--muted)}
+  .error{
+    color:var(--danger);
+    font-weight:600;
+  }
   @media (max-width:1100px){
     .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .hero{grid-template-columns:1fr}
@@ -260,6 +297,13 @@
       <div class="upload" id="dropzone">
         <p style="margin-top:0">Drag & drop files here, or choose files.</p>
         <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
+      </div>
+
+      <!-- download button appears here -->
+      <div id="downloadBox" class="download-box">
+        <div class="download-title">Your file is ready</div>
+        <button id="downloadBtn" class="download-btn">⬇ Download File</button>
+        <div class="mini" style="margin-top:8px">Click to download the processed file.</div>
       </div>
 
       <div class="row" style="margin-top:14px">
@@ -357,6 +401,11 @@
   const statusEl = document.getElementById('status');
   const resultEl = document.getElementById('result');
 
+  const downloadBox = document.getElementById('downloadBox');
+  const downloadBtn = document.getElementById('downloadBtn');
+  let lastDownloadUrl = '';
+  let lastFileName = 'output.pdf';
+
   function jump(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -365,12 +414,20 @@
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  function setStatus(title, text) {
-    statusEl.textContent = title + ' — ' + text;
+  function setStatus(title, text, isError = false) {
+    statusEl.innerHTML = isError
+      ? `<span class="error">${title}</span> — ${text}`
+      : `${title} — ${text}`;
   }
 
   function setOutput(html) {
     resultEl.innerHTML = html;
+  }
+
+  function resetDownload() {
+    downloadBox.classList.remove('show');
+    lastDownloadUrl = '';
+    lastFileName = 'output.pdf';
   }
 
   function showOnly(cat) {
@@ -393,18 +450,49 @@
 
   dropzone.addEventListener('drop', ev => {
     if (ev.dataTransfer.files?.length) fileInput.files = ev.dataTransfer.files;
+    resetDownload();
     setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
+    setOutput('Files selected. Run a tool to generate output.');
   });
 
   fileInput.addEventListener('change', () => {
+    resetDownload();
     setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
+    setOutput('Files selected. Run a tool to generate output.');
   });
+
+  downloadBtn.addEventListener('click', () => {
+    if (!lastDownloadUrl) return;
+
+    const a = document.createElement('a');
+    a.href = lastDownloadUrl;
+    a.download = lastFileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  function filenameForTool(tool, contentType = '') {
+    if (contentType.includes('application/zip')) return 'output.zip';
+    const map = {
+      merge: 'merged.pdf',
+      split: 'split_pages.zip',
+      rotate: 'rotated.pdf',
+      watermark: 'watermarked.pdf',
+      'delete-pages': 'pages_deleted.pdf',
+      'extract-pages': 'extracted_pages.zip',
+      'image-to-pdf': 'images_to_pdf.pdf',
+      'page-number': 'numbered.pdf',
+      compress: 'compressed.pdf'
+    };
+    return map[tool] || 'output.pdf';
+  }
 
   async function run(tool) {
     try {
       const files = Array.from(fileInput.files || []);
       if (!files.length) {
-        setStatus('Error', 'Upload files first.');
+        setStatus('Error', 'Upload files first.', true);
         setOutput('Choose at least one file before running a tool.');
         return;
       }
@@ -422,37 +510,41 @@
       fd.append('text', document.getElementById('watermarkText').value || 'CONFIDENTIAL');
 
       setStatus('Processing', tool + ' is running...');
+      setOutput('Processing your file. Please wait...');
 
       const res = await fetch('/api/' + tool, {
         method: 'POST',
         body: fd
       });
 
+      const ct = res.headers.get('content-type') || '';
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || 'Request failed');
       }
 
-      const ct = res.headers.get('content-type') || '';
-
       if (ct.includes('application/json')) {
         const data = await res.json();
+        resetDownload();
         setStatus('Done', tool + ' completed successfully.');
         setOutput('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
         return;
       }
 
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const filename = res.headers.get('x-filename') || 'output.pdf';
+      lastDownloadUrl = URL.createObjectURL(blob);
+      lastFileName = res.headers.get('x-filename') || filenameForTool(tool, ct);
 
+      downloadBox.classList.add('show');
       setStatus('Done', tool + ' completed successfully.');
-      setOutput('<a href="' + url + '" download="' + filename + '">Download ' + filename + '</a>');
+      setOutput('✅ File is ready. Download button is below the upload box.');
     } catch (err) {
-      setStatus('Error', err.message);
-      setOutput('<pre>' + err.message + '</pre>');
+      resetDownload();
+      setStatus('Error', err.message, true);
+      setOutput('<span class="error">' + err.message + '</span>');
     }
   }
 </script>
 </body>
-      </html>
+</html>
