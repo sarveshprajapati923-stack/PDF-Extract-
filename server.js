@@ -639,14 +639,6 @@ function sendJson(res, data) {
   return res.json(data);
 }
 
-function homePagePath() {
-  return path.join(__dirname, "index.html");
-}
-
-app.get("/", async (req, res) => {
-  res.sendFile(homePagePath());
-});
-
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
   res.send(`User-agent: *
