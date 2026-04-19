@@ -1,551 +1,1277 @@
-const express = require('express');
-const multer = require('multer');
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const archiver = require('archiver');
-const pdfParse = require('pdf-parse');
-const { PDFDocument, rgb, StandardFonts, degrees } = require('pdf-lib');
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const fsp = fs.promises;
+const cors = require("cors");
+const compression = require("compression");
+const helmet = require("helmet");
+const multer = require("multer");
+const JSZip = require("jszip");
+const { PDFDocument, StandardFonts, rgb, degrees } = require("pdf-lib");
+const pdfParse = require("pdf-parse");
+const { Document, Packer, Paragraph, TextRun } = require("docx");
+const { createCanvas } = require("canvas");
+const { createWorker } = require("tesseract.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SITE_URL = (process.env.SITE_URL || 'https://wepdfhub.click').replace(/\/+$/, '');
+const BASE_URL = process.env.BASE_URL || "https://wepdfhub.click";
 
-app.disable('x-powered-by');
+app.use(cors());
+app.use(compression());
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
+app.disable("x-powered-by");
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  next();
-});
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const upload = multer({
-  storage: multer.memoryStorage(),
+  dest: uploadDir,
   limits: {
-    fileSize: 25 * 1024 * 1024,
+    fileSize: 50 * 1024 * 1024,
     files: 20
   }
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d', etag: true }));
+const tools = [
+  { slug: "merge-pdf", title: "Merge PDF", description: "Combine multiple PDF files into one.", files: "multi" },
+  { slug: "split-pdf", title: "Split PDF", description: "Split selected pages into separate PDF files.", files: "single" },
+  { slug: "compress-pdf", title: "Compress PDF", description: "Reduce PDF file size.", files: "single" },
+  { slug: "rotate-pdf", title: "Rotate PDF", description: "Rotate all pages left or right.", files: "single" },
+  { slug: "watermark-pdf", title: "Watermark PDF", description: "Add a text watermark to every page.", files: "single" },
+  { slug: "extract-text", title: "Extract Text", description: "Extract text from a PDF file.", files: "single" },
+  { slug: "delete-pages", title: "Delete Pages", description: "Remove selected pages from a PDF.", files: "single" },
+  { slug: "extract-pages", title: "Extract Pages", description: "Keep only selected pages from a PDF.", files: "single" },
+  { slug: "image-to-pdf", title: "Image to PDF", description: "Convert JPG or PNG images into PDF.", files: "multi" },
+  { slug: "page-number", title: "Page Number", description: "Add page numbers to each page.", files: "single" },
+  { slug: "reorder-pages", title: "Reorder Pages", description: "Change the page order of a PDF.", files: "single" },
+  { slug: "reverse-pages", title: "Reverse Pages", description: "Reverse the order of all pages.", files: "single" },
+  { slug: "duplicate-pages", title: "Duplicate Pages", description: "Duplicate selected pages inside the PDF.", files: "single" },
+  { slug: "add-blank-pages", title: "Add Blank Pages", description: "Append blank pages to the end of the PDF.", files: "single" },
+  { slug: "crop-pdf", title: "Crop PDF", description: "Crop page area from a PDF.", files: "single" },
+  { slug: "metadata-pdf", title: "PDF Metadata", description: "Edit title, author, subject, and keywords.", files: "single" },
+  { slug: "pdf-info", title: "PDF Info", description: "View PDF page count and basic metadata.", files: "single" },
+  { slug: "pdf-to-word", title: "PDF to Word", description: "Convert PDF to DOCX.", files: "single" },
+  { slug: "pdf-to-jpg", title: "PDF to JPG", description: "Convert PDF pages to JPG images.", files: "single" },
+  { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" }
+];
 
-const RATE_WINDOW_MS = 5 * 60 * 1000;
-const RATE_MAX = 40;
-const rateStore = new Map();
+const toolMap = new Map(tools.map(t => [t.slug, t]));
 
-function rateLimit(req, res, next) {
-  const ip = req.ip || req.socket?.remoteAddress || 'unknown';
-  const now = Date.now();
-  const hits = rateStore.get(ip) || [];
-  const fresh = hits.filter(ts => now - ts < RATE_WINDOW_MS);
+function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
-  if (fresh.length >= RATE_MAX) {
-    return res.status(429).json({ ok: false, error: 'Too many requests. Try again later.' });
+function fullUrl(slug = "") {
+  return slug ? `${BASE_URL}/${slug}` : BASE_URL;
+}
+
+function cleanupFiles(files = []) {
+  return Promise.all(
+    files
+      .filter(Boolean)
+      .map(async file => {
+        try {
+          await fsp.unlink(file.path);
+        } catch {}
+      })
+  );
+}
+
+function parsePageSpec(spec, totalPages) {
+  if (!spec || !String(spec).trim()) return [];
+  const pages = new Set();
+
+  String(spec)
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .forEach(token => {
+      if (token.includes("-")) {
+        const [aRaw, bRaw] = token.split("-");
+        const a = parseInt(aRaw.trim(), 10);
+        const b = parseInt(bRaw.trim(), 10);
+        if (!Number.isFinite(a) || !Number.isFinite(b)) return;
+        const start = Math.max(1, Math.min(a, b));
+        const end = Math.min(totalPages, Math.max(a, b));
+        for (let i = start; i <= end; i++) pages.add(i - 1);
+      } else {
+        const n = parseInt(token, 10);
+        if (Number.isFinite(n) && n >= 1 && n <= totalPages) pages.add(n - 1);
+      }
+    });
+
+  return [...pages].sort((x, y) => x - y);
+}
+
+function parsePageOrder(spec, totalPages) {
+  const list = parsePageSpec(spec, totalPages);
+  return list.length ? list : [...Array(totalPages).keys()];
+}
+
+function pageBg() {
+  return `
+  :root{
+    --bg:#f7f9ff; --bg2:#eef4ff; --panel:#fff; --line:#d8e2f0; --text:#0f172a; --muted:#64748b;
+    --primary:#2563eb; --primary2:#0ea5e9; --success:#16a34a; --danger:#dc2626;
+    --shadow:0 18px 50px rgba(15,23,42,.08); --radius:24px;
   }
-
-  fresh.push(now);
-  rateStore.set(ip, fresh);
-  next();
-}
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, hits] of rateStore.entries()) {
-    const fresh = hits.filter(ts => now - ts < RATE_WINDOW_MS);
-    if (fresh.length) rateStore.set(ip, fresh);
-    else rateStore.delete(ip);
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text)}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+  .brand{font-weight:800;font-size:1.2rem}
+  .back,.btn,.chip,.download{
+    border:1px solid var(--line);background:#fff;color:var(--text);padding:12px 14px;border-radius:14px;
+    cursor:pointer;transition:.18s ease;display:inline-flex;align-items:center;justify-content:center
   }
-}, RATE_WINDOW_MS).unref();
-
-app.use(rateLimit);
-
-function badRequest(res, msg) {
-  return res.status(400).json({ ok: false, error: msg });
-}
-
-function sanitizeName(name) {
-  return String(name || 'file')
-    .replace(/[^a-z0-9._-]+/gi, '_')
-    .replace(/_+/g, '_')
-    .replace(/^[_\.]+|[_\.]+$/g, '')
-    .slice(0, 80) || 'file';
-}
-
-function sha256(buffer) {
-  return crypto.createHash('sha256').update(buffer).digest('hex');
-}
-
-function uniqByHash(files) {
-  const seen = new Set();
-  const out = [];
-  for (const file of files) {
-    const hash = sha256(file.buffer);
-    if (!seen.has(hash)) {
-      seen.add(hash);
-      out.push(file);
-    }
+  .back:hover,.btn:hover,.chip:hover,.download:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.35)}
+  .solid{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;font-weight:700}
+  .hero,.card{border-radius:var(--radius);border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}
+  .hero{padding:24px}
+  h1{margin:0 0 10px;font-size:clamp(1.8rem,4vw,3rem);line-height:1.02;letter-spacing:-.04em}
+  p{margin:0;color:var(--muted);line-height:1.7}
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}
+  .panel{padding:18px}
+  .upload{border:1.5px dashed rgba(37,99,235,.22);border-radius:22px;padding:18px;background:linear-gradient(180deg,#fff,#f8fbff)}
+  .field{margin-top:12px}
+  label{display:block;margin:0 0 8px;font-size:.92rem;color:var(--muted)}
+  input[type=file],input[type=text]{
+    width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;outline:none
   }
-  return out;
-}
-
-function isPdf(file) {
-  return file?.mimetype === 'application/pdf' || String(file?.originalname || '').toLowerCase().endsWith('.pdf');
-}
-
-function isImage(file) {
-  return ['image/png', 'image/jpeg', 'image/jpg'].includes(file?.mimetype);
-}
-
-function parsePages(input, maxPages) {
-  const text = String(input || '').trim();
-  if (!text) return [];
-  const out = new Set();
-
-  for (const part of text.split(',')) {
-    const p = part.trim();
-    if (!p) continue;
-
-    if (p.includes('-')) {
-      const [aRaw, bRaw] = p.split('-');
-      const a = Number(aRaw);
-      const b = Number(bRaw);
-      if (!Number.isInteger(a) || !Number.isInteger(b)) continue;
-      const start = Math.max(1, Math.min(a, b));
-      const end = Math.min(maxPages, Math.max(a, b));
-      for (let i = start; i <= end; i++) out.add(i);
-    } else {
-      const n = Number(p);
-      if (Number.isInteger(n) && n >= 1 && n <= maxPages) out.add(n);
-    }
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .status{margin-top:12px;font-size:.95rem}
+  .result{
+    margin-top:12px;min-height:160px;border-radius:18px;border:1px solid var(--line);background:#fff;padding:14px;
+    white-space:pre-wrap;overflow:auto
   }
-
-  return [...out].sort((a, b) => a - b);
+  .download-box{display:none;margin-top:14px;padding:16px;border-radius:18px;border:1px solid rgba(22,163,74,.18);background:rgba(22,163,74,.06)}
+  .download-box.show{display:block}
+  .download{background:linear-gradient(135deg,var(--success),#22c55e);color:#fff;border-color:transparent;font-weight:800}
+  .chip-wrap{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{padding:10px 12px}
+  .mini{font-size:.92rem;color:var(--muted)}
+  .note{margin-top:10px;padding:12px 14px;border-radius:16px;border:1px solid rgba(37,99,235,.18);background:rgba(37,99,235,.06);color:#1d4ed8}
+  .warn{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.08);color:#92400e}
+  .error{color:var(--danger);font-weight:700}
+  .progress{
+    width:100%;height:12px;background:#e8eef8;border-radius:999px;overflow:hidden;margin-top:14px;border:1px solid #d6e2f2
+  }
+  .progress > div{
+    width:0%;height:100%;
+    background:linear-gradient(90deg,var(--primary),var(--primary2));
+    transition:width .15s ease
+  }
+  .dropzone.drag{
+    border-color:rgba(22,163,74,.45)!important;
+    background:rgba(22,163,74,.06)!important;
+  }
+  @media (max-width:900px){.grid,.row{grid-template-columns:1fr}}
+  `;
 }
 
-async function bytesToPdf(bytes) {
-  return PDFDocument.load(bytes, { ignoreEncryption: false });
+function buildStaticPage(title, heading, content) {
+  return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeHtml(title)} | WePDFHub</title>
+    <meta name="description" content="${escapeHtml(heading)}" />
+    <link rel="canonical" href="${BASE_URL}" />
+    <style>${pageBg()}</style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div class="brand">WePDFHub</div>
+        <a class="back" href="/">← Home</a>
+      </div>
+      <section class="hero">
+        <h1>${escapeHtml(heading)}</h1>
+        ${content}
+      </section>
+      <div style="margin-top:16px" class="mini">
+        <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/rules">Rules</a>
+      </div>
+    </div>
+  </body>
+  </html>`;
 }
 
-async function makePdfFromSinglePage(sourcePdf, pageIndex) {
-  const out = await PDFDocument.create();
-  const [page] = await out.copyPages(sourcePdf, [pageIndex]);
-  out.addPage(page);
-  return out.save({ useObjectStreams: true });
+function renderToolPage(tool) {
+  const related = tools
+    .filter(t => t.slug !== tool.slug)
+    .slice(0, 10)
+    .map(t => `<a class="chip" href="/${t.slug}">${escapeHtml(t.title)}</a>`)
+    .join("");
+
+  const fieldPages =
+    ["split-pdf", "delete-pages", "extract-pages", "duplicate-pages", "reorder-pages"].includes(tool.slug)
+      ? `<div class="field"><label>Pages</label><input id="pages" type="text" placeholder="1,3-5" /></div>`
+      : "";
+
+  const fieldDegrees = tool.slug === "rotate-pdf" ? `<div class="field"><label>Degrees</label><input id="degrees" type="text" value="90" /></div>` : "";
+  const fieldText = tool.slug === "watermark-pdf" ? `<div class="field"><label>Watermark text</label><input id="text" type="text" value="CONFIDENTIAL" /></div>` : "";
+  const fieldCount = tool.slug === "add-blank-pages" ? `<div class="field"><label>Blank pages count</label><input id="count" type="text" value="1" /></div>` : "";
+  const fieldCrop = tool.slug === "crop-pdf"
+    ? `
+    <div class="row">
+      <div class="field"><label>X</label><input id="cropX" type="text" value="0" /></div>
+      <div class="field"><label>Y</label><input id="cropY" type="text" value="0" /></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Width</label><input id="cropW" type="text" value="400" /></div>
+      <div class="field"><label>Height</label><input id="cropH" type="text" value="600" /></div>
+    </div>`
+    : "";
+
+  const fieldMeta = tool.slug === "metadata-pdf"
+    ? `
+    <div class="field"><label>Title</label><input id="titleMeta" type="text" value="WePDF Document" /></div>
+    <div class="field"><label>Author</label><input id="authorMeta" type="text" value="WePDF" /></div>
+    <div class="field"><label>Subject</label><input id="subjectMeta" type="text" value="PDF Tools" /></div>
+    <div class="field"><label>Keywords</label><input id="keywordsMeta" type="text" value="pdf, tools, wepdf" /></div>`
+    : "";
+
+  const startPageField = tool.slug === "page-number"
+    ? `<div class="field"><label>Start page</label><input id="startPage" type="text" value="1" /></div>`
+    : "";
+
+  const note =
+    tool.slug === "pdf-to-word"
+      ? `<div class="note">This converts extracted PDF text to DOCX. Best for text-based PDFs.</div>`
+      : tool.slug === "pdf-to-jpg"
+      ? `<div class="note">This exports each page as an image and downloads a ZIP.</div>`
+      : tool.slug === "ocr-pdf"
+      ? `<div class="note">This runs OCR on page images and returns extracted text.</div>`
+      : "";
+
+  return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="SM3evf3tuRLP23syjV822eZnRKIDL09kfOwthVj3Res" />
+    <title>${escapeHtml(tool.title)} | WePDFHub</title>
+    <meta name="description" content="${escapeHtml(tool.description)}" />
+    <link rel="canonical" href="${fullUrl(tool.slug)}" />
+    <meta property="og:title" content="${escapeHtml(tool.title)} | WePDFHub" />
+    <meta property="og:description" content="${escapeHtml(tool.description)}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${fullUrl(tool.slug)}" />
+    <style>${pageBg()}</style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div class="brand">WePDFHub</div>
+        <a class="back" href="/">← Home</a>
+      </div>
+
+      <section class="hero">
+        <span class="badge" style="display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid rgba(37,99,235,.18);background:rgba(37,99,235,.06);color:#1d4ed8;font-size:.9rem">Dedicated tool page</span>
+        <h1>${escapeHtml(tool.title)}</h1>
+        <p>${escapeHtml(tool.description)}</p>
+        <p class="mini" style="margin-top:10px">Dedicated URL: /${escapeHtml(tool.slug)}</p>
+        ${note}
+      </section>
+
+      <section class="grid">
+        <div class="card panel">
+          <h2 style="margin-top:0">Upload & process</h2>
+          <div class="upload">
+            <div class="field">
+              <label>Files</label>
+              <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
+            </div>
+
+            ${fieldPages}
+            ${fieldDegrees}
+            ${fieldText}
+            ${fieldCount}
+            ${fieldCrop}
+            ${fieldMeta}
+            ${startPageField}
+
+            <div id="progressWrap" class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+
+            <div class="actions">
+              <button class="btn solid" id="runBtn" type="button">Run ${escapeHtml(tool.title)}</button>
+              <button class="btn" id="resetBtn" type="button">Reset</button>
+            </div>
+
+            <div class="mini" style="margin-top:10px">Drag and drop works on this box too.</div>
+          </div>
+
+          <div id="downloadBox" class="download-box">
+            <div style="font-weight:800;margin-bottom:8px">Your file is ready</div>
+            <button id="downloadBtn" class="download" type="button">Download File</button>
+          </div>
+
+          <div id="status" class="status mini">Waiting for action...</div>
+          <div id="result" class="result">No output yet.</div>
+        </div>
+
+        <div class="card panel">
+          <h2 style="margin-top:0">Related tools</h2>
+          <div class="chip-wrap">${related}</div>
+          <div style="margin-top:18px">
+            <h3>SEO structure</h3>
+            <p class="mini">Each tool has its own URL, title, and description, just like competitor PDF sites.</p>
+          </div>
+        </div>
+      </section>
+
+      <div style="margin-top:16px" class="mini">
+        <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/rules">Rules</a>
+      </div>
+    </div>
+
+    <script>
+      const toolSlug = ${JSON.stringify(tool.slug)};
+      const fileInput = document.getElementById("fileInput");
+      const runBtn = document.getElementById("runBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const statusEl = document.getElementById("status");
+      const resultEl = document.getElementById("result");
+      const downloadBox = document.getElementById("downloadBox");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const progressBar = document.getElementById("progressBar");
+      const progressWrap = document.getElementById("progressWrap");
+      const uploadArea = document.querySelector(".upload");
+      let downloadUrl = "";
+      let downloadName = "output.pdf";
+
+      function setStatus(title, text, isError = false) {
+        statusEl.innerHTML = isError
+          ? '<span class="error">' + title + '</span> — ' + text
+          : title + ' — ' + text;
+      }
+
+      function resetDownload() {
+        downloadBox.classList.remove("show");
+        if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+        downloadUrl = "";
+        downloadName = "output.pdf";
+      }
+
+      function setProgress(p) {
+        progressBar.style.width = Math.max(0, Math.min(100, p)) + "%";
+      }
+
+      function inferName() {
+        const map = {
+          "merge-pdf": "merged.pdf",
+          "split-pdf": "split_pages.zip",
+          "compress-pdf": "compressed.pdf",
+          "rotate-pdf": "rotated.pdf",
+          "watermark-pdf": "watermarked.pdf",
+          "extract-text": "extracted.txt",
+          "delete-pages": "pages_deleted.pdf",
+          "extract-pages": "extracted_pages.pdf",
+          "image-to-pdf": "images_to_pdf.pdf",
+          "page-number": "numbered.pdf",
+          "reorder-pages": "reordered.pdf",
+          "reverse-pages": "reversed.pdf",
+          "duplicate-pages": "duplicated.pdf",
+          "add-blank-pages": "blank_pages_added.pdf",
+          "crop-pdf": "cropped.pdf",
+          "metadata-pdf": "metadata_updated.pdf",
+          "pdf-info": "info.json",
+          "pdf-to-word": "converted.docx",
+          "pdf-to-jpg": "pages.zip",
+          "ocr-pdf": "ocr.txt"
+        };
+        return map[toolSlug] || "output.pdf";
+      }
+
+      function collectFormData() {
+        const fd = new FormData();
+        const files = Array.from(fileInput.files || []);
+        if (toolSlug === "merge-pdf" || toolSlug === "image-to-pdf") {
+          files.forEach(f => fd.append("files", f));
+        } else {
+          fd.append("file", files[0]);
+        }
+
+        const get = id => {
+          const el = document.getElementById(id);
+          return el ? el.value : "";
+        };
+
+        fd.append("pages", get("pages"));
+        fd.append("degrees", get("degrees"));
+        fd.append("text", get("text"));
+        fd.append("count", get("count"));
+        fd.append("cropX", get("cropX"));
+        fd.append("cropY", get("cropY"));
+        fd.append("cropW", get("cropW"));
+        fd.append("cropH", get("cropH"));
+        fd.append("titleMeta", get("titleMeta"));
+        fd.append("authorMeta", get("authorMeta"));
+        fd.append("subjectMeta", get("subjectMeta"));
+        fd.append("keywordsMeta", get("keywordsMeta"));
+        fd.append("startPage", get("startPage"));
+        return fd;
+      }
+
+      downloadBtn.addEventListener("click", () => {
+        if (!downloadUrl) return;
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = downloadName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+
+      resetBtn.addEventListener("click", () => {
+        fileInput.value = "";
+        ["pages","degrees","text","count","cropX","cropY","cropW","cropH","titleMeta","authorMeta","subjectMeta","keywordsMeta","startPage"].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (id === "degrees") el.value = "90";
+          else if (id === "text") el.value = "CONFIDENTIAL";
+          else if (id === "count") el.value = "1";
+          else if (id === "cropX" || id === "cropY") el.value = "0";
+          else if (id === "cropW") el.value = "400";
+          else if (id === "cropH") el.value = "600";
+          else if (id === "titleMeta") el.value = "WePDF Document";
+          else if (id === "authorMeta") el.value = "WePDF";
+          else if (id === "subjectMeta") el.value = "PDF Tools";
+          else if (id === "keywordsMeta") el.value = "pdf, tools, wepdf";
+          else if (id === "startPage") el.value = "1";
+          else el.value = "";
+        });
+        setStatus("Reset", "Ready again.");
+        resultEl.textContent = "No output yet.";
+        setProgress(0);
+        resetDownload();
+      });
+
+      function bindDropZone(el) {
+        ["dragenter", "dragover"].forEach(evt => el.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          el.classList.add("drag");
+        }));
+
+        ["dragleave", "drop"].forEach(evt => el.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          el.classList.remove("drag");
+        }));
+
+        el.addEventListener("drop", ev => {
+          const files = ev.dataTransfer.files;
+          if (files && files.length) {
+            fileInput.files = files;
+            setStatus("Files ready", files.length + " file(s) selected.");
+            resultEl.textContent = "Files selected. Run a tool to generate output.";
+          }
+        });
+      }
+
+      bindDropZone(uploadArea);
+
+      fileInput.addEventListener("change", () => {
+        setStatus("Files ready", (fileInput.files || []).length + " file(s) selected.");
+        resultEl.textContent = "Files selected. Run a tool to generate output.";
+        resetDownload();
+      });
+
+      async function runTool() {
+        try {
+          const files = Array.from(fileInput.files || []);
+          if (!files.length) {
+            setStatus("Error", "Upload files first.", true);
+            resultEl.textContent = "Choose at least one file before running the tool.";
+            return;
+          }
+
+          const fd = collectFormData();
+          setStatus("Processing", toolSlug + " is running...");
+          resultEl.textContent = "Processing your file. Please wait...";
+          setProgress(5);
+          resetDownload();
+
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/api/" + toolSlug, true);
+          xhr.responseType = "blob";
+
+          xhr.upload.onprogress = function (e) {
+            if (e.lengthComputable) {
+              const p = 5 + (e.loaded / e.total) * 55;
+              setProgress(p);
+            }
+          };
+
+          xhr.onprogress = function () {
+            if (xhr.readyState === 3) setProgress(70);
+          };
+
+          xhr.onload = function () {
+            try {
+              const ct = xhr.getResponseHeader("content-type") || "";
+              if (xhr.status >= 400) {
+                if (ct.includes("application/json")) {
+                  const reader = new FileReader();
+                  reader.onload = function () {
+                    try {
+                      const data = JSON.parse(reader.result);
+                      throw new Error(data.error || "Request failed");
+                    } catch (err) {
+                      setStatus("Error", err.message, true);
+                      resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
+                      setProgress(0);
+                    }
+                  };
+                  reader.readAsText(xhr.response);
+                  return;
+                }
+                setStatus("Error", "Request failed", true);
+                resultEl.innerHTML = '<span class="error">Request failed</span>';
+                setProgress(0);
+                return;
+              }
+
+              if (ct.includes("application/json")) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                  const data = JSON.parse(reader.result);
+                  setStatus("Done", "Completed successfully.");
+                  resultEl.textContent = JSON.stringify(data, null, 2);
+                  setProgress(100);
+                };
+                reader.readAsText(xhr.response);
+                return;
+              }
+
+              const blob = xhr.response;
+              downloadUrl = URL.createObjectURL(blob);
+              downloadName = xhr.getResponseHeader("x-filename") || inferName();
+              downloadBox.classList.add("show");
+              setStatus("Done", "Completed successfully.");
+              resultEl.textContent = "File is ready. Click download.";
+              setProgress(100);
+            } catch (err) {
+              setStatus("Error", err.message, true);
+              resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
+              setProgress(0);
+            }
+          };
+
+          xhr.onerror = function () {
+            setStatus("Error", "Network error.", true);
+            resultEl.innerHTML = '<span class="error">Network error.</span>';
+            setProgress(0);
+          };
+
+          xhr.send(fd);
+        } catch (err) {
+          setStatus("Error", err.message, true);
+          resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
+          setProgress(0);
+        }
+      }
+
+      runBtn.addEventListener("click", runTool);
+    </script>
+  </body>
+  </html>`;
 }
 
-async function zipDirectory(sourceDir, zipPath) {
-  return new Promise((resolve, reject) => {
-    const output = fs.createWriteStream(zipPath);
-    const archive = archiver('zip', { zlib: { level: 9 } });
-
-    output.on('close', resolve);
-    output.on('error', reject);
-    archive.on('error', reject);
-
-    archive.pipe(output);
-    archive.directory(sourceDir, false);
-    archive.finalize();
-  });
+async function readPdf(file) {
+  const bytes = await fsp.readFile(file.path);
+  return PDFDocument.load(bytes);
 }
 
-function sendPdf(res, bytes, filename) {
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.setHeader('x-filename', filename);
-  return res.send(Buffer.from(bytes));
+function sendPdf(res, buffer, filename) {
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("X-Filename", filename);
+  return res.send(Buffer.from(buffer));
 }
 
-function cleanupDir(dir) {
-  try {
-    fs.rmSync(dir, { recursive: true, force: true });
-  } catch {}
+function sendZip(res, buffer, filename) {
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("X-Filename", filename);
+  return res.send(Buffer.from(buffer));
 }
 
-function renderDocPage(title, bodyHtml) {
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${title} | WePDF</title>
-  <meta name="description" content="${title} page for WePDF." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="${SITE_URL}/${title.toLowerCase().replace(/\s+/g, '-') === 'privacy-policy' ? 'privacy' : title.toLowerCase().replace(/\s+/g, '-')}" />
-  <style>
-    :root{
-      --bg:#f8fafc;
-      --bg2:#eef5ff;
-      --panel:#ffffff;
-      --line:#dbe3ef;
-      --text:#0f172a;
-      --muted:#64748b;
-      --a:#2563eb;
-      --shadow:0 18px 50px rgba(15,23,42,.08);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-      background:linear-gradient(180deg,var(--bg),var(--bg2));
-      color:var(--text);
-      line-height:1.7;
-    }
-    main{max-width:920px;margin:0 auto;padding:24px}
-    a{color:var(--a);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:22px;
-      box-shadow:var(--shadow);
-    }
-    h1,h2{line-height:1.15;margin-top:0}
-    .muted{color:var(--muted)}
-  </style>
-</head>
-<body>
-<main>
-  <p><a href="/">← Back to home</a></p>
-  <div class="card">
-    ${bodyHtml}
-  </div>
-</main>
-</body>
-</html>`;
+function sendDocx(res, buffer, filename) {
+  res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("X-Filename", filename);
+  return res.send(Buffer.from(buffer));
 }
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+function sendText(res, text, filename) {
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("X-Filename", filename);
+  return res.send(text);
+}
+
+function sendJson(res, data) {
+  return res.json(data);
+}
+
+function homePagePath() {
+  return path.join(__dirname, "index.html");
+}
+
+app.get("/", async (req, res) => {
+  res.sendFile(homePagePath());
 });
 
-app.get('/health', (req, res) => {
-  res.json({ ok: true, name: 'WePDF', rules: 'enabled' });
-});
-
-app.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send(
-`User-agent: *
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`User-agent: *
 Allow: /
 
-Sitemap: ${SITE_URL}/sitemap.xml
-`
+Sitemap: ${fullUrl("sitemap.xml")}`);
+});
+
+app.get("/sitemap.xml", (req, res) => {
+  const urls = [
+    "",
+    "about",
+    "contact",
+    "privacy",
+    "terms",
+    "rules",
+    ...tools.map(t => t.slug)
+  ];
+
+  const xml =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    urls
+      .map(u => {
+        const loc = u ? fullUrl(u) : BASE_URL;
+        const priority = u === "" ? "1.0" : "0.8";
+        return `  <url><loc>${loc}</loc><changefreq>weekly</changefreq><priority>${priority}</priority></url>`;
+      })
+      .join("\n") +
+    `\n</urlset>`;
+
+  res.header("Content-Type", "application/xml");
+  res.send(xml);
+});
+
+app.get("/about", (req, res) => {
+  res.send(
+    buildStaticPage(
+      "About Us",
+      "About WePDFHub",
+      `<p>WePDFHub is a fast PDF tools website built for simple, secure, mobile-friendly document tasks.</p>
+       <p>Each tool has its own dedicated URL, making the site easier to browse and better for SEO.</p>`
+    )
   );
 });
 
-app.get('/sitemap.xml', (req, res) => {
-  const urls = ['/', '/privacy', '/terms', '/api/rules'];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
-</urlset>`;
-  res.type('application/xml').send(xml);
+app.get("/contact", (req, res) => {
+  res.send(
+    buildStaticPage(
+      "Contact",
+      "Contact WePDFHub",
+      `<p>Email: <a href="mailto:support@wepdfhub.click">support@wepdfhub.click</a></p>
+       <p>Use this email for tool issues, partnership queries, and website support.</p>`
+    )
+  );
 });
 
-app.get('/api/rules', (req, res) => {
-  res.json({
-    ok: true,
-    maxUploadSizeMB: 25,
-    maxFilesPerRequest: 20,
-    rateLimit: `${RATE_MAX} requests / ${Math.round(RATE_WINDOW_MS / 60000)} min`,
-    allowedPdfTools: ['merge', 'split', 'rotate', 'watermark', 'extract-text', 'delete-pages', 'extract-pages', 'page-number', 'compress'],
-    allowedImageTools: ['image-to-pdf'],
-    rules: [
-      'Only PDF files for PDF tools.',
-      'PNG/JPG only for image-to-pdf.',
-      'Max upload size 25MB per file.',
-      'Up to 20 files per request.',
-      'Duplicate PDFs are ignored in merge.',
-      'Valid page syntax: 1,3-5',
-      'Rotate only accepts 0, 90, 180, 270 degrees.'
-    ]
-  });
+app.get("/privacy", (req, res) => {
+  res.send(
+    buildStaticPage(
+      "Privacy Policy",
+      "Privacy Policy",
+      `<p>WePDFHub processes uploaded files only for the selected action.</p>
+       <ul>
+         <li>Temporary files are deleted after processing.</li>
+         <li>Files are not stored long-term by design.</li>
+         <li>We do not sell user files or personal data.</li>
+       </ul>`
+    )
+  );
 });
 
-app.get('/privacy', (req, res) => {
-  res.type('html').send(renderDocPage(
-    'Privacy Policy',
-    `
-      <h1>Privacy Policy</h1>
-      <p class="muted">Last updated: today</p>
-      <p>Files are processed temporarily to complete the selected PDF tool request. Uploaded files are not intended for permanent storage.</p>
-      <p>We do not sell personal data. Logs may include basic technical information such as time, IP address, and request status for security and abuse prevention.</p>
-      <p>Processed files are deleted after the task finishes, except when a browser download is created during the request.</p>
-    `
-  ));
+app.get("/terms", (req, res) => {
+  res.send(
+    buildStaticPage(
+      "Terms of Service",
+      "Terms of Service",
+      `<p>By using WePDFHub, you agree to use the site legally and responsibly.</p>
+       <ul>
+         <li>Do not upload illegal, harmful, or unauthorized content.</li>
+         <li>Do not abuse the service with spam or malicious traffic.</li>
+         <li>File size and usage limits may apply to keep the platform stable.</li>
+       </ul>`
+    )
+  );
 });
 
-app.get('/terms', (req, res) => {
-  res.type('html').send(renderDocPage(
-    'Terms of Service',
-    `
-      <h1>Terms of Service</h1>
-      <p class="muted">Last updated: today</p>
-      <p>Use this service only for lawful files that you have the right to upload and process.</p>
-      <p>Do not upload malware, copyrighted files you do not own, or content that violates any law or third-party rights.</p>
-      <p>Service availability, speed, and file limits may change without notice.</p>
-      <p>We may block abusive traffic, oversized files, duplicate spam, or invalid requests.</p>
-    `
-  ));
+app.get("/rules", (req, res) => {
+  res.send(
+    buildStaticPage(
+      "Rules",
+      "WePDFHub Rules",
+      `<p>These rules keep the platform safe, fast, and useful.</p>
+       <ul>
+         <li>Use supported file types only.</li>
+         <li>Keep files within the allowed size.</li>
+         <li>Do not upload harmful content.</li>
+         <li>Respect copyright and privacy laws.</li>
+       </ul>`
+    )
+  );
 });
 
-app.post('/api/merge', upload.array('files', 20), async (req, res) => {
-  try {
-    let files = (req.files || []).filter(isPdf);
-    files = uniqByHash(files);
-
-    if (files.length < 2) return badRequest(res, 'Upload at least 2 unique PDF files.');
-
-    const out = await PDFDocument.create();
-
-    for (const file of files) {
-      const pdf = await bytesToPdf(file.buffer);
-      const pages = await out.copyPages(pdf, pdf.getPageIndices());
-      pages.forEach(page => out.addPage(page));
-    }
-
-    const bytes = await out.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'merged.pdf');
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Merge failed' });
-  }
+app.get("/:slug", (req, res, next) => {
+  const tool = toolMap.get(req.params.slug);
+  if (!tool) return next();
+  res.send(renderToolPage(tool));
 });
 
-app.post('/api/split', upload.single('file'), async (req, res) => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-split-'));
-  const zipPath = path.join(tempDir, 'split_pages.zip');
+function getSingleFile(req) {
+  return req.file ? [req.file] : [];
+}
 
-  try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+async function pagesToPdfBuffer(inputPdfBytes, pageIndexes, rotateDeg = 0, watermarkText = "", crop = null) {
+  const pdf = await PDFDocument.load(inputPdfBytes);
+  const out = await PDFDocument.create();
+  const pages = await out.copyPages(pdf, pageIndexes);
+  const font = watermarkText ? await out.embedFont(StandardFonts.HelveticaBold) : null;
 
-    const pdf = await bytesToPdf(file.buffer);
-    const maxPages = pdf.getPageCount();
-    const wanted = parsePages(req.body.pages, maxPages);
-    const selected = wanted.length ? wanted : pdf.getPageIndices().map(i => i + 1);
-
-    if (!selected.length) return badRequest(res, 'No valid pages found.');
-    if (selected.length > 200) return badRequest(res, 'Too many pages requested.');
-
-    for (const pageNumber of selected) {
-      const single = await makePdfFromSinglePage(pdf, pageNumber - 1);
-      const base = sanitizeName(path.parse(file.originalname || 'page.pdf').name);
-      const outPath = path.join(tempDir, `${base}_page_${pageNumber}.pdf`);
-      fs.writeFileSync(outPath, Buffer.from(single));
-    }
-
-    await zipDirectory(tempDir, zipPath);
-    return res.download(zipPath, 'split_pages.zip', () => cleanupDir(tempDir));
-  } catch (err) {
-    cleanupDir(tempDir);
-    return res.status(500).json({ ok: false, error: err.message || 'Split failed' });
-  }
-});
-
-app.post('/api/rotate', upload.single('file'), async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
-
-    const degreesValue = Number(req.body.degrees);
-    const allowed = new Set([0, 90, 180, 270]);
-    const rotation = allowed.has(degreesValue) ? degreesValue : 90;
-
-    const pdf = await bytesToPdf(file.buffer);
-    pdf.getPages().forEach(page => page.setRotation(degrees(rotation)));
-
-    const bytes = await pdf.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'rotated.pdf');
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Rotate failed' });
-  }
-});
-
-app.post('/api/watermark', upload.single('file'), async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
-
-    const text = String(req.body.text || 'CONFIDENTIAL').trim().slice(0, 60) || 'CONFIDENTIAL';
-    const pdf = await bytesToPdf(file.buffer);
-    const font = await pdf.embedFont(StandardFonts.HelveticaBold);
-
-    for (const page of pdf.getPages()) {
+  pages.forEach((page, idx) => {
+    if (rotateDeg) page.setRotation(degrees(rotateDeg));
+    if (crop) page.setCropBox(crop.x, crop.y, crop.w, crop.h);
+    if (watermarkText) {
       const { width, height } = page.getSize();
-      page.drawText(text, {
-        x: width * 0.12,
+      page.drawText(watermarkText, {
+        x: width * 0.16,
         y: height * 0.5,
-        size: Math.max(24, Math.min(width, height) / 10),
+        size: Math.max(24, Math.min(width, height) / 12),
         font,
-        color: rgb(0.15, 0.45, 0.95),
-        rotate: degrees(30),
-        opacity: 0.16
+        color: rgb(0.75, 0.08, 0.08),
+        opacity: 0.16,
+        rotate: degrees(30)
       });
     }
+    out.addPage(page);
+  });
 
-    const bytes = await pdf.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'watermarked.pdf');
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Watermark failed' });
-  }
-});
+  return out.save();
+}
 
-app.post('/api/extract-text', upload.single('file'), async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+async function renderPdfToImages(pdfBytes, scale = 2) {
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const loadingTask = pdfjsLib.getDocument({ data: pdfBytes });
+  const pdf = await loadingTask.promise;
+  const images = [];
 
-    const data = await pdfParse(file.buffer);
-    return res.json({
-      ok: true,
-      pages: data.numpages,
-      text: (data.text || '').trim(),
-      info: data.info || {}
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const viewport = page.getViewport({ scale });
+    const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+    const ctx = canvas.getContext("2d");
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise;
+
+    images.push({
+      page: pageNum,
+      buffer: canvas.toBuffer("image/jpeg", { quality: 0.92 })
     });
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Text extraction failed' });
   }
-});
 
-app.post('/api/delete-pages', upload.single('file'), async (req, res) => {
+  return images;
+}
+
+app.post("/api/merge-pdf", upload.array("files", 20), async (req, res) => {
+  const files = req.files || [];
   try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+    if (files.length < 2) return res.status(400).json({ error: "Upload at least 2 PDF files." });
 
-    const pdf = await bytesToPdf(file.buffer);
-    const maxPages = pdf.getPageCount();
-    const toDelete = parsePages(req.body.pages, maxPages);
-
-    if (!toDelete.length) return badRequest(res, 'Enter pages to delete like 2,4-6.');
-
-    const keep = pdf.getPageIndices().map(i => i + 1).filter(n => !toDelete.includes(n));
-    if (!keep.length) return badRequest(res, 'All pages cannot be deleted.');
-
-    const out = await PDFDocument.create();
-    for (const pageNumber of keep) {
-      const [copied] = await out.copyPages(pdf, [pageNumber - 1]);
-      out.addPage(copied);
-    }
-
-    const bytes = await out.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'pages_deleted.pdf');
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Delete pages failed' });
-  }
-});
-
-app.post('/api/extract-pages', upload.single('file'), async (req, res) => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-extract-'));
-  const zipPath = path.join(tempDir, 'extracted_pages.zip');
-
-  try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
-
-    const pdf = await bytesToPdf(file.buffer);
-    const maxPages = pdf.getPageCount();
-    const selected = parsePages(req.body.pages, maxPages);
-
-    if (!selected.length) return badRequest(res, 'Enter pages like 1,3-5.');
-    if (selected.length > 200) return badRequest(res, 'Too many pages requested.');
-
-    for (const pageNumber of selected) {
-      const single = await makePdfFromSinglePage(pdf, pageNumber - 1);
-      const base = sanitizeName(path.parse(file.originalname || 'page.pdf').name);
-      const outPath = path.join(tempDir, `${base}_page_${pageNumber}.pdf`);
-      fs.writeFileSync(outPath, Buffer.from(single));
-    }
-
-    await zipDirectory(tempDir, zipPath);
-    return res.download(zipPath, 'extracted_pages.zip', () => cleanupDir(tempDir));
-  } catch (err) {
-    cleanupDir(tempDir);
-    return res.status(500).json({ ok: false, error: err.message || 'Extract pages failed' });
-  }
-});
-
-app.post('/api/image-to-pdf', upload.array('files', 20), async (req, res) => {
-  try {
-    const files = (req.files || []).filter(isImage);
-    if (!files.length) return badRequest(res, 'Upload PNG or JPG image files.');
-
-    const out = await PDFDocument.create();
-
+    const merged = await PDFDocument.create();
     for (const file of files) {
-      const img = file.mimetype === 'image/png'
-        ? await out.embedPng(file.buffer)
-        : await out.embedJpg(file.buffer);
+      const bytes = await fsp.readFile(file.path);
+      const pdf = await PDFDocument.load(bytes);
+      const copied = await merged.copyPages(pdf, pdf.getPageIndices());
+      copied.forEach(page => merged.addPage(page));
+    }
 
-      const page = out.addPage([img.width, img.height]);
+    const out = await merged.save();
+    sendPdf(res, out, "merged.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(files);
+  }
+});
+
+app.post("/api/split-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+    const pages = parsePageSpec(req.body.pages, total);
+    if (!pages.length) return res.status(400).json({ error: "Enter valid pages like 1,3-5" });
+
+    const zip = new JSZip();
+    for (const idx of pages) {
+      const outDoc = await PDFDocument.create();
+      const copied = await outDoc.copyPages(pdf, [idx]);
+      copied.forEach(page => outDoc.addPage(page));
+      const buf = await outDoc.save();
+      zip.file(`page-${idx + 1}.pdf`, buf);
+    }
+
+    const zipBuf = await zip.generateAsync({ type: "nodebuffer" });
+    sendZip(res, zipBuf, "split_pages.zip");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/compress-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const out = await pdf.save({ useObjectStreams: true });
+    sendPdf(res, out, "compressed.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/rotate-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const degreesValue = parseInt(req.body.degrees || "90", 10);
+    const pdf = await readPdf(file);
+    pdf.getPages().forEach(page => page.setRotation(degrees(degreesValue)));
+    const out = await pdf.save();
+    sendPdf(res, out, "rotated.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/watermark-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const text = String(req.body.text || "CONFIDENTIAL");
+    const pdf = await readPdf(file);
+    const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+    pdf.getPages().forEach(page => {
+      const { width, height } = page.getSize();
+      page.drawText(text, {
+        x: width * 0.14,
+        y: height * 0.5,
+        size: Math.max(24, Math.min(width, height) / 12),
+        font,
+        color: rgb(0.8, 0.1, 0.1),
+        opacity: 0.18,
+        rotate: degrees(30)
+      });
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "watermarked.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/extract-text", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const bytes = await fsp.readFile(file.path);
+    const parsed = await pdfParse(bytes);
+    sendJson(res, { pages: parsed.numpages || 0, text: parsed.text || "" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/delete-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+    const removePages = parsePageSpec(req.body.pages, total);
+    if (!removePages.length) return res.status(400).json({ error: "Enter valid pages like 2,4-6" });
+
+    const keep = [];
+    for (let i = 0; i < total; i++) if (!removePages.includes(i)) keep.push(i);
+
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, keep);
+    copied.forEach(page => outDoc.addPage(page));
+    const out = await outDoc.save();
+    sendPdf(res, out, "pages_deleted.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/extract-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+    const keepPages = parsePageSpec(req.body.pages, total);
+    if (!keepPages.length) return res.status(400).json({ error: "Enter valid pages like 1,3-5" });
+
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, keepPages);
+    copied.forEach(page => outDoc.addPage(page));
+    const out = await outDoc.save();
+    sendPdf(res, out, "extracted_pages.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/image-to-pdf", upload.array("files", 20), async (req, res) => {
+  const files = req.files || [];
+  try {
+    if (!files.length) return res.status(400).json({ error: "Upload JPG or PNG files." });
+
+    const outDoc = await PDFDocument.create();
+    for (const file of files) {
+      const bytes = await fsp.readFile(file.path);
+      let img;
+      if (file.mimetype === "image/png") img = await outDoc.embedPng(bytes);
+      else if (file.mimetype === "image/jpeg" || file.mimetype === "image/jpg") img = await outDoc.embedJpg(bytes);
+      else throw new Error("Only JPG and PNG supported.");
+      const page = outDoc.addPage([img.width, img.height]);
       page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
     }
 
-    const bytes = await out.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'images_to_pdf.pdf');
+    const out = await outDoc.save();
+    sendPdf(res, out, "images_to_pdf.pdf");
   } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Image to PDF failed' });
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(files);
   }
 });
 
-app.post('/api/page-number', upload.single('file'), async (req, res) => {
+app.post("/api/page-number", upload.single("file"), async (req, res) => {
+  const file = req.file;
   try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
-
-    const pdf = await bytesToPdf(file.buffer);
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const start = parseInt(req.body.startPage || "1", 10);
+    const pdf = await readPdf(file);
     const font = await pdf.embedFont(StandardFonts.Helvetica);
 
-    pdf.getPages().forEach((page, i) => {
+    pdf.getPages().forEach((page, index) => {
       const { width } = page.getSize();
-      page.drawText(String(i + 1), {
-        x: width - 40,
+      page.drawText(String(start + index), {
+        x: width / 2 - 6,
         y: 18,
         size: 10,
         font,
-        color: rgb(0.25, 0.25, 0.25),
-        opacity: 0.85
+        color: rgb(0.1, 0.1, 0.1)
       });
     });
 
-    const bytes = await pdf.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'numbered.pdf');
+    const out = await pdf.save();
+    sendPdf(res, out, "numbered.pdf");
   } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Page number failed' });
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
   }
 });
 
-app.post('/api/compress', upload.single('file'), async (req, res) => {
+app.post("/api/reorder-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
   try {
-    const file = req.file;
-    if (!file || !isPdf(file)) return badRequest(res, 'Upload one valid PDF file.');
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+    const order = parsePageOrder(req.body.pages, total);
 
-    const pdf = await bytesToPdf(file.buffer);
-    const bytes = await pdf.save({ useObjectStreams: true });
-    return sendPdf(res, bytes, 'compressed.pdf');
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, order);
+    copied.forEach(page => outDoc.addPage(page));
+    const out = await outDoc.save();
+    sendPdf(res, out, "reordered.pdf");
   } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message || 'Compress failed' });
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
   }
 });
 
-app.use((err, req, res, next) => {
-  if (err?.code === 'LIMIT_FILE_SIZE') {
-    return res.status(413).json({ ok: false, error: 'File too large. Max size is 25MB.' });
+app.post("/api/reverse-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const order = [...Array(pdf.getPageCount()).keys()].reverse();
+
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, order);
+    copied.forEach(page => outDoc.addPage(page));
+    const out = await outDoc.save();
+    sendPdf(res, out, "reversed.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
   }
-  if (err?.code === 'LIMIT_FILE_COUNT') {
-    return res.status(413).json({ ok: false, error: 'Too many files uploaded.' });
+});
+
+app.post("/api/duplicate-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+    const pages = parsePageSpec(req.body.pages, total);
+    if (!pages.length) return res.status(400).json({ error: "Enter valid pages like 1,3-5" });
+
+    const outDoc = await PDFDocument.create();
+    const copiedOriginal = await outDoc.copyPages(pdf, [...Array(total).keys()]);
+    copiedOriginal.forEach(page => outDoc.addPage(page));
+
+    const copiedExtra = await outDoc.copyPages(pdf, pages);
+    copiedExtra.forEach(page => outDoc.addPage(page));
+
+    const out = await outDoc.save();
+    sendPdf(res, out, "duplicated.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
   }
-  return next(err);
+});
+
+app.post("/api/add-blank-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const count = Math.max(1, parseInt(req.body.count || "1", 10));
+    const pdf = await readPdf(file);
+    const firstPage = pdf.getPages()[0];
+    const size = firstPage ? firstPage.getSize() : { width: 595, height: 842 };
+
+    for (let i = 0; i < count; i++) pdf.addPage([size.width, size.height]);
+
+    const out = await pdf.save();
+    sendPdf(res, out, "blank_pages_added.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/crop-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const crop = {
+      x: parseFloat(req.body.cropX || "0"),
+      y: parseFloat(req.body.cropY || "0"),
+      w: parseFloat(req.body.cropW || "400"),
+      h: parseFloat(req.body.cropH || "600")
+    };
+
+    const pdf = await readPdf(file);
+    pdf.getPages().forEach(page => {
+      if (typeof page.setCropBox === "function") page.setCropBox(crop.x, crop.y, crop.w, crop.h);
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "cropped.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/metadata-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const pdf = await readPdf(file);
+
+    pdf.setTitle(String(req.body.titleMeta || "WePDF Document"));
+    pdf.setAuthor(String(req.body.authorMeta || "WePDF"));
+    pdf.setSubject(String(req.body.subjectMeta || "PDF Tools"));
+    pdf.setKeywords(
+      String(req.body.keywordsMeta || "pdf, tools, wepdf")
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean)
+    );
+
+    const out = await pdf.save();
+    sendPdf(res, out, "metadata_updated.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/pdf-info", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+    const bytes = await fsp.readFile(file.path);
+    const parsed = await pdfParse(bytes);
+    const pdf = await PDFDocument.load(bytes);
+
+    sendJson(res, {
+      pageCount: pdf.getPageCount(),
+      info: parsed.info || {},
+      metadata: parsed.metadata || {}
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/pdf-to-word", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const bytes = await fsp.readFile(file.path);
+    const parsed = await pdfParse(bytes);
+    const lines = String(parsed.text || "")
+      .split(/\n+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph({ children: [new TextRun({ text: "WePDFHub PDF to Word", bold: true })] }),
+            ...lines.map(line => new Paragraph(line))
+          ]
+        }
+      ]
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+    sendDocx(res, buffer, "converted.docx");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/pdf-to-jpg", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const bytes = await fsp.readFile(file.path);
+    const images = await renderPdfToImages(bytes, 2);
+    const zip = new JSZip();
+
+    for (const img of images) {
+      zip.file(`page-${img.page}.jpg`, img.buffer);
+    }
+
+    const zipBuf = await zip.generateAsync({ type: "nodebuffer" });
+    sendZip(res, zipBuf, "pdf_pages_jpg.zip");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
+app.post("/api/ocr-pdf", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  let worker;
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const bytes = await fsp.readFile(file.path);
+    const images = await renderPdfToImages(bytes, 2);
+    worker = await createWorker("eng");
+
+    const results = [];
+    for (const img of images) {
+      const { data } = await worker.recognize(img.buffer);
+      if (data && data.text && data.text.trim()) {
+        results.push(`--- Page ${img.page} ---\n${data.text.trim()}`);
+      }
+    }
+
+    await worker.terminate();
+    worker = null;
+
+    sendText(res, results.join("\n\n") || "No OCR text found.", "ocr-output.txt");
+  } catch (err) {
+    try {
+      if (worker) await worker.terminate();
+    } catch {}
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
 });
 
 app.use((req, res) => {
-  res.status(404).json({ ok: false, error: 'Route not found' });
+  res.status(404).send("Not Found");
 });
 
 app.listen(PORT, () => {
-  console.log(`WePDF running on http://localhost:${PORT}`);
+  console.log(`WePDFHub running on port ${PORT}`);
 });
