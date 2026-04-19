@@ -10,6 +10,17 @@ const { PDFDocument, rgb, StandardFonts, degrees } = require('pdf-lib');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SITE_URL = (process.env.SITE_URL || 'https://wepdfhub.click').replace(/\/+$/, '');
+
+app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -21,7 +32,7 @@ const upload = multer({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '7d', etag: true }));
 
 const RATE_WINDOW_MS = 5 * 60 * 1000;
 const RATE_MAX = 40;
@@ -61,7 +72,8 @@ function sanitizeName(name) {
   return String(name || 'file')
     .replace(/[^a-z0-9._-]+/gi, '_')
     .replace(/_+/g, '_')
-    .slice(0, 80);
+    .replace(/^[_\.]+|[_\.]+$/g, '')
+    .slice(0, 80) || 'file';
 }
 
 function sha256(buffer) {
@@ -123,7 +135,7 @@ async function makePdfFromSinglePage(sourcePdf, pageIndex) {
   const out = await PDFDocument.create();
   const [page] = await out.copyPages(sourcePdf, [pageIndex]);
   out.addPage(page);
-  return out.save();
+  return out.save({ useObjectStreams: true });
 }
 
 async function zipDirectory(sourceDir, zipPath) {
@@ -160,7 +172,10 @@ function renderDocPage(title, bodyHtml) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${title}</title>
+  <title>${title} | WePDF</title>
+  <meta name="description" content="${title} page for WePDF." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="${SITE_URL}/${title.toLowerCase().replace(/\s+/g, '-') === 'privacy-policy' ? 'privacy' : title.toLowerCase().replace(/\s+/g, '-')}" />
   <style>
     :root{
       --bg:#f8fafc;
@@ -205,8 +220,31 @@ function renderDocPage(title, bodyHtml) {
 </html>`;
 }
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.get('/health', (req, res) => {
   res.json({ ok: true, name: 'WePDF', rules: 'enabled' });
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(
+`User-agent: *
+Allow: /
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`
+  );
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const urls = ['/', '/privacy', '/terms', '/api/rules'];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
+</urlset>`;
+  res.type('application/xml').send(xml);
 });
 
 app.get('/api/rules', (req, res) => {
