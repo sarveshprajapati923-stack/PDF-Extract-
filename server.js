@@ -39,6 +39,13 @@ const upload = multer({
   }
 });
 
+/* ================= HOME ROUTE FIX ================= */
+// public/index.html serve hoga
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+/* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
   { slug: "merge-pdf", title: "Merge PDF", description: "Combine multiple PDF files into one.", files: "multi" },
   { slug: "split-pdf", title: "Split PDF", description: "Split selected pages into separate PDF files.", files: "single" },
