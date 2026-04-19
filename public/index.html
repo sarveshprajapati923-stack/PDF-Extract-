@@ -4,580 +4,152 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="google-site-verification" content="SM3evf3tuRLP23syjV822eZnRKIDL09kfOwthVj3Res" />
-  
-<title>WePDF - Free PDF Tools | Merge, Split, Compress Online</title>
-<meta name="description" content="WePDF lets you merge, split, compress, rotate, watermark, and convert PDF files online for free. Fast, secure, and mobile-friendly PDF tools." />
-<meta name="keywords" content="pdf tools, merge pdf, split pdf, compress pdf, rotate pdf, watermark pdf, convert pdf, free pdf tools, wepdf" />
-<meta name="author" content="WePDF" />
-<meta name="robots" content="index, follow" />
+<title>WePDFHub - Free PDF Tools | Merge, Split, Compress Online</title>
+<meta name="description" content="WePDFHub lets you merge, split, compress, rotate, watermark, extract text, and convert PDFs online. Fast, secure, mobile-friendly PDF tools." />
 <link rel="canonical" href="https://wepdfhub.click" />
-
-<meta property="og:title" content="WePDF - Free PDF Tools" />
-<meta property="og:description" content="Merge, split, compress, rotate, watermark and convert PDFs online for free." />
+<meta property="og:title" content="WePDFHub - Free PDF Tools" />
+<meta property="og:description" content="Fast and modern PDF tools with dedicated pages for every tool." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wepdfhub.click" />
-
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="WePDF - Free PDF Tools" />
-<meta name="twitter:description" content="Fast, secure and mobile-friendly PDF tools online." />
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "WePDF",
-  "url": "https://wepdfhub.click",
-  "description": "Free online PDF tools to merge, split, compress, rotate, watermark, extract text, delete pages, and convert images to PDF."
-}
-</script>
-
 <style>
   :root{
-    --bg:#f8fafc;
-    --bg2:#eef5ff;
+    --bg:#f7f9ff;
+    --bg2:#eef4ff;
     --panel:#ffffff;
-    --panel2:#f8fbff;
-    --line:#dbe3ef;
+    --line:#d8e2f0;
     --text:#0f172a;
     --muted:#64748b;
     --primary:#2563eb;
     --primary2:#0ea5e9;
-    --success:#16a34a;
-    --danger:#dc2626;
     --shadow:0 18px 50px rgba(15,23,42,.08);
     --radius:24px;
   }
   *{box-sizing:border-box}
-  html,body{
-    margin:0;
-    min-height:100%;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:linear-gradient(180deg,var(--bg),var(--bg2));
-    color:var(--text);
-  }
-  a{color:var(--primary);text-decoration:none}
-  a:hover{text-decoration:underline}
-  .app{
-    display:grid;
-    grid-template-columns:280px 1fr;
-    min-height:100vh;
-  }
-  .sidebar{
-    padding:18px;
-    border-right:1px solid var(--line);
-    background:rgba(255,255,255,.8);
-    backdrop-filter:blur(16px);
-    position:sticky;
-    top:0;
-    height:100vh;
-  }
-  .brand{
-    padding:16px;
-    border:1px solid var(--line);
-    border-radius:20px;
-    background:linear-gradient(180deg,#fff,var(--panel2));
-    margin-bottom:14px;
-    box-shadow:var(--shadow);
-  }
-  .brand h1{margin:0 0 6px;font-size:1.2rem;letter-spacing:-.02em}
-  .brand p{margin:0;color:var(--muted);font-size:.9rem}
-  .nav{display:grid;gap:10px}
-  .nav button,.btn,.chip,.tool .btns button,.download-btn{
-    border:1px solid var(--line);
-    background:#fff;
-    color:var(--text);
-    padding:12px 14px;
-    border-radius:14px;
-    cursor:pointer;
-    transition:.18s ease;
-    box-shadow:0 6px 16px rgba(15,23,42,.04);
-  }
-  .nav button:hover,.btn:hover,.chip:hover,.tool .btns button:hover,.download-btn:hover{
-    transform:translateY(-1px);
-    border-color:rgba(37,99,235,.35);
-  }
-  .nav button:active,.btn:active,.chip:active,.tool .btns button:active,.download-btn:active{
-    transform:scale(.98);
-  }
-  .nav .active{
-    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
-    border-color:rgba(37,99,235,.25);
-  }
-  main{padding:18px}
+  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text)}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1200px;margin:0 auto;padding:18px}
   .hero,.card{
     border-radius:var(--radius);
     border:1px solid var(--line);
     background:var(--panel);
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow)
   }
-  .hero{
-    padding:24px;
-    display:grid;
-    grid-template-columns:1.2fr .8fr;
-    gap:18px;
-    margin-bottom:16px;
-  }
-  .hero h2{
-    margin:0 0 10px;
-    font-size:clamp(2rem,4vw,3.5rem);
-    line-height:.98;
-    letter-spacing:-.05em;
-  }
-  .hero p{margin:0;color:var(--muted);line-height:1.7;max-width:64ch}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-  .solid{
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
-    color:#fff;
-    border-color:transparent;
-    font-weight:700;
-  }
-  .section{padding:18px}
-  .upload{
-    border:1.5px dashed rgba(37,99,235,.22);
-    border-radius:22px;
-    padding:22px;
-    text-align:center;
-    background:linear-gradient(180deg,#fff,#f8fbff);
-  }
-  .upload.drag{
-    border-color:rgba(22,163,74,.45);
-    background:rgba(22,163,74,.06);
-  }
-  input[type=file],input[type=text]{
-    width:100%;
-    padding:12px 14px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:#fff;
-    color:var(--text);
-    outline:none;
-  }
-  input[type=file]{padding:10px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .mini{color:var(--muted);font-size:.9rem}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:14px;
-  }
-  .tool{
-    padding:16px;
-    border-radius:22px;
-    border:1px solid var(--line);
-    background:linear-gradient(180deg,#fff,#f8fbff);
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    min-height:170px;
-    transition:.18s ease;
-  }
-  .tool:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.08)}
-  .tool h3{margin:0;font-size:1rem}
-  .tool p{margin:0;color:var(--muted);line-height:1.5;font-size:.92rem}
-  .tool .top{display:flex;justify-content:space-between;gap:12px}
-  .ico{
-    width:46px;height:46px;
-    border-radius:16px;
-    display:grid;
-    place-items:center;
-    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
-    color:var(--primary);
-    font-size:1.15rem;
-    flex:0 0 auto;
-  }
-  .tool .btns{display:flex;gap:10px;margin-top:auto}
-  .tool .btns button{flex:1}
-  .result{
-    white-space:pre-wrap;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:14px;
-    min-height:140px;
-    overflow:auto;
-    box-shadow:var(--shadow);
-  }
-  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-  .footer{
-    padding:10px 2px 18px;
-    text-align:center;
-    color:var(--muted);
-  }
-  .notice{
-    padding:12px 14px;
-    border:1px solid rgba(37,99,235,.18);
-    background:rgba(37,99,235,.06);
-    border-radius:16px;
-    color:#1e3a8a;
-    margin:14px 0 0;
-  }
+  .hero{padding:24px;display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
   .badge{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    border-radius:999px;
+    display:inline-flex;gap:8px;align-items:center;
+    padding:8px 12px;border-radius:999px;
     border:1px solid rgba(37,99,235,.18);
     background:rgba(37,99,235,.06);
-    color:#1d4ed8;
-    margin-bottom:12px;
-    font-size:.9rem;
+    color:#1d4ed8;font-size:.9rem
   }
-  .download-box{
-    display:none;
-    margin-top:16px;
-    padding:16px;
-    border:1px solid rgba(22,163,74,.18);
-    background:rgba(22,163,74,.06);
-    border-radius:18px;
-    text-align:center;
-    box-shadow:var(--shadow);
+  h1{margin:12px 0 10px;font-size:clamp(2rem,5vw,4rem);line-height:.95;letter-spacing:-.05em}
+  p{color:var(--muted);line-height:1.7}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:12px 16px;border-radius:14px;border:1px solid var(--line);
+    background:#fff;transition:.18s ease
   }
-  .download-box.show{display:block}
-  .download-title{
-    font-weight:700;
-    margin-bottom:6px;
+  .btn:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.35)}
+  .solid{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+  .tool-card{
+    padding:16px;border-radius:22px;border:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#f8fbff);
+    display:flex;gap:12px;align-items:flex-start;min-height:118px;
+    transition:.18s ease
   }
-  .download-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    min-width:220px;
-    padding:14px 18px;
-    background:linear-gradient(135deg,var(--success),#22c55e);
-    color:#fff;
-    border-color:transparent;
-    font-weight:800;
+  .tool-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.08)}
+  .tool-ico{
+    width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
+    color:var(--primary);font-weight:800
   }
-  .download-btn:disabled{
-    opacity:.55;
-    cursor:not-allowed;
-    transform:none;
-  }
-  .muted{color:var(--muted)}
-  .error{
-    color:var(--danger);
-    font-weight:600;
-  }
-  .seo-hidden{
-    position:absolute;
-    left:-9999px;
-    width:1px;
-    height:1px;
-    overflow:hidden;
-  }
-  @media (max-width:1100px){
-    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .hero{grid-template-columns:1fr}
-  }
-  @media (max-width:860px){
-    .app{grid-template-columns:1fr}
-    .sidebar{position:relative;height:auto}
-    .grid,.row{grid-template-columns:1fr}
-  }
+  .tool-card h3{margin:0 0 4px;font-size:1rem}
+  .tool-card p{margin:0;font-size:.92rem}
+  .panel{padding:18px}
+  .mini{font-size:.92rem;color:var(--muted)}
+  .footer{padding:18px 4px 4px;text-align:center;color:var(--muted)}
+  .links a{margin:0 6px}
+  @media (max-width:1100px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:700px){.grid{grid-template-columns:1fr}}
 </style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"WePDFHub",
+  "url":"https://wepdfhub.click",
+  "description":"Free online PDF tools with dedicated pages for every tool."
+}
+</script>
 </head>
 <body>
-<h1 class="seo-hidden">Free Online PDF Tools - Merge, Split, Compress, Rotate and Convert PDF Files</h1>
-
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <h1>WePDF</h1>
-      <p>Real PDF tools. No paid API.</p>
-    </div>
-
-    <div class="nav">
-      <button class="active" onclick="jump('upload')">Upload</button>
-      <button onclick="jump('tools')">Tools</button>
-      <button onclick="jump('output')">Output</button>
-      <button onclick="openDoc('/privacy')">Privacy</button>
-      <button onclick="openDoc('/terms')">Terms</button>
-      <button onclick="openDoc('/api/rules')">Rules</button>
-    </div>
-
-    <div class="card" style="margin-top:16px;padding:16px">
-      <h3 style="margin:0 0 8px">Real features</h3>
-      <p class="mini">Merge, split, rotate, watermark, delete pages, extract pages, image to PDF, page number, extract text.</p>
-      <div class="notice">Files are processed temporarily and are not meant for long-term storage.</div>
-    </div>
-  </aside>
-
-  <main>
+  <div class="wrap">
     <section class="hero">
       <div>
         <span class="badge">Competitor-style PDF suite</span>
-        <h2>Clean, fast, and real PDF tools.</h2>
-        <p>WePDF gives you the core PDF actions people actually use. The UI is kept white and premium, with a simple workflow that works on mobile too.</p>
+        <h1>Clean, fast, dedicated PDF tool pages.</h1>
+        <p>WePDFHub gives every tool its own link, title, and description so the site behaves like a real PDF platform.</p>
         <div class="actions">
-          <button class="btn solid" onclick="jump('tools')">Open tools</button>
-          <button class="btn" onclick="jump('upload')">Upload file</button>
-          <button class="btn" onclick="openDoc('/api/rules')">View rules</button>
+          <a class="btn solid" href="#tools">Open tools</a>
+          <a class="btn" href="/merge-pdf">Try Merge PDF</a>
         </div>
       </div>
-
-      <div class="card" style="padding:16px">
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
-          <div class="card" style="padding:14px;background:#fff"><b>Merge</b><div class="mini">PDF combine</div></div>
-          <div class="card" style="padding:14px;background:#fff"><b>Split</b><div class="mini">ZIP output</div></div>
-          <div class="card" style="padding:14px;background:#fff"><b>Image</b><div class="mini">To PDF</div></div>
-          <div class="card" style="padding:14px;background:#fff"><b>Text</b><div class="mini">Extract</div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section card" id="upload">
-      <h3 style="margin-top:0">Upload</h3>
-      <div class="upload" id="dropzone">
-        <p style="margin-top:0">Drag & drop files here, or choose files.</p>
-        <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
-      </div>
-
-      <div id="downloadBox" class="download-box">
-        <div class="download-title">Your file is ready</div>
-        <button id="downloadBtn" class="download-btn">⬇ Download File</button>
-        <div class="mini" style="margin-top:8px">Click to download the processed file.</div>
-      </div>
-
-      <div class="row" style="margin-top:14px">
-        <div>
-          <div class="mini">Rotate degrees</div>
-          <input id="rotateDegrees" type="text" value="90" />
-        </div>
-        <div>
-          <div class="mini">Watermark text</div>
-          <input id="watermarkText" type="text" value="CONFIDENTIAL" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <div>
-          <div class="mini">Pages (split/delete/extract)</div>
-          <input id="pagesInput" type="text" placeholder="1,3-5" />
-        </div>
-        <div>
-          <div class="mini">Tip</div>
-          <input type="text" value="Use one PDF for rotate/watermark/extract" readonly />
+      <div class="card panel">
+        <h2 style="margin:0 0 8px">Core tools</h2>
+        <p class="mini">Merge, split, compress, rotate, watermark, extract text, delete pages, extract pages, image to PDF, page number, reorder, reverse, duplicate, blank pages, crop, metadata, info, PDF to Word, PDF to JPG, OCR.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px">
+          <div class="card panel" style="box-shadow:none;background:#fff"><b>SEO ready</b><div class="mini">Unique pages</div></div>
+          <div class="card panel" style="box-shadow:none;background:#fff"><b>Mobile first</b><div class="mini">Fast UI</div></div>
+          <div class="card panel" style="box-shadow:none;background:#fff"><b>Secure backend</b><div class="mini">Helmet + limits</div></div>
+          <div class="card panel" style="box-shadow:none;background:#fff"><b>Auto sitemap</b><div class="mini">Better indexing</div></div>
         </div>
       </div>
     </section>
 
-    <section class="section card" id="tools" style="margin-top:16px">
-      <h3 style="margin-top:0">Tools</h3>
-      <div class="chips">
-        <button class="chip" onclick="showOnly('all')">All</button>
-        <button class="chip" onclick="showOnly('pdf')">PDF</button>
-        <button class="chip" onclick="showOnly('image')">Image</button>
-        <button class="chip" onclick="showOnly('text')">Text</button>
-      </div>
+    <section id="tools" class="card panel" style="margin-top:16px">
+      <h2 style="margin-top:0">All tools</h2>
+      <div class="grid">
+        <a class="tool-card" href="/merge-pdf"><div class="tool-ico">M</div><div><h3>Merge PDF</h3><p>Combine multiple PDFs into one.</p></div></a>
+        <a class="tool-card" href="/split-pdf"><div class="tool-ico">S</div><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div></a>
+        <a class="tool-card" href="/compress-pdf"><div class="tool-ico">C</div><div><h3>Compress PDF</h3><p>Reduce file size.</p></div></a>
+        <a class="tool-card" href="/rotate-pdf"><div class="tool-ico">R</div><div><h3>Rotate PDF</h3><p>Rotate pages left or right.</p></div></a>
 
-      <div class="grid" id="toolGrid">
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Merge PDF</h3><p>Combine many PDFs into one.</p></div><div class="ico">🔗</div></div>
-          <div class="btns"><button class="btn" onclick="run('merge')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div><div class="ico">✂️</div></div>
-          <div class="btns"><button class="btn" onclick="run('split')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Rotate PDF</h3><p>Rotate all pages.</p></div><div class="ico">🔄</div></div>
-          <div class="btns"><button class="btn" onclick="run('rotate')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Watermark</h3><p>Add text watermark.</p></div><div class="ico">💧</div></div>
-          <div class="btns"><button class="btn" onclick="run('watermark')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="text">
-          <div class="top"><div><h3>Extract Text</h3><p>Read PDF text.</p></div><div class="ico">🧠</div></div>
-          <div class="btns"><button class="btn" onclick="run('extract-text')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div><div class="ico">🗑️</div></div>
-          <div class="btns"><button class="btn" onclick="run('delete-pages')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Extract Pages</h3><p>Keep only selected pages.</p></div><div class="ico">📄</div></div>
-          <div class="btns"><button class="btn" onclick="run('extract-pages')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="image">
-          <div class="top"><div><h3>Image → PDF</h3><p>Convert PNG/JPG to PDF.</p></div><div class="ico">🖼️</div></div>
-          <div class="btns"><button class="btn" onclick="run('image-to-pdf')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Page Number</h3><p>Add page numbers.</p></div><div class="ico">🔢</div></div>
-          <div class="btns"><button class="btn" onclick="run('page-number')">Run</button></div>
-        </div>
-        <div class="tool" data-cat="pdf">
-          <div class="top"><div><h3>Compress PDF</h3><p>Save optimized PDF.</p></div><div class="ico">🗜️</div></div>
-          <div class="btns"><button class="btn" onclick="run('compress')">Run</button></div>
-        </div>
-      </div>
-    </section>
+        <a class="tool-card" href="/watermark-pdf"><div class="tool-ico">W</div><div><h3>Watermark PDF</h3><p>Add text watermark.</p></div></a>
+        <a class="tool-card" href="/extract-text"><div class="tool-ico">T</div><div><h3>Extract Text</h3><p>Read PDF text.</p></div></a>
+        <a class="tool-card" href="/delete-pages"><div class="tool-ico">D</div><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div></a>
+        <a class="tool-card" href="/extract-pages"><div class="tool-ico">E</div><div><h3>Extract Pages</h3><p>Keep selected pages only.</p></div></a>
 
-    <section class="section card" id="output" style="margin-top:16px">
-      <h3 style="margin-top:0">Output</h3>
-      <div id="status" class="mini" style="margin-bottom:10px">Waiting for action...</div>
-      <div id="result" class="result">No output yet.</div>
+        <a class="tool-card" href="/image-to-pdf"><div class="tool-ico">I</div><div><h3>Image to PDF</h3><p>Convert JPG/PNG to PDF.</p></div></a>
+        <a class="tool-card" href="/page-number"><div class="tool-ico">N</div><div><h3>Page Number</h3><p>Add page numbers.</p></div></a>
+        <a class="tool-card" href="/reorder-pages"><div class="tool-ico">O</div><div><h3>Reorder Pages</h3><p>Change page order.</p></div></a>
+        <a class="tool-card" href="/reverse-pages"><div class="tool-ico">V</div><div><h3>Reverse Pages</h3><p>Reverse all pages.</p></div></a>
+
+        <a class="tool-card" href="/duplicate-pages"><div class="tool-ico">Q</div><div><h3>Duplicate Pages</h3><p>Duplicate selected pages.</p></div></a>
+        <a class="tool-card" href="/add-blank-pages"><div class="tool-ico">B</div><div><h3>Blank Pages</h3><p>Add blank pages.</p></div></a>
+        <a class="tool-card" href="/crop-pdf"><div class="tool-ico">X</div><div><h3>Crop PDF</h3><p>Crop page area.</p></div></a>
+        <a class="tool-card" href="/metadata-pdf"><div class="tool-ico">A</div><div><h3>Metadata</h3><p>Edit document metadata.</p></div></a>
+
+        <a class="tool-card" href="/pdf-info"><div class="tool-ico">J</div><div><h3>PDF Info</h3><p>View page count and info.</p></div></a>
+        <a class="tool-card" href="/pdf-to-word"><div class="tool-ico">U</div><div><h3>PDF to Word</h3><p>Convert to DOCX.</p></div></a>
+        <a class="tool-card" href="/pdf-to-jpg"><div class="tool-ico">Y</div><div><h3>PDF to JPG</h3><p>Convert pages to images.</p></div></a>
+        <a class="tool-card" href="/ocr-pdf"><div class="tool-ico">Z</div><div><h3>OCR PDF</h3><p>Recognize scanned text.</p></div></a>
+      </div>
     </section>
 
     <div class="footer">
-      <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/api/rules">Rules</a><br>
-      WePDF • real backend build
+      <div class="links">
+        <a href="/about">About</a> ·
+        <a href="/contact">Contact</a> ·
+        <a href="/privacy">Privacy</a> ·
+        <a href="/terms">Terms</a> ·
+        <a href="/rules">Rules</a> ·
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+      <div style="margin-top:8px">WePDFHub • dedicated tool routes • secure backend</div>
     </div>
-  </main>
-</div>
-
-<script>
-  const fileInput = document.getElementById('fileInput');
-  const dropzone = document.getElementById('dropzone');
-  const statusEl = document.getElementById('status');
-  const resultEl = document.getElementById('result');
-
-  const downloadBox = document.getElementById('downloadBox');
-  const downloadBtn = document.getElementById('downloadBtn');
-  let lastDownloadUrl = '';
-  let lastFileName = 'output.pdf';
-
-  function jump(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function openDoc(url) {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  }
-
-  function setStatus(title, text, isError = false) {
-    statusEl.innerHTML = isError
-      ? `<span class="error">${title}</span> — ${text}`
-      : `${title} — ${text}`;
-  }
-
-  function setOutput(html) {
-    resultEl.innerHTML = html;
-  }
-
-  function resetDownload() {
-    downloadBox.classList.remove('show');
-    lastDownloadUrl = '';
-    lastFileName = 'output.pdf';
-  }
-
-  function showOnly(cat) {
-    document.querySelectorAll('#toolGrid .tool').forEach(card => {
-      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
-    });
-  }
-
-  ['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropzone.classList.add('drag');
-  }));
-
-  ['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropzone.classList.remove('drag');
-  }));
-
-  dropzone.addEventListener('drop', ev => {
-    if (ev.dataTransfer.files?.length) fileInput.files = ev.dataTransfer.files;
-    resetDownload();
-    setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
-    setOutput('Files selected. Run a tool to generate output.');
-  });
-
-  fileInput.addEventListener('change', () => {
-    resetDownload();
-    setStatus('Files ready', `${fileInput.files.length} file(s) selected.`);
-    setOutput('Files selected. Run a tool to generate output.');
-  });
-
-  downloadBtn.addEventListener('click', () => {
-    if (!lastDownloadUrl) return;
-    const a = document.createElement('a');
-    a.href = lastDownloadUrl;
-    a.download = lastFileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
-
-  function filenameForTool(tool, contentType = '') {
-    if (contentType.includes('application/zip')) return 'output.zip';
-    const map = {
-      merge: 'merged.pdf',
-      split: 'split_pages.zip',
-      rotate: 'rotated.pdf',
-      watermark: 'watermarked.pdf',
-      'delete-pages': 'pages_deleted.pdf',
-      'extract-pages': 'extracted_pages.zip',
-      'image-to-pdf': 'images_to_pdf.pdf',
-      'page-number': 'numbered.pdf',
-      compress: 'compressed.pdf'
-    };
-    return map[tool] || 'output.pdf';
-  }
-
-  async function run(tool) {
-    try {
-      const files = Array.from(fileInput.files || []);
-      if (!files.length) {
-        setStatus('Error', 'Upload files first.', true);
-        setOutput('Choose at least one file before running a tool.');
-        return;
-      }
-
-      const fd = new FormData();
-
-      if (tool === 'merge' || tool === 'image-to-pdf') {
-        files.forEach(f => fd.append('files', f));
-      } else {
-        fd.append('file', files[0]);
-      }
-
-      fd.append('pages', document.getElementById('pagesInput').value || '');
-      fd.append('degrees', document.getElementById('rotateDegrees').value || '90');
-      fd.append('text', document.getElementById('watermarkText').value || 'CONFIDENTIAL');
-
-      setStatus('Processing', tool + ' is running...');
-      setOutput('Processing your file. Please wait...');
-
-      const res = await fetch('/api/' + tool, {
-        method: 'POST',
-        body: fd
-      });
-
-      const ct = res.headers.get('content-type') || '';
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Request failed');
-      }
-
-      if (ct.includes('application/json')) {
-        const data = await res.json();
-        resetDownload();
-        setStatus('Done', tool + ' completed successfully.');
-        setOutput('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
-        return;
-      }
-
-      const blob = await res.blob();
-      lastDownloadUrl = URL.createObjectURL(blob);
-      lastFileName = res.headers.get('x-filename') || filenameForTool(tool, ct);
-
-      downloadBox.classList.add('show');
-      setStatus('Done', tool + ' completed successfully.');
-      setOutput('✅ File is ready. Download button is below the upload box.');
-    } catch (err) {
-      resetDownload();
-      setStatus('Error', err.message, true);
-      setOutput('<span class="error">' + err.message + '</span>');
-    }
-  }
-</script>
+  </div>
 </body>
-</html>
+          </html>
