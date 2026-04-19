@@ -24,6 +24,8 @@ app.use(
     contentSecurityPolicy: false
   })
 );
+app.use(express.static(path.join(__dirname, "public")));
+
 app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
