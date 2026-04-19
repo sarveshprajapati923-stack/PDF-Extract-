@@ -1,18 +1,27 @@
 {
-  "name": "pdf-extract-pro",
-  "version": "1.0.0",
-  "main": "server.js",
+  "name": "wepdfhub",
+  "version": "3.0.0",
+  "private": true,
+  "type": "commonjs",
   "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=20"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "archiver": "^7.0.1",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "docx": "^8.5.0",
     "express": "^4.21.2",
-    "multer": "^1.4.5-lts.1",
+    "helmet": "^8.0.0",
+    "jszip": "^3.10.1",
+    "multer": "^1.4.5-lts.2",
     "pdf-lib": "^1.17.1",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.9.155",
+    "canvas": "^3.1.0",
+    "tesseract.js": "^5.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
