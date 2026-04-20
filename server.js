@@ -1238,6 +1238,10 @@ app.post("/api/pdf-to-jpg", upload.single("file"), async (req, res) => {
 
     const bytes = await fsp.readFile(file.path);
     const images = await renderPdfToImages(bytes, 2);
+    if (images.length > 10) {
+  throw new Error("Max 10 pages allowed for this tool.");
+}
+    
     const zip = new JSZip();
 
     for (const img of images) {
@@ -1261,7 +1265,17 @@ app.post("/api/ocr-pdf", upload.single("file"), async (req, res) => {
 
     const bytes = await fsp.readFile(file.path);
     const images = await renderPdfToImages(bytes, 2);
-    worker = await createWorker("eng");
+    
+    if (images.length > 10) {
+  throw new Error("Max 10 pages allowed for this tool.");
+    }
+    
+    worker = await createWorker({
+  logger: m => console.log(m)
+});
+
+await worker.loadLanguage("eng");
+await worker.initialize("eng");
 
     const results = [];
     for (const img of images) {
