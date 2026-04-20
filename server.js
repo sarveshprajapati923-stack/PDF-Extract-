@@ -21,7 +21,14 @@ app.use(cors());
 app.use(compression());
 app.use(
   helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"]
+      }
+    }
   })
 );
 app.use(express.static(path.join(__dirname, "public")));
