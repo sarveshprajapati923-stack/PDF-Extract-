@@ -311,10 +311,21 @@ function renderToolPage(tool) {
       <section class="grid">
         <div class="card panel">
           <h2 style="margin-top:0">Upload & process</h2>
-          <div class="upload">
+          <div class="upload dropzone" id="dropzone">
+  <div style="text-align:center;padding:30px">
+    <div style="font-size:50px">📂</div>
+    <div style="font-weight:700;margin-top:10px">
+      Drag & Drop Files Here
+    </div>
+    <div class="mini">or click to upload</div>
+  </div>
             <div class="field">
               <label>Files</label>
               <input id="fileInput" type="file" multiple accept="application/pdf,image/png,image/jpeg" />
+              <div id="previewLabel" style="display:none;font-size:12px;margin-top:8px;color:#64748b">
+  Preview:
+</div>
+              <canvas id="previewCanvas" style="width:100%;margin-top:10px;border-radius:12px;border:1px solid #ddd;display:none;"></canvas>
             </div>
 
             ${fieldPages}
@@ -336,9 +347,22 @@ function renderToolPage(tool) {
           </div>
 
           <div id="downloadBox" class="download-box">
-            <div style="font-weight:800;margin-bottom:8px">Your file is ready</div>
-            <button id="downloadBtn" class="download" type="button">Download File</button>
-          </div>
+  <div style="font-size:40px">✅</div>
+
+  <div style="font-weight:800;margin:10px 0">
+    File Ready
+  </div>
+
+  <button id="downloadBtn" class="download" type="button">
+    ⬇ Download
+  </button>
+
+  <button onclick="location.reload()" 
+    class="btn" 
+    style="margin-top:10px">
+    Reset
+  </button>
+</div>
 
           <div id="status" class="status mini">Waiting for action...</div>
           <div id="result" class="result">No output yet.</div>
