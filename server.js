@@ -282,6 +282,8 @@ function renderToolPage(tool) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="SM3evf3tuRLP23syjV822eZnRKIDL09kfOwthVj3Res" />
+    <!-- Robots SEO -->
+  <meta name="robots" content="index, follow">
     <title>${escapeHtml(tool.title)} | WePDFHub</title>
     <meta name="description" content="${escapeHtml(tool.description)}" />
     <link rel="canonical" href="${fullUrl(tool.slug)}" />
