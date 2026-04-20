@@ -659,6 +659,8 @@ Sitemap: ${fullUrl("sitemap.xml")}`);
 });
 
 app.get("/sitemap.xml", (req, res) => {
+
+  const lastmod = new Date().toISOString();
   const urls = [
     "",
     "about",
@@ -676,7 +678,12 @@ app.get("/sitemap.xml", (req, res) => {
       .map(u => {
         const loc = u ? fullUrl(u) : BASE_URL;
         const priority = u === "" ? "1.0" : "0.8";
-        return `  <url><loc>${loc}</loc><changefreq>weekly</changefreq><priority>${priority}</priority></url>`;
+        return `  <url>
+  <loc>${loc}</loc>
+  <lastmod>${lastmod}</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>${priority}</priority>
+</url>`;
       })
       .join("\n") +
     `\n</urlset>`;
