@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WePDFHub - Free PDF Tools</title>
-
-<style>
+<title>WePDFHub - Smart PDF Tools</title><style>
 :root{
   --bg:#f7f9ff;
   --panel:#fff;
@@ -24,6 +21,39 @@ body{
 
 .wrap{max-width:1200px;margin:auto;padding:20px}
 
+.top-bar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+
+.search{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  outline:none;
+}
+
+.filter-btn{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.filter-btn.active{
+  background:var(--primary);
+  color:#fff;
+}
+
+.filter-btn:hover{
+  transform:scale(1.05);
+}
+
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -41,7 +71,7 @@ body{
 }
 
 .tool-card:hover{
-  transform:translateY(-4px);
+  transform:translateY(-5px);
 }
 
 .tool-ico{
@@ -57,61 +87,76 @@ body{
 
 h3{margin:0;font-size:16px}
 p{margin:0;font-size:13px;color:var(--muted)}
-</style>
-</head>
+</style></head><body><div class="wrap">  <div class="top-bar">
+    <input id="search" class="search" placeholder="Search tools..." /><button class="filter-btn active" data-cat="all">All</button>
+<button class="filter-btn" data-cat="edit">Edit</button>
+<button class="filter-btn" data-cat="convert">Convert</button>
+<button class="filter-btn" data-cat="security">Security</button>
 
-<body>
-
-<div class="wrap">
-  <h2>All Tools</h2>
-  <div id="toolsGrid" class="grid"></div>
-</div>
-
-<script>
-// 🔥 SAME tools array (sync with backend)
+  </div>  <div id="grid" class="grid"></div></div><script>
 const tools = [
-  { slug:"merge-pdf", title:"Merge PDF", desc:"Combine PDFs" },
-  { slug:"split-pdf", title:"Split PDF", desc:"Split pages" },
-  { slug:"compress-pdf", title:"Compress PDF", desc:"Reduce size" },
-  { slug:"rotate-pdf", title:"Rotate PDF", desc:"Rotate pages" },
-  { slug:"watermark-pdf", title:"Watermark PDF", desc:"Add watermark" },
-  { slug:"extract-text", title:"Extract Text", desc:"Read text" },
-  { slug:"delete-pages", title:"Delete Pages", desc:"Remove pages" },
-  { slug:"extract-pages", title:"Extract Pages", desc:"Keep pages" },
-  { slug:"image-to-pdf", title:"Image to PDF", desc:"Convert images" },
-  { slug:"page-number", title:"Page Number", desc:"Add numbers" },
-  { slug:"reorder-pages", title:"Reorder Pages", desc:"Change order" },
-  { slug:"reverse-pages", title:"Reverse Pages", desc:"Reverse pages" },
-  { slug:"duplicate-pages", title:"Duplicate Pages", desc:"Duplicate pages" },
-  { slug:"add-blank-pages", title:"Blank Pages", desc:"Add blank pages" },
-  { slug:"crop-pdf", title:"Crop PDF", desc:"Crop pages" },
-  { slug:"metadata-pdf", title:"Metadata", desc:"Edit metadata" },
-  { slug:"pdf-info", title:"PDF Info", desc:"View info" },
-  { slug:"pdf-to-word", title:"PDF to Word", desc:"Convert to DOCX" },
-  { slug:"pdf-to-jpg", title:"PDF to JPG", desc:"Convert to images" },
-  { slug:"ocr-pdf", title:"OCR PDF", desc:"Scan text" },
-  { slug:"protect-pdf", title:"Protect PDF", desc:"Add password 🔒" } // ✅ added
+  {slug:"merge-pdf", title:"Merge PDF", cat:"edit"},
+  {slug:"split-pdf", title:"Split PDF", cat:"edit"},
+  {slug:"compress-pdf", title:"Compress PDF", cat:"edit"},
+  {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit"},
+  {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit"},
+  {slug:"delete-pages", title:"Delete Pages", cat:"edit"},
+  {slug:"extract-pages", title:"Extract Pages", cat:"edit"},
+  {slug:"reorder-pages", title:"Reorder Pages", cat:"edit"},
+  {slug:"reverse-pages", title:"Reverse Pages", cat:"edit"},
+  {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit"},
+  {slug:"crop-pdf", title:"Crop PDF", cat:"edit"},
+
+  {slug:"image-to-pdf", title:"Image to PDF", cat:"convert"},
+  {slug:"pdf-to-word", title:"PDF to Word", cat:"convert"},
+  {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert"},
+  {slug:"ocr-pdf", title:"OCR PDF", cat:"convert"},
+
+  {slug:"protect-pdf", title:"Protect PDF", cat:"security"},
+  {slug:"metadata-pdf", title:"Metadata", cat:"security"},
+  {slug:"pdf-info", title:"PDF Info", cat:"security"}
 ];
 
-// 🔥 Render dynamic grid
-const grid = document.getElementById("toolsGrid");
+let currentCat = "all";
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
 
-tools.forEach(tool => {
-  const el = document.createElement("a");
-  el.href = "/" + tool.slug;
-  el.className = "tool-card";
+function render(){
+  grid.innerHTML = "";
 
-  el.innerHTML = `
-    <div class="tool-ico">${tool.title[0]}</div>
-    <div>
-      <h3>${tool.title}</h3>
-      <p>${tool.desc}</p>
-    </div>
-  `;
+  const val = search.value.toLowerCase();
 
-  grid.appendChild(el);
+  tools
+    .filter(t => (currentCat === "all" || t.cat === currentCat))
+    .filter(t => t.title.toLowerCase().includes(val))
+    .forEach(t => {
+      const el = document.createElement("a");
+      el.href = "/" + t.slug;
+      el.className = "tool-card";
+
+      el.innerHTML = `
+        <div class="tool-ico">${t.title[0]}</div>
+        <div>
+          <h3>${t.title}</h3>
+          <p>${t.cat}</p>
+        </div>
+      `;
+
+      grid.appendChild(el);
+    });
+}
+
+search.addEventListener("input", render);
+
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+  btn.onclick = () => {
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentCat = btn.dataset.cat;
+    render();
+  };
 });
-</script>
 
-</body>
+render();
+</script></body>
 </html>
