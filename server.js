@@ -54,10 +54,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-/* PDF TO WORD PAGE */
-app.get("/pdf-to-word", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "pdf-to-word.html"));
-});
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
   { slug: "merge-pdf", title: "Merge PDF", description: "Combine multiple PDF files into one.", files: "multi" },
