@@ -53,44 +53,16 @@ const upload = multer({
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
-const { PDFDocument } = require("pdf-lib");
-
-// सुनिश्चित uploads folder ho
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
-}
-
-// 🔒 Multer config (rules ke saath)
-const upload = multer({
-  dest: "uploads/",
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype !== "application/pdf") {
-      return cb(new Error("Only PDF files allowed"), false);
-    }
-    cb(null, true);
-  }
-});
-
 app.post("/protect-pdf", upload.single("pdf"), async (req, res) => {
   let filePath = null;
   let outputPath = null;
 
   try {
-    if (!req.file) {
-      return res.status(400).send("No file uploaded");
-    }
+    if (!req.file) return res.status(400).send("No file");
 
     const password = req.body.password;
-
-    // 🔒 Password validation
     if (!password || password.length < 4) {
-      return res.status(400).send("Password must be at least 4 characters");
+      return res.status(400).send("Weak password");
     }
 
     filePath = req.file.path;
@@ -100,16 +72,10 @@ app.post("/protect-pdf", upload.single("pdf"), async (req, res) => {
 
     const protectedBytes = await pdfDoc.save({
       userPassword: password,
-      ownerPassword: password,
-      permissions: {
-        printing: "highResolution",
-        modifying: false,
-        copying: false,
-        annotating: false
-      }
+      ownerPassword: password
     });
 
-    outputPath = path.join("uploads", "protected-" + Date.now() + ".pdf");
+    outputPath = path.join(uploadDir, "protected-" + Date.now() + ".pdf");
     fs.writeFileSync(outputPath, protectedBytes);
 
     res.download(outputPath, "protected.pdf", () => {
@@ -118,12 +84,7 @@ app.post("/protect-pdf", upload.single("pdf"), async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error protecting PDF");
-
-    // Cleanup agar error aaye
-    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+    res.status(500).send("Error");
   }
 });
 
