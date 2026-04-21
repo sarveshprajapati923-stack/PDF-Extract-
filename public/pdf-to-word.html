@@ -148,7 +148,7 @@
           <section id="fileCard" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div class="flex min-w-0 gap-4">
-                <div class="flex h-24 w-18 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
+                <div class="flex h-24 w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
                   <canvas id="thumbCanvas" class="block bg-white"></canvas>
                 </div>
 
@@ -269,7 +269,7 @@
             </div>
           </section>
 
-          <footer class="rounded-[2rem] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500 shadow-soft">
+          <footer class="rounded-[2rem] border border-slate-200 bg-white px-5 py-4 shadow-soft">
             <div class="grid gap-3 sm:grid-cols-4 sm:gap-4">
               <div class="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
                 <div class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white">✓</div>
@@ -580,10 +580,6 @@
 
       await renderPageToCanvas(page, previewCanvas, scale);
       updateFileCard();
-
-      if (!thumbCanvas.width || !thumbCanvas.height) {
-        await renderThumbnail(file);
-      }
     }
 
     async function renderThumbnail(file) {
@@ -593,25 +589,8 @@
       const pdf = await pdfjsLib.getDocument({ url: thumbObjectUrl }).promise;
       const page = await pdf.getPage(1);
 
-      const canvas = thumbCanvas;
-      const context = canvas.getContext("2d", { alpha: false });
-
-      const viewport = page.getViewport({ scale: 0.38 });
-      const dpr = window.devicePixelRatio || 1;
-
-      canvas.width = Math.floor(viewport.width * dpr);
-      canvas.height = Math.floor(viewport.height * dpr);
-      canvas.style.width = Math.floor(viewport.width) + "px";
-      canvas.style.height = Math.floor(viewport.height) + "px";
-
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      context.fillStyle = "#ffffff";
-      context.fillRect(0, 0, viewport.width, viewport.height);
-
-      await page.render({
-        canvasContext: context,
-        viewport
-      }).promise;
+      const viewport = page.getViewport({ scale: 0.36 });
+      await renderPageToCanvas(page, thumbCanvas, 0.36);
     }
 
     function updateFileCard() {
@@ -655,8 +634,10 @@
 
       updateFileCard();
       setProgress(4, "Rendering preview...");
+
       try {
         await renderPreview(file);
+        await renderThumbnail(file);
         setProgress(0, "Ready to convert.");
       } catch (err) {
         alert("Preview could not be loaded.");
