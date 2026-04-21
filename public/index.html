@@ -3,160 +3,115 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="google-site-verification" content="SM3evf3tuRLP23syjV822eZnRKIDL09kfOwthVj3Res" />
-<title>WePDFHub - Free PDF Tools | Merge, Split, Compress Online</title>
-<meta name="description" content="WePDFHub lets you merge, split, compress, rotate, watermark, extract text, and convert PDFs online. Fast, secure, mobile-friendly PDF tools." />
-<link rel="canonical" href="https://wepdfhub.click" />
-<meta property="og:title" content="WePDFHub - Free PDF Tools" />
-<meta property="og:description" content="Fast and modern PDF tools with dedicated pages for every tool." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://wepdfhub.click" />
-<meta name="twitter:card" content="summary_large_image" />
+<title>WePDFHub - Free PDF Tools</title>
+
 <style>
-  :root{
-    --bg:#f7f9ff;
-    --bg2:#eef4ff;
-    --panel:#ffffff;
-    --line:#d8e2f0;
-    --text:#0f172a;
-    --muted:#64748b;
-    --primary:#2563eb;
-    --primary2:#0ea5e9;
-    --shadow:0 18px 50px rgba(15,23,42,.08);
-    --radius:24px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text)}
-  a{text-decoration:none;color:inherit}
-  .wrap{max-width:1200px;margin:0 auto;padding:18px}
-  .hero,.card{
-    border-radius:var(--radius);
-    border:1px solid var(--line);
-    background:var(--panel);
-    box-shadow:var(--shadow)
-  }
-  .hero{padding:24px;display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
-  .badge{
-    display:inline-flex;gap:8px;align-items:center;
-    padding:8px 12px;border-radius:999px;
-    border:1px solid rgba(37,99,235,.18);
-    background:rgba(37,99,235,.06);
-    color:#1d4ed8;font-size:.9rem
-  }
-  h1{margin:12px 0 10px;font-size:clamp(2rem,5vw,4rem);line-height:.95;letter-spacing:-.05em}
-  p{color:var(--muted);line-height:1.7}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;
-    padding:12px 16px;border-radius:14px;border:1px solid var(--line);
-    background:#fff;transition:.18s ease
-  }
-  .btn:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.35)}
-  .solid{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;font-weight:700}
-  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
-  .tool-card{
-    padding:16px;border-radius:22px;border:1px solid var(--line);
-    background:linear-gradient(180deg,#fff,#f8fbff);
-    display:flex;gap:12px;align-items:flex-start;min-height:118px;
-    transition:.18s ease
-  }
-  .tool-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.08)}
-  .tool-ico{
-    width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
-    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.12));
-    color:var(--primary);font-weight:800
-  }
-  .tool-card h3{margin:0 0 4px;font-size:1rem}
-  .tool-card p{margin:0;font-size:.92rem}
-  .panel{padding:18px}
-  .mini{font-size:.92rem;color:var(--muted)}
-  .footer{padding:18px 4px 4px;text-align:center;color:var(--muted)}
-  .links a{margin:0 6px}
-  @media (max-width:1100px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:700px){.grid{grid-template-columns:1fr}}
-</style>
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"WebSite",
-  "name":"WePDFHub",
-  "url":"https://wepdfhub.click",
-  "description":"Free online PDF tools with dedicated pages for every tool."
+:root{
+  --bg:#f7f9ff;
+  --panel:#fff;
+  --line:#d8e2f0;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#2563eb;
 }
-</script>
+
+body{
+  margin:0;
+  font-family:system-ui;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.wrap{max-width:1200px;margin:auto;padding:20px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+
+.tool-card{
+  padding:16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:#fff;
+  display:flex;
+  gap:12px;
+  transition:.2s;
+}
+
+.tool-card:hover{
+  transform:translateY(-4px);
+}
+
+.tool-ico{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:#eef4ff;
+  font-weight:bold;
+  color:var(--primary);
+}
+
+h3{margin:0;font-size:16px}
+p{margin:0;font-size:13px;color:var(--muted)}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div>
-        <span class="badge">Competitor-style PDF suite</span>
-        <h1>Clean, fast, dedicated PDF tool pages.</h1>
-        <p>WePDFHub gives every tool its own link, title, and description so the site behaves like a real PDF platform.</p>
-        <div class="actions">
-          <a class="btn solid" href="#tools">Open tools</a>
-          <a class="btn" href="/merge-pdf">Try Merge PDF</a>
-        </div>
-      </div>
-      <div class="card panel">
-        <h2 style="margin:0 0 8px">Core tools</h2>
-        <p class="mini">Merge, split, compress, rotate, watermark, extract text, delete pages, extract pages, image to PDF, page number, reorder, reverse, duplicate, blank pages, crop, metadata, info, PDF to Word, PDF to JPG, OCR.</p>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px">
-          <div class="card panel" style="box-shadow:none;background:#fff"><b>SEO ready</b><div class="mini">Unique pages</div></div>
-          <div class="card panel" style="box-shadow:none;background:#fff"><b>Mobile first</b><div class="mini">Fast UI</div></div>
-          <div class="card panel" style="box-shadow:none;background:#fff"><b>Secure backend</b><div class="mini">Helmet + limits</div></div>
-          <div class="card panel" style="box-shadow:none;background:#fff"><b>Auto sitemap</b><div class="mini">Better indexing</div></div>
-        </div>
-      </div>
-    </section>
 
-    <section id="tools" class="card panel" style="margin-top:16px">
-      <h2 style="margin-top:0">All tools</h2>
-      <div class="grid">
-        <a class="tool-card" href="/merge-pdf"><div class="tool-ico">M</div><div><h3>Merge PDF</h3><p>Combine multiple PDFs into one.</p></div></a>
-        <a class="tool-card" href="/split-pdf"><div class="tool-ico">S</div><div><h3>Split PDF</h3><p>Split selected pages into ZIP.</p></div></a>
-        <a class="tool-card" href="/compress-pdf"><div class="tool-ico">C</div><div><h3>Compress PDF</h3><p>Reduce file size.</p></div></a>
-        <a class="tool-card" href="/rotate-pdf"><div class="tool-ico">R</div><div><h3>Rotate PDF</h3><p>Rotate pages left or right.</p></div></a>
+<div class="wrap">
+  <h2>All Tools</h2>
+  <div id="toolsGrid" class="grid"></div>
+</div>
 
-        <a class="tool-card" href="/watermark-pdf"><div class="tool-ico">W</div><div><h3>Watermark PDF</h3><p>Add text watermark.</p></div></a>
-        <a class="tool-card" href="/extract-text"><div class="tool-ico">T</div><div><h3>Extract Text</h3><p>Read PDF text.</p></div></a>
-        <a class="tool-card" href="/delete-pages"><div class="tool-ico">D</div><div><h3>Delete Pages</h3><p>Remove selected pages.</p></div></a>
-        <a class="tool-card" href="/extract-pages"><div class="tool-ico">E</div><div><h3>Extract Pages</h3><p>Keep selected pages only.</p></div></a>
+<script>
+// 🔥 SAME tools array (sync with backend)
+const tools = [
+  { slug:"merge-pdf", title:"Merge PDF", desc:"Combine PDFs" },
+  { slug:"split-pdf", title:"Split PDF", desc:"Split pages" },
+  { slug:"compress-pdf", title:"Compress PDF", desc:"Reduce size" },
+  { slug:"rotate-pdf", title:"Rotate PDF", desc:"Rotate pages" },
+  { slug:"watermark-pdf", title:"Watermark PDF", desc:"Add watermark" },
+  { slug:"extract-text", title:"Extract Text", desc:"Read text" },
+  { slug:"delete-pages", title:"Delete Pages", desc:"Remove pages" },
+  { slug:"extract-pages", title:"Extract Pages", desc:"Keep pages" },
+  { slug:"image-to-pdf", title:"Image to PDF", desc:"Convert images" },
+  { slug:"page-number", title:"Page Number", desc:"Add numbers" },
+  { slug:"reorder-pages", title:"Reorder Pages", desc:"Change order" },
+  { slug:"reverse-pages", title:"Reverse Pages", desc:"Reverse pages" },
+  { slug:"duplicate-pages", title:"Duplicate Pages", desc:"Duplicate pages" },
+  { slug:"add-blank-pages", title:"Blank Pages", desc:"Add blank pages" },
+  { slug:"crop-pdf", title:"Crop PDF", desc:"Crop pages" },
+  { slug:"metadata-pdf", title:"Metadata", desc:"Edit metadata" },
+  { slug:"pdf-info", title:"PDF Info", desc:"View info" },
+  { slug:"pdf-to-word", title:"PDF to Word", desc:"Convert to DOCX" },
+  { slug:"pdf-to-jpg", title:"PDF to JPG", desc:"Convert to images" },
+  { slug:"ocr-pdf", title:"OCR PDF", desc:"Scan text" },
+  { slug:"protect-pdf", title:"Protect PDF", desc:"Add password 🔒" } // ✅ added
+];
 
-        <a class="tool-card" href="/image-to-pdf"><div class="tool-ico">I</div><div><h3>Image to PDF</h3><p>Convert JPG/PNG to PDF.</p></div></a>
-        <a class="tool-card" href="/page-number"><div class="tool-ico">N</div><div><h3>Page Number</h3><p>Add page numbers.</p></div></a>
-        <a class="tool-card" href="/reorder-pages"><div class="tool-ico">O</div><div><h3>Reorder Pages</h3><p>Change page order.</p></div></a>
-        <a class="tool-card" href="/reverse-pages"><div class="tool-ico">V</div><div><h3>Reverse Pages</h3><p>Reverse all pages.</p></div></a>
+// 🔥 Render dynamic grid
+const grid = document.getElementById("toolsGrid");
 
-        <a class="tool-card" href="/duplicate-pages"><div class="tool-ico">Q</div><div><h3>Duplicate Pages</h3><p>Duplicate selected pages.</p></div></a>
-        <a class="tool-card" href="/add-blank-pages"><div class="tool-ico">B</div><div><h3>Blank Pages</h3><p>Add blank pages.</p></div></a>
-        <a class="tool-card" href="/crop-pdf"><div class="tool-ico">X</div><div><h3>Crop PDF</h3><p>Crop page area.</p></div></a>
-        <a class="tool-card" href="/metadata-pdf"><div class="tool-ico">A</div><div><h3>Metadata</h3><p>Edit document metadata.</p></div></a>
+tools.forEach(tool => {
+  const el = document.createElement("a");
+  el.href = "/" + tool.slug;
+  el.className = "tool-card";
 
-        <a class="tool-card" href="/pdf-info"><div class="tool-ico">J</div><div><h3>PDF Info</h3><p>View page count and info.</p></div></a>
-        <a class="tool-card" href="/pdf-to-word"><div class="tool-ico">U</div><div><h3>PDF to Word</h3><p>Convert to DOCX.</p></div></a>
-        <a class="tool-card" href="/pdf-to-jpg"><div class="tool-ico">Y</div><div><h3>PDF to JPG</h3><p>Convert pages to images.</p></div></a>
-        <a class="tool-card" href="/ocr-pdf"><div class="tool-ico">Z</div><div><h3>OCR PDF</h3><p>Recognize scanned text.</p></div></a>
-        <a class="tool-card" href="/protect-pdf">
-  <div class="tool-ico">P</div>
-  <div>
-    <h3>Protect PDF</h3>
-    <p>Add password to secure PDF.</p>
-  </div>
-        </a>
-      </div>
-    </section>
-
-    <div class="footer">
-      <div class="links">
-        <a href="/about">About</a> ·
-        <a href="/contact">Contact</a> ·
-        <a href="/privacy">Privacy</a> ·
-        <a href="/terms">Terms</a> ·
-        <a href="/rules">Rules</a> ·
-        <a href="/sitemap.xml">Sitemap</a>
-      </div>
-      <div style="margin-top:8px">WePDFHub • dedicated tool routes • secure backend</div>
+  el.innerHTML = `
+    <div class="tool-ico">${tool.title[0]}</div>
+    <div>
+      <h3>${tool.title}</h3>
+      <p>${tool.desc}</p>
     </div>
-  </div>
+  `;
+
+  grid.appendChild(el);
+});
+</script>
+
 </body>
-          </html>
+</html>
