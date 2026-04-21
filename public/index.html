@@ -298,9 +298,26 @@ document.querySelectorAll(".filter-btn").forEach(btn=>{
 });
 
 render();
-function toggleMenu(){
-  const sb = document.getElementById("sidebar");
-  sb.style.left = sb.style.left === "0px" ? "-250px" : "0px";
+document.querySelectorAll(".tabs button").forEach(btn=>{
+  btn.onclick = () => {
+    const text = btn.innerText.toLowerCase();
+
+    toolsFiltered(text);
+  };
+});
+
+function toolsFiltered(type){
+  grid.innerHTML = "";
+
+  tools
+  .filter(t => {
+    if(type === "all") return true;
+    if(type.includes("organize")) return t.cat==="edit";
+    if(type.includes("convert")) return t.cat==="convert";
+    if(type.includes("security")) return t.cat==="security";
+    return true;
+  })
+  .forEach(renderCard);
   }
 
 </script>
