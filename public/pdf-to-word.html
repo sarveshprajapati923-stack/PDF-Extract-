@@ -6,46 +6,73 @@
   <title>Convert PDF to Word - WePDFHub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; }
-    .upload-box { transition: all 0.3s; }
-    .upload-box:hover { border-color: #ef4444; background: #fef2f2; }
-  </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-  <div class="max-w-2xl mx-auto py-8 px-4">
-    
-    <h1 class="text-3xl font-bold text-center mb-2">Convert PDF to Word</h1>
-    <p class="text-center text-gray-600 mb-8">Fast, secure and easy PDF to DOCX conversion</p>
+  <div class="max-w-2xl mx-auto pt-10 px-4">
+
+    <h1 class="text-4xl font-bold text-center text-gray-900 mb-2">Convert PDF to Word</h1>
+    <p class="text-center text-gray-600 mb-12">Fast, clean, and high-quality conversion</p>
 
     <!-- Upload Area -->
-    <div id="uploadArea" class="upload-box border-2 border-dashed border-gray-300 rounded-3xl p-12 text-center cursor-pointer hover:border-red-500">
-      <i class="fa-solid fa-cloud-arrow-up text-6xl text-red-500 mb-4"></i>
-      <p class="text-xl font-semibold">Drop your PDF file here</p>
-      <p class="text-gray-500">or</p>
+    <div id="uploadArea" class="border-2 border-dashed border-gray-300 rounded-3xl p-16 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
+      <i class="fa-solid fa-cloud-arrow-up text-7xl text-blue-500 mb-6"></i>
+      <p class="text-2xl font-semibold text-gray-800">Drop your PDF file here</p>
+      <p class="text-gray-500 mt-3">or click to upload</p>
+      
       <button onclick="document.getElementById('fileInput').click()" 
-              class="mt-4 px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700">
+              class="mt-8 px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-2xl text-lg shadow-md">
         Select PDF File
       </button>
+      
       <input type="file" id="fileInput" accept="application/pdf" class="hidden">
-      <p class="text-xs text-gray-400 mt-4">PDF files only • Max 50MB</p>
+      <p class="text-sm text-gray-400 mt-8">PDF only • Max 50MB</p>
     </div>
 
-    <!-- File Info & Preview (will show after upload) -->
-    <div id="fileInfo" class="hidden mt-6">
-      <!-- Dynamic content JS se aayega -->
+    <!-- File Info Area -->
+    <div id="fileInfo" class="hidden mt-8 bg-white rounded-3xl shadow p-8">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-20 bg-red-100 rounded flex items-center justify-center text-3xl">📄</div>
+        <div class="flex-1 min-w-0">
+          <p class="font-medium truncate" id="fileName">filename.pdf</p>
+          <p class="text-sm text-gray-500" id="fileSize">0 MB</p>
+        </div>
+        <button onclick="removeFile()" class="text-red-500 hover:text-red-600 font-medium">Remove</button>
+      </div>
+
+      <button onclick="startConversion()" 
+              class="w-full mt-10 py-5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xl rounded-2xl shadow">
+        Convert to Word
+      </button>
     </div>
 
   </div>
 
   <script>
-    // Simple JS for demo (baad mein backend connect kar lena)
-    document.getElementById('fileInput').addEventListener('change', function(e) {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileInput = document.getElementById('fileInput');
+
+    fileInput.addEventListener('change', function(e) {
       if (e.target.files[0]) {
-        alert("File selected: " + e.target.files[0].name + "\n\nAbhi backend connect karna baaki hai.");
+        const file = e.target.files[0];
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = (file.size / (1024*1024)).toFixed(2) + " MB";
+        
+        uploadArea.classList.add('hidden');
+        fileInfo.classList.remove('hidden');
       }
     });
+
+    function removeFile() {
+      uploadArea.classList.remove('hidden');
+      fileInfo.classList.add('hidden');
+      fileInput.value = '';
+    }
+
+    function startConversion() {
+      alert("✅ File conversion started!\n\n(Backend integration abhi baaki hai)");
+    }
   </script>
 
 </body>
