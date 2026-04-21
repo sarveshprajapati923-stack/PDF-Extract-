@@ -886,6 +886,9 @@ app.post("/api/merge-pdf", upload.array("files", 20), async (req, res) => {
   const files = req.files || [];
   try {
     if (files.length < 2) return res.status(400).json({ error: "Upload at least 2 PDF files." });
+    app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
+  // code
+});
 
     const merged = await PDFDocument.create();
     for (const file of files) {
