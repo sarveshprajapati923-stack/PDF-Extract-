@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protect PDF - WePDFHub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+.container{
+  width:100%;
+  max-width:420px;
+  padding:25px;
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  text-align:center;
+  animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;}
+}
+
+h2{
+  margin-bottom:15px;
+  font-weight:600;
+}
+
+.upload-box{
+  border:2px dashed #38bdf8;
+  padding:20px;
+  border-radius:15px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.upload-box:hover{
+  background:rgba(56,189,248,0.1);
+}
+
+input[type=file]{display:none;}
+
+input[type=password]{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+.strength{
+  height:6px;
+  border-radius:10px;
+  margin-top:8px;
+  background:#334155;
+  overflow:hidden;
+}
+
+.strength span{
+  display:block;
+  height:100%;
+  width:0%;
+  background:#ef4444;
+  transition:.3s;
+}
+
+button{
+  margin-top:20px;
+  padding:12px 20px;
+  border:2px solid #38bdf8;
+  background:transparent;
+  color:#38bdf8;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  background:#38bdf8;
+  color:black;
+  transform:scale(1.05);
+}
+
+.loader{
+  display:none;
+  margin-top:15px;
+}
+
+.loader div{
+  width:8px;
+  height:8px;
+  margin:3px;
+  background:#38bdf8;
+  border-radius:50%;
+  display:inline-block;
+  animation:bounce 1.2s infinite;
+}
+
+.loader div:nth-child(2){animation-delay:.2s;}
+.loader div:nth-child(3){animation-delay:.4s;}
+
+@keyframes bounce{
+  0%,80%,100%{transform:scale(0);}
+  40%{transform:scale(1);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🔐 Protect PDF</h2>
+
+  <label class="upload-box" id="dropArea">
+    Click or Drop PDF Here
+    <input type="file" id="fileInput" accept="application/pdf">
+  </label>
+
+  <input type="password" id="password" placeholder="Enter Password">
+
+  <div class="strength"><span id="bar"></span></div>
+
+  <button onclick="protectPDF()">Protect PDF</button>
+
+  <div class="loader" id="loader">
+    <div></div><div></div><div></div>
+  </div>
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const dropArea = document.getElementById("dropArea");
+const bar = document.getElementById("bar");
+
+// Drag & Drop
+dropArea.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropArea.style.background = "#0ea5e9";
+});
+
+dropArea.addEventListener("dragleave", () => {
+  dropArea.style.background = "";
+});
+
+dropArea.addEventListener("drop", e => {
+  e.preventDefault();
+  fileInput.files = e.dataTransfer.files;
+  dropArea.style.background = "";
+});
+
+// Password strength
+document.getElementById("password").addEventListener("input", e => {
+  const val = e.target.value;
+  let strength = 0;
+  if(val.length > 5) strength += 30;
+  if(/[A-Z]/.test(val)) strength += 20;
+  if(/[0-9]/.test(val)) strength += 20;
+  if(/[^A-Za-z0-9]/.test(val)) strength += 30;
+
+  bar.style.width = strength + "%";
+
+  if(strength < 40) bar.style.background = "#ef4444";
+  else if(strength < 70) bar.style.background = "#f59e0b";
+  else bar.style.background = "#22c55e";
+});
+
+async function protectPDF(){
+  const file = fileInput.files[0];
+  const password = document.getElementById("password").value;
+
+  if(!file || !password){
+    alert("Upload file & enter password");
+    return;
+  }
+
+  document.getElementById("loader").style.display = "block";
+
+  const formData = new FormData();
+  formData.append("pdf", file);
+  formData.append("password", password);
+
+  const res = await fetch("/protect-pdf", {
+    method:"POST",
+    body:formData
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "protected.pdf";
+  a.click();
+
+  document.getElementById("loader").style.display = "none";
+}
+</script>
+
+</body>
+</html>
