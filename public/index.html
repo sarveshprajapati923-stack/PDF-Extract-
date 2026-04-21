@@ -252,14 +252,16 @@ function render(){
     const el=document.createElement("a");
     el.href="/"+t.slug;
     el.className="tool-card";
-
-    el.innerHTML=`
-      <div class="tool-ico">${icons[t.slug] || "📄"}</div>
-      <div>
-        <h3>${t.title}</h3>
-        <p>${t.cat}</p>
-      </div>
-    `;
+el.innerHTML = `
+  <div class="tool-ico">${icons[t.slug] || "📄"}</div>
+  <div>
+    <h3>${t.title}</h3>
+    <p>${t.cat}</p>
+    <small style="color:#777">
+      Fast, secure and easy to use PDF tool for daily work.
+    </small>
+  </div>
+`;
 
     grid.appendChild(el);
   });
