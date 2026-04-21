@@ -109,8 +109,8 @@ const tools = [
   { slug: "pdf-info", title: "PDF Info", description: "View PDF page count and basic metadata.", files: "single" },
   { slug: "pdf-to-word", title: "PDF to Word", description: "Convert PDF to DOCX.", files: "single" },
   { slug: "pdf-to-jpg", title: "PDF to JPG", description: "Convert PDF pages to JPG images.", files: "single" },
-  { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" }
-  { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" }
+  { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
+  { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
