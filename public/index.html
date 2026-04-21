@@ -135,8 +135,14 @@ p{margin:0;font-size:13px;color:var(--muted)}
       }
   .menu-btn{
   position:fixed;
+  top:15px;
+  left:15px;
   z-index:9999;
-  }
+}
+
+body{
+  padding-top:50px;
+}
 </style>
 </head>
 
@@ -151,9 +157,14 @@ p{margin:0;font-size:13px;color:var(--muted)}
 </div>
 
 <div class="wrap">
-  <div style="margin-bottom:10px;color:#64748b">
-  Every tool you need to work with PDFs in one place
-  </div>
+  .top-bar{
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.top-bar + div{
+  margin-top:10px;
+}
 
   <div class="top-bar">
     <div class="tabs">
