@@ -4,66 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="SM3evf3tuRLP23syjV822eZnRKIDL09kfOwthVj3Res" />
-  <title>PDF to Word | WePDFHub</title>
-  <meta name="description" content="Convert PDF to Word online with a clean, fast, and secure tool from WePDFHub." />
-  <link rel="canonical" href="https://wepdfhub.click/pdf-to-word" />
   <meta name="robots" content="index, follow" />
+  <title>PDF to Word | WePDFHub</title>
+  <meta name="description" content="Convert PDF to Word online with a premium, fast, and secure tool by WePDFHub." />
+  <link rel="canonical" href="https://wepdfhub.click/pdf-to-word" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     html { scroll-behavior: smooth; }
     body {
       background:
-        radial-gradient(circle at top, rgba(37,99,235,.08), transparent 35%),
+        radial-gradient(circle at 10% 0%, rgba(59,130,246,.10), transparent 28%),
+        radial-gradient(circle at 90% 10%, rgba(14,165,233,.08), transparent 24%),
         linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
     }
     .glass {
-      background: rgba(255,255,255,.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
     .shadow-soft {
-      box-shadow: 0 20px 60px rgba(15, 23, 42, .08);
+      box-shadow: 0 18px 60px rgba(15, 23, 42, .08);
+    }
+    .shadow-hover {
+      box-shadow: 0 24px 80px rgba(37, 99, 235, .14);
     }
     .dropzone-active {
       border-color: rgb(37 99 235) !important;
-      background: rgba(239, 246, 255, .9) !important;
-      transform: scale(.995);
-    }
-    .btn-press:active {
-      transform: scale(.98);
-    }
-    .fade-in {
-      animation: fadeIn .25s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      background: linear-gradient(180deg, rgba(239,246,255,.92), rgba(255,255,255,.96)) !important;
+      transform: scale(.996);
+      box-shadow: 0 24px 80px rgba(37, 99, 235, .16);
     }
     .progress-bar {
-      transition: width .22s ease;
+      transition: width .24s ease;
+      background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
+    }
+    .fade-in {
+      animation: fadeIn .24s ease-out;
+    }
+    .float {
+      animation: float 3.2s ease-in-out infinite;
+    }
+    .pulse-ring {
+      animation: ring 2.4s ease-in-out infinite;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes ring {
+      0% { box-shadow: 0 0 0 0 rgba(37,99,235,.18); }
+      70% { box-shadow: 0 0 0 18px rgba(37,99,235,0); }
+      100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); }
     }
     canvas {
       image-rendering: auto;
     }
+    .page-hidden {
+      display: none;
+    }
   </style>
 </head>
+
 <body class="min-h-screen text-slate-900">
   <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-5xl">
-      <header class="mb-6 rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-soft glass">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-6 rounded-[2rem] border border-slate-200/80 bg-white/80 p-5 shadow-soft glass">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div class="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
               WePDFHub • PDF to Word
             </div>
             <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Convert PDF to Word</h1>
             <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-              Fast, clean, and trustworthy conversion with a polished upload flow, preview, progress, and download state.
+              A premium, clean, and trustworthy conversion experience with preview, progress, and a polished download flow.
             </p>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:min-w-[360px]">
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:min-w-[410px]">
             <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
               <div class="text-xs text-slate-500">Format</div>
               <div class="mt-1 font-semibold">PDF → DOCX</div>
@@ -73,94 +96,110 @@
               <div class="mt-1 font-semibold">First Page</div>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <div class="text-xs text-slate-500">Speed</div>
-              <div class="mt-1 font-semibold">Fast UI</div>
+              <div class="text-xs text-slate-500">Privacy</div>
+              <div class="mt-1 font-semibold">Temporary</div>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <div class="text-xs text-slate-500">Security</div>
-              <div class="mt-1 font-semibold">Private</div>
+              <div class="text-xs text-slate-500">Speed</div>
+              <div class="mt-1 font-semibold">Fast UI</div>
             </div>
           </div>
         </div>
       </header>
 
       <section class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-        <!-- LEFT: WORK AREA -->
+        <!-- LEFT -->
         <div class="space-y-6">
-          <!-- Upload zone -->
+          <!-- Dropzone -->
           <section
             id="dropzone"
-            class="group relative overflow-hidden rounded-3xl border-2 border-dashed border-blue-200 bg-white p-5 shadow-soft transition duration-200 hover:border-blue-400 hover:bg-blue-50/60 active:scale-[0.995] sm:p-7"
+            class="group relative overflow-hidden rounded-[2rem] border-2 border-dashed border-blue-200 bg-white p-6 shadow-soft transition duration-200 hover:border-blue-400 hover:bg-blue-50/50 sm:p-8"
           >
-            <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div class="absolute -left-20 top-0 h-40 w-40 rounded-full bg-blue-100 blur-3xl"></div>
-              <div class="absolute -right-20 bottom-0 h-40 w-40 rounded-full bg-sky-100 blur-3xl"></div>
+            <div class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div class="absolute -left-20 top-0 h-44 w-44 rounded-full bg-blue-100 blur-3xl"></div>
+              <div class="absolute -right-20 bottom-0 h-44 w-44 rounded-full bg-sky-100 blur-3xl"></div>
             </div>
 
             <div class="relative z-10 flex flex-col items-center justify-center text-center">
-              <div class="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
-                <svg viewBox="0 0 24 24" fill="none" class="h-10 w-10" aria-hidden="true">
+              <div class="pulse-ring float mb-4 flex h-24 w-24 items-center justify-center rounded-[1.5rem] bg-blue-600 text-white shadow-lg shadow-blue-200">
+                <svg viewBox="0 0 24 24" fill="none" class="h-12 w-12" aria-hidden="true">
                   <path d="M12 16V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   <path d="M7 9l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </div>
 
-              <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">Drop your PDF file here</h2>
-              <p class="mt-2 text-sm text-slate-500 sm:text-base">or click to upload</p>
+              <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">Drop your PDF here or click to upload</h2>
+              <p class="mt-2 text-sm text-slate-500 sm:text-base">Supported formats: PDF only • Best for clean text-based PDFs</p>
 
-              <button
-                id="browseBtn"
-                type="button"
-                class="btn-press mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-              >
-                <span>Choose PDF</span>
-              </button>
+              <div class="mt-5 flex flex-col items-center gap-3 sm:flex-row">
+                <button
+                  id="browseBtn"
+                  type="button"
+                  class="btn-press inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-95"
+                >
+                  <span>Choose PDF</span>
+                </button>
+
+                <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-500 shadow-sm">
+                  Fast preview • Secure flow • Temporary files
+                </div>
+              </div>
 
               <input id="fileInput" type="file" accept="application/pdf" class="hidden" />
             </div>
           </section>
 
-          <!-- File info -->
-          <section id="fileInfoCard" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-soft fade-in">
-            <div class="flex items-start justify-between gap-4">
-              <div>
+          <!-- File card -->
+          <section id="fileInfoCard" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div class="min-w-0">
                 <div class="text-sm font-medium text-slate-500">Uploaded file</div>
                 <div id="fileName" class="mt-1 break-all text-lg font-semibold text-slate-900"></div>
                 <div id="fileSize" class="mt-1 text-sm text-slate-500"></div>
+                <div id="filePages" class="mt-1 text-sm text-slate-500"></div>
               </div>
-              <button id="clearFileBtn" type="button" class="btn-press rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                Remove
-              </button>
+
+              <div class="flex flex-wrap gap-2">
+                <button id="viewInfoBtnTop" type="button" class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                  View file info
+                </button>
+                <button id="removeFileBtn" type="button" class="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100">
+                  Remove file
+                </button>
+              </div>
             </div>
           </section>
 
           <!-- Preview -->
-          <section id="previewSection" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-soft fade-in">
-            <div class="mb-4 flex items-center justify-between">
-              <h3 class="text-lg font-semibold">Preview</h3>
+          <section id="previewSection" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold">Preview</h3>
+                <p class="text-sm text-slate-500">Clear first-page preview from PDF.js</p>
+              </div>
               <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Page 1</span>
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3">
-              <canvas id="previewCanvas" class="mx-auto block max-w-full rounded-xl bg-white"></canvas>
+              <canvas id="pdfCanvas" class="mx-auto block max-w-full rounded-xl bg-white"></canvas>
             </div>
           </section>
 
           <!-- Options -->
-          <section id="optionsSection" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-soft fade-in">
+          <section id="optionsSection" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
             <h3 class="text-lg font-semibold">Options</h3>
 
             <div class="mt-4 grid gap-4 sm:grid-cols-2">
               <label class="block">
-                <span class="mb-2 block text-sm font-medium text-slate-700">Page range</span>
+                <span class="mb-2 block text-sm font-medium text-slate-700">Page Range</span>
                 <select id="pageOption" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
-                  <option value="all">All pages</option>
-                  <option value="custom">Custom range</option>
+                  <option value="all">All Pages</option>
+                  <option value="custom">Custom</option>
                 </select>
               </label>
 
-              <label id="customRangeWrap" class="block opacity-0 pointer-events-none transition">
+              <label id="customRangeWrap" class="block opacity-0 pointer-events-none translate-y-1 transition">
                 <span class="mb-2 block text-sm font-medium text-slate-700">Custom pages</span>
                 <input
                   id="customRange"
@@ -171,31 +210,17 @@
               </label>
             </div>
 
-            <p class="mt-3 text-sm text-slate-500">The page range is prepared in the UI for your backend flow. If your route already supports it, it will pass through.</p>
-          </section>
-
-          <!-- Progress -->
-          <section id="progressSection" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-soft fade-in">
-            <div class="mb-3 flex items-center justify-between">
-              <h3 class="text-lg font-semibold">Converting</h3>
-              <div id="progressText" class="text-sm font-semibold text-blue-700">0%</div>
-            </div>
-
-            <div class="h-3 overflow-hidden rounded-full bg-slate-100">
-              <div id="progressBar" class="progress-bar h-full w-0 rounded-full bg-gradient-to-r from-blue-600 to-sky-500"></div>
-            </div>
-
-            <p id="progressLabel" class="mt-3 text-sm text-slate-500">Preparing your file…</p>
+            <p class="mt-3 text-sm text-slate-500">All pages is the default. Custom range is ready for your backend parsing.</p>
           </section>
 
           <!-- Action button -->
-          <section id="actionSection" class="hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-soft fade-in">
+          <section id="actionSection" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
             <button
               id="runBtn"
               type="button"
-              class="btn-press inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+              class="btn-press inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 active:scale-95"
             >
-              <span>Run PDF to Word</span>
+              <span>Convert to Word</span>
             </button>
 
             <div class="mt-4 grid gap-3 text-sm text-slate-500 sm:grid-cols-3">
@@ -204,40 +229,27 @@
               <div class="rounded-2xl bg-slate-50 px-4 py-3">Mobile friendly</div>
             </div>
           </section>
-        </div>
 
-        <!-- RIGHT: SUCCESS / STATUS -->
-        <div class="space-y-6">
-          <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-soft">
-            <h3 class="text-lg font-semibold">How it works</h3>
-            <div class="mt-4 space-y-3">
-              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">1</div>
-                <div>
-                  <div class="font-medium">Upload a PDF</div>
-                  <div class="text-sm text-slate-500">Drag and drop or browse a file.</div>
-                </div>
-              </div>
-              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">2</div>
-                <div>
-                  <div class="font-medium">Preview and convert</div>
-                  <div class="text-sm text-slate-500">Preview page 1 and click convert.</div>
-                </div>
-              </div>
-              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">3</div>
-                <div>
-                  <div class="font-medium">Download the DOCX</div>
-                  <div class="text-sm text-slate-500">Get the converted Word file instantly.</div>
-                </div>
-              </div>
+          <!-- Progress -->
+          <section id="progressSection" class="hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft fade-in">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="text-lg font-semibold">Converting</h3>
+              <div id="progressText" class="text-sm font-semibold text-blue-700">0%</div>
             </div>
+
+            <div class="h-3 overflow-hidden rounded-full bg-slate-100">
+              <div id="progressBar" class="progress-bar h-full w-0 rounded-full"></div>
+            </div>
+
+            <p id="progressLabel" class="mt-3 text-sm text-slate-500">Preparing your file…</p>
           </section>
 
-          <section id="successSection" class="hidden rounded-3xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-5 shadow-soft fade-in">
+          <!-- Success -->
+          <section id="successSection" class="hidden rounded-[2rem] border border-emerald-200 bg-gradient-to-b from-emerald-50 to-white p-5 shadow-soft fade-in">
             <div class="flex items-start gap-4">
-              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-2xl text-white">✓</div>
+              <div class="pulse-ring flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-2xl text-white">
+                ✓
+              </div>
               <div class="flex-1">
                 <h3 class="text-xl font-semibold text-emerald-800">Conversion complete</h3>
                 <p class="mt-1 text-sm text-emerald-700/80">Your Word file is ready to download.</p>
@@ -249,7 +261,7 @@
                 id="downloadBtn"
                 href="#"
                 download="converted.docx"
-                class="btn-press inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+                class="btn-press inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 active:scale-95"
               >
                 Download Word File
               </a>
@@ -257,69 +269,179 @@
               <button
                 id="anotherBtn"
                 type="button"
-                class="btn-press inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base font-semibold text-slate-800 transition hover:bg-slate-50"
+                class="btn-press inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base font-semibold text-slate-800 transition hover:bg-slate-50 active:scale-95"
               >
                 Convert Another File
               </button>
+
+              <button
+                id="viewInfoBtn"
+                type="button"
+                class="inline-flex w-full items-center justify-center rounded-2xl border border-emerald-200 bg-white px-6 py-4 text-base font-semibold text-emerald-700 transition hover:bg-emerald-50 active:scale-95"
+              >
+                View file info
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="space-y-6">
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+            <h3 class="text-lg font-semibold">How it works</h3>
+            <div class="mt-4 space-y-3">
+              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">1</div>
+                <div>
+                  <div class="font-medium">Upload your PDF</div>
+                  <div class="text-sm text-slate-500">Drag and drop or browse your file.</div>
+                </div>
+              </div>
+              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">2</div>
+                <div>
+                  <div class="font-medium">Preview and convert</div>
+                  <div class="text-sm text-slate-500">Check page 1, choose range, and convert.</div>
+                </div>
+              </div>
+              <div class="flex gap-3 rounded-2xl bg-slate-50 p-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">3</div>
+                <div>
+                  <div class="font-medium">Download Word file</div>
+                  <div class="text-sm text-slate-500">Get the DOCX instantly after conversion.</div>
+                </div>
+              </div>
             </div>
           </section>
 
-          <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-soft">
-            <h3 class="text-lg font-semibold">Trust signals</h3>
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+            <h3 class="text-lg font-semibold">Why this feels premium</h3>
             <div class="mt-4 grid gap-3">
               <div class="rounded-2xl bg-slate-50 p-4">
-                <div class="font-medium">Secure processing</div>
-                <div class="mt-1 text-sm text-slate-500">Files are handled temporarily for the selected action.</div>
+                <div class="font-medium">Modern typography</div>
+                <div class="mt-1 text-sm text-slate-500">Balanced spacing, soft shadows, and clean hierarchy.</div>
               </div>
               <div class="rounded-2xl bg-slate-50 p-4">
-                <div class="font-medium">Clean design</div>
-                <div class="mt-1 text-sm text-slate-500">White and blue UI with a polished, modern feel.</div>
+                <div class="font-medium">Polished interaction</div>
+                <div class="mt-1 text-sm text-slate-500">Glow on hover, active states, and smooth transitions.</div>
               </div>
               <div class="rounded-2xl bg-slate-50 p-4">
-                <div class="font-medium">Fast loading</div>
-                <div class="mt-1 text-sm text-slate-500">Single page with lightweight client-side rendering.</div>
+                <div class="font-medium">Fast loading feel</div>
+                <div class="mt-1 text-sm text-slate-500">One page, lightweight scripts, and CDN-based assets.</div>
               </div>
             </div>
           </section>
         </div>
       </section>
+
+      <footer class="mt-6 rounded-[2rem] border border-slate-200 bg-white/80 px-5 py-4 text-center text-sm text-slate-500 shadow-soft glass">
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <span>Secure</span>
+          <span>Private</span>
+          <span>No paid API</span>
+          <span>Temporary files</span>
+        </div>
+      </footer>
     </div>
   </main>
 
+  <!-- File info modal -->
+  <div id="infoModal" class="page-hidden fixed inset-0 z-50">
+    <div id="infoOverlay" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+    <div class="relative mx-auto flex min-h-full max-w-2xl items-center px-4 py-8">
+      <div class="w-full rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_30px_100px_rgba(15,23,42,.2)] sm:p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-xl font-semibold">File information</h3>
+            <p class="mt-1 text-sm text-slate-500">Quick details about the uploaded PDF.</p>
+          </div>
+          <button id="closeInfoBtn" type="button" class="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+            Close
+          </button>
+        </div>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <div class="text-xs text-slate-500">File name</div>
+            <div id="modalFileName" class="mt-1 break-all font-medium text-slate-900"></div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <div class="text-xs text-slate-500">File size</div>
+            <div id="modalFileSize" class="mt-1 font-medium text-slate-900"></div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <div class="text-xs text-slate-500">Pages</div>
+            <div id="modalPages" class="mt-1 font-medium text-slate-900"></div>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <div class="text-xs text-slate-500">Format</div>
+            <div id="modalType" class="mt-1 font-medium text-slate-900"></div>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+          <div class="text-sm font-medium text-blue-800">Current page range</div>
+          <div id="modalRange" class="mt-1 text-sm text-blue-700">All pages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
     const dropzone = document.getElementById("dropzone");
     const browseBtn = document.getElementById("browseBtn");
     const fileInput = document.getElementById("fileInput");
+
     const fileInfoCard = document.getElementById("fileInfoCard");
     const fileNameEl = document.getElementById("fileName");
     const fileSizeEl = document.getElementById("fileSize");
+    const filePagesEl = document.getElementById("filePages");
+
     const previewSection = document.getElementById("previewSection");
-    const previewCanvas = document.getElementById("previewCanvas");
+    const previewCanvas = document.getElementById("pdfCanvas");
+
     const optionsSection = document.getElementById("optionsSection");
     const actionSection = document.getElementById("actionSection");
     const runBtn = document.getElementById("runBtn");
+
     const progressSection = document.getElementById("progressSection");
     const progressBar = document.getElementById("progressBar");
     const progressText = document.getElementById("progressText");
     const progressLabel = document.getElementById("progressLabel");
+
     const successSection = document.getElementById("successSection");
     const downloadBtn = document.getElementById("downloadBtn");
     const anotherBtn = document.getElementById("anotherBtn");
-    const clearFileBtn = document.getElementById("clearFileBtn");
+    const removeFileBtn = document.getElementById("removeFileBtn");
+    const viewInfoBtn = document.getElementById("viewInfoBtn");
+    const viewInfoBtnTop = document.getElementById("viewInfoBtnTop");
+
     const pageOption = document.getElementById("pageOption");
     const customRangeWrap = document.getElementById("customRangeWrap");
     const customRange = document.getElementById("customRange");
 
+    const infoModal = document.getElementById("infoModal");
+    const infoOverlay = document.getElementById("infoOverlay");
+    const closeInfoBtn = document.getElementById("closeInfoBtn");
+    const modalFileName = document.getElementById("modalFileName");
+    const modalFileSize = document.getElementById("modalFileSize");
+    const modalPages = document.getElementById("modalPages");
+    const modalType = document.getElementById("modalType");
+    const modalRange = document.getElementById("modalRange");
+
     let selectedFile = null;
-    let downloadUrl = "";
     let previewObjectUrl = "";
+    let downloadObjectUrl = "";
+    let previewPageCount = 0;
+    let currentProgress = 0;
+    let progressTimer = null;
+    let isConverting = false;
 
     function humanSize(bytes) {
-      if (!bytes && bytes !== 0) return "0 B";
+      if (!Number.isFinite(bytes)) return "0 B";
       const units = ["B", "KB", "MB", "GB"];
       let value = bytes;
       let unit = 0;
@@ -330,60 +452,108 @@
       return `${value.toFixed(unit === 0 ? 0 : 2)} ${units[unit]}`;
     }
 
-    function setProgress(pct, label) {
-      const clamped = Math.max(0, Math.min(100, pct));
-      progressBar.style.width = clamped + "%";
-      progressText.textContent = clamped + "%";
-      if (label) progressLabel.textContent = label;
-    }
-
     function show(el) {
+      el.classList.remove("page-hidden");
       el.classList.remove("hidden");
     }
 
     function hide(el) {
+      el.classList.add("page-hidden");
       el.classList.add("hidden");
     }
 
-    function resetUI(keepFile = false) {
-      setProgress(0, "Preparing your file…");
+    function setProgress(value, label) {
+      const pct = Math.max(0, Math.min(100, value));
+      currentProgress = pct;
+      progressBar.style.width = pct + "%";
+      progressText.textContent = pct + "%";
+      if (label) progressLabel.textContent = label;
+    }
+
+    function startProgressLoop() {
+      stopProgressLoop();
+      progressTimer = setInterval(() => {
+        if (!isConverting) return;
+        if (currentProgress < 88) {
+          setProgress(currentProgress + (currentProgress < 60 ? 2 : 1), "Converting your file...");
+        }
+      }, 180);
+    }
+
+    function stopProgressLoop() {
+      if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
+      }
+    }
+
+    function activateDropzone(active) {
+      dropzone.classList.toggle("dropzone-active", active);
+      dropzone.classList.toggle("shadow-hover", active);
+    }
+
+    function cleanupPreviewUrl() {
+      if (previewObjectUrl) {
+        URL.revokeObjectURL(previewObjectUrl);
+        previewObjectUrl = "";
+      }
+    }
+
+    function cleanupDownloadUrl() {
+      if (downloadObjectUrl) {
+        URL.revokeObjectURL(downloadObjectUrl);
+        downloadObjectUrl = "";
+      }
+    }
+
+    function resetAll(keepPicker = false) {
+      isConverting = false;
+      stopProgressLoop();
+      cleanupPreviewUrl();
+      cleanupDownloadUrl();
+      currentProgress = 0;
+      previewPageCount = 0;
+
+      setProgress(0, "Preparing your file...");
       hide(progressSection);
       hide(successSection);
       hide(fileInfoCard);
       hide(previewSection);
       hide(optionsSection);
       hide(actionSection);
-      if (!keepFile) {
+      hide(infoModal);
+
+      if (!keepPicker) {
         selectedFile = null;
         fileInput.value = "";
       }
-      if (downloadUrl) {
-        URL.revokeObjectURL(downloadUrl);
-        downloadUrl = "";
-      }
-      if (previewObjectUrl) {
-        URL.revokeObjectURL(previewObjectUrl);
-        previewObjectUrl = "";
-      }
+
+      pageOption.value = "all";
+      customRange.value = "";
+      customRangeWrap.classList.add("opacity-0", "pointer-events-none", "translate-y-1");
+      customRangeWrap.classList.remove("translate-y-0");
     }
 
-    function activateDropzone(active) {
-      dropzone.classList.toggle("dropzone-active", active);
+    function updateFileInfoCard() {
+      if (!selectedFile) return;
+      fileNameEl.textContent = selectedFile.name;
+      fileSizeEl.textContent = humanSize(selectedFile.size);
+      filePagesEl.textContent = previewPageCount ? `${previewPageCount} page(s) detected` : "Loading page count...";
     }
 
     async function renderPreview(file) {
-      if (previewObjectUrl) {
-        URL.revokeObjectURL(previewObjectUrl);
-        previewObjectUrl = "";
-      }
-
+      cleanupPreviewUrl();
       previewObjectUrl = URL.createObjectURL(file);
+
       const pdf = await pdfjsLib.getDocument({ url: previewObjectUrl }).promise;
+      previewPageCount = pdf.numPages;
+      updateFileInfoCard();
+
       const page = await pdf.getPage(1);
 
       const containerWidth = Math.min(
-        previewSection.clientWidth - 40,
-        820
+        Math.max(previewSection.clientWidth - 40, 280),
+        920
       );
 
       const baseViewport = page.getViewport({ scale: 1 });
@@ -393,19 +563,36 @@
       const canvas = previewCanvas;
       const context = canvas.getContext("2d", { alpha: false });
 
-      canvas.width = Math.floor(viewport.width);
-      canvas.height = Math.floor(viewport.height);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(viewport.width * dpr);
+      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.style.width = Math.floor(viewport.width) + "px";
+      canvas.style.height = Math.floor(viewport.height) + "px";
 
-      // Render white background for a clean preview
-      context.save();
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.fillStyle = "#ffffff";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.restore();
+      context.fillRect(0, 0, viewport.width, viewport.height);
 
       await page.render({
         canvasContext: context,
         viewport
       }).promise;
+    }
+
+    function openInfoModal() {
+      if (!selectedFile) return;
+      modalFileName.textContent = selectedFile.name;
+      modalFileSize.textContent = humanSize(selectedFile.size);
+      modalPages.textContent = previewPageCount ? `${previewPageCount} page(s)` : "—";
+      modalType.textContent = selectedFile.type || "application/pdf";
+      modalRange.textContent = pageOption.value === "custom"
+        ? (customRange.value.trim() || "Custom range not set")
+        : "All pages";
+      show(infoModal);
+    }
+
+    function closeInfoModal() {
+      hide(infoModal);
     }
 
     async function handleFile(file) {
@@ -416,26 +603,31 @@
         return;
       }
 
-      resetUI(true);
+      resetAll(true);
       selectedFile = file;
-
-      fileNameEl.textContent = file.name;
-      fileSizeEl.textContent = humanSize(file.size);
 
       show(fileInfoCard);
       show(previewSection);
       show(optionsSection);
       show(actionSection);
 
-      setProgress(0, "Rendering preview…");
-      await renderPreview(file);
+      updateFileInfoCard();
+      setProgress(6, "Rendering preview...");
+      try {
+        await renderPreview(file);
+        setProgress(0, "Ready to convert.");
+      } catch (err) {
+        alert("Preview could not be loaded.");
+      }
     }
 
-    browseBtn.addEventListener("click", () => fileInput.click());
+    browseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fileInput.click();
+    });
 
     dropzone.addEventListener("click", (e) => {
-      // Prevent accidental click on buttons from double opening
-      if (e.target === runBtn) return;
+      if (e.target.closest("button, a, input, select, textarea")) return;
       fileInput.click();
     });
 
@@ -457,9 +649,6 @@
       await handleFile(file);
     });
 
-    clearFileBtn.addEventListener("click", () => resetUI(false));
-    anotherBtn.addEventListener("click", () => resetUI(false));
-
     pageOption.addEventListener("change", () => {
       const custom = pageOption.value === "custom";
       customRangeWrap.classList.toggle("opacity-0", !custom);
@@ -468,11 +657,17 @@
       customRangeWrap.classList.toggle("translate-y-0", custom);
     });
 
-    function showSuccess(blob, filename) {
-      if (downloadUrl) URL.revokeObjectURL(downloadUrl);
-      downloadUrl = URL.createObjectURL(blob);
+    removeFileBtn.addEventListener("click", () => resetAll(false));
+    anotherBtn.addEventListener("click", () => resetAll(false));
+    viewInfoBtn.addEventListener("click", openInfoModal);
+    viewInfoBtnTop.addEventListener("click", openInfoModal);
+    closeInfoBtn.addEventListener("click", closeInfoModal);
+    infoOverlay.addEventListener("click", closeInfoModal);
 
-      downloadBtn.href = downloadUrl;
+    function showSuccess(blob, filename) {
+      cleanupDownloadUrl();
+      downloadObjectUrl = URL.createObjectURL(blob);
+      downloadBtn.href = downloadObjectUrl;
       downloadBtn.setAttribute("download", filename || "converted.docx");
 
       hide(actionSection);
@@ -481,40 +676,51 @@
     }
 
     function runConversion() {
-      if (!selectedFile) return;
+      if (!selectedFile || isConverting) return;
 
+      if (pageOption.value === "custom" && !customRange.value.trim()) {
+        alert("Please enter a custom page range like 1-5.");
+        return;
+      }
+
+      isConverting = true;
       show(progressSection);
       hide(successSection);
-      setProgress(0, "Uploading file…");
+      setProgress(4, "Uploading file...");
+      startProgressLoop();
 
       const formData = new FormData();
       formData.append("file", selectedFile);
-      formData.append("pages", pageOption.value === "custom" ? customRange.value.trim() : "all");
+      formData.append("pages", pageOption.value === "custom" ? customRange.value.trim() : "");
 
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "/api/pdf-to-word", true);
       xhr.responseType = "blob";
 
-      // A smooth progress feel while uploading
       xhr.upload.onprogress = (e) => {
         if (!e.lengthComputable) return;
-        const uploadPct = Math.round((e.loaded / e.total) * 65);
-        setProgress(uploadPct, "Uploading and converting…");
+        const uploadPct = Math.round((e.loaded / e.total) * 70);
+        setProgress(Math.max(currentProgress, uploadPct), e.loaded >= e.total ? "Converting your file..." : "Uploading file...");
+        if (e.loaded >= e.total) {
+          setProgress(Math.max(currentProgress, 72), "Converting your file...");
+        }
       };
 
-      // Optional download progress feel
       xhr.onprogress = (e) => {
         if (!e.lengthComputable) return;
-        const downloadPct = 65 + Math.round((e.loaded / e.total) * 30);
-        setProgress(Math.min(downloadPct, 95), "Finishing conversion…");
+        const convertPct = 72 + Math.round((e.loaded / e.total) * 18);
+        setProgress(Math.min(convertPct, 95), "Converting your file...");
       };
 
       xhr.onload = () => {
+        stopProgressLoop();
+        isConverting = false;
+
         if (xhr.status !== 200) {
           setProgress(0, "Conversion failed.");
-          alert("Conversion failed.");
           hide(progressSection);
           show(actionSection);
+          alert("Conversion failed. Please try again.");
           return;
         }
 
@@ -525,10 +731,12 @@
       };
 
       xhr.onerror = () => {
+        stopProgressLoop();
+        isConverting = false;
         setProgress(0, "Network error.");
-        alert("An error occurred while converting.");
         hide(progressSection);
         show(actionSection);
+        alert("An error occurred while converting.");
       };
 
       xhr.send(formData);
@@ -536,12 +744,14 @@
 
     runBtn.addEventListener("click", runConversion);
 
-    // Keep canvas crisp on resize after preview is shown
     window.addEventListener("resize", () => {
-      if (selectedFile && previewSection.classList.contains("hidden") === false) {
+      if (selectedFile && !previewSection.classList.contains("page-hidden")) {
         renderPreview(selectedFile).catch(() => {});
       }
     });
+
+    // Initial state
+    resetAll(true);
   </script>
 </body>
-  </html>
+</html>
