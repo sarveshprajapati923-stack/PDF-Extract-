@@ -54,11 +54,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
-  // tumhara pura existing code
-});
-app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
-  // unlock code
-});
   let filePath = null;
   let outputPath = null;
 
@@ -86,6 +81,37 @@ app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
     res.download(outputPath, "protected.pdf", () => {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+    });
+
+  } catch (err) {
+    res.status(500).send("Error");
+  }
+});
+
+const { exec } = require("child_process");
+
+app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
+  let input = null;
+  let output = null;
+
+  try {
+    if (!req.file) return res.status(400).send("No file");
+
+    const password = req.body.password || "";
+    input = req.file.path;
+    output = path.join(uploadDir, "unlocked-" + Date.now() + ".pdf");
+
+    const cmd = `qpdf --password="${password}" --decrypt "${input}" "${output}"`;
+
+    exec(cmd, (err) => {
+      if (err) {
+        return res.status(400).send("Wrong password or unlock failed");
+      }
+
+      res.download(output, "unlocked.pdf", () => {
+        if (fs.existsSync(input)) fs.unlinkSync(input);
+        if (fs.existsSync(output)) fs.unlinkSync(output);
+      });
     });
 
   } catch (err) {
