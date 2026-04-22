@@ -54,7 +54,11 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
+  // tumhara pura existing code
+});
 app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
+  // unlock code
+});
   let filePath = null;
   let outputPath = null;
 
