@@ -1597,6 +1597,12 @@ await worker.initialize("eng");
   }
 });
 
+app.get("/:slug", (req, res, next) => {
+  const tool = toolMap.get(req.params.slug);
+  if (!tool) return next();
+  res.send(renderToolPage(tool));
+});
+
 app.use((req, res) => {
   res.status(404).send("Not Found");
 });
