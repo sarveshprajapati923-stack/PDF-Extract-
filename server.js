@@ -222,6 +222,51 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
     await cleanupFiles(getSingleFile(req));
   }
 });
+const { exec } = require("child_process");
+const upload = multer({ dest: uploadDir });
+
+// WORD TO PDF
+app.post("/api/word-to-pdf", upload.single("file"), (req, res) => {
+  let inputPath = null;
+  let outputPath = null;
+
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    inputPath = req.file.path;
+    const outputDir = path.join(__dirname, "converted");
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const outputFileName = req.file.filename + ".pdf";
+    outputPath = path.join(outputDir, outputFileName);
+
+    // LibreOffice command
+    const cmd = `libreoffice --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
+
+    exec(cmd, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Conversion failed" });
+      }
+
+      const finalFile = path.join(outputDir, req.file.filename + ".pdf");
+
+      res.download(finalFile, "converted.pdf", (downloadErr) => {
+        try {
+          if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+          if (fs.existsSync(finalFile)) fs.unlinkSync(finalFile);
+        } catch {}
+      });
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
