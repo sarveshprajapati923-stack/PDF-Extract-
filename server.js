@@ -119,6 +119,110 @@ app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
   }
 });
 
+app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  let worker;
+
+  try {
+    if (!file) return res.status(400).json({ error: "Upload PDF file" });
+
+    const XLSX = require("xlsx");
+    const bytes = await fsp.readFile(file.path);
+
+    // ===== 1. TEXT EXTRACT =====
+    let parsed = await pdfParse(bytes);
+    let text = parsed.text.trim();
+
+    // ===== 2. OCR FALLBACK =====
+    if (!text || text.length < 50) {
+      const images = await renderPdfToImages(bytes, 2);
+
+      worker = await createWorker();
+      await worker.loadLanguage("eng");
+      await worker.initialize("eng");
+
+      let ocrText = "";
+      for (const img of images) {
+        const { data } = await worker.recognize(img.buffer);
+        ocrText += "\n" + data.text;
+      }
+
+      await worker.terminate();
+      worker = null;
+
+      text = ocrText;
+    }
+
+    // ===== 3. LINE CLEAN =====
+    let lines = text
+      .split("\n")
+      .map(l => l.trim())
+      .filter(l => l.length > 1);
+
+    // ===== 4. HEADER DETECT =====
+    let header = null;
+    let rows = [];
+    let maxCols = 0;
+
+    lines.forEach((line, i) => {
+      let cols = line.split(/\s{2,}|\t|\|/).filter(Boolean);
+
+      // fallback
+      if (cols.length <= 1) {
+        cols = line.split(/\s+/);
+      }
+
+      // detect header (first row with many columns)
+      if (!header && cols.length >= 3) {
+        header = cols;
+      }
+
+      maxCols = Math.max(maxCols, cols.length);
+      rows.push(cols);
+    });
+
+    // ===== 5. NORMALIZE =====
+    rows = rows.map(r => {
+      while (r.length < maxCols) r.push("");
+      return r;
+    });
+
+    // ===== 6. ADD HEADER IF FOUND =====
+    if (header) {
+      while (header.length < maxCols) header.push("");
+      rows.unshift(header);
+    }
+
+    // ===== 7. CREATE EXCEL =====
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+
+    // column width auto
+    ws["!cols"] = Array(maxCols).fill({ wch: 22 });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    const buffer = XLSX.write(wb, {
+      type: "buffer",
+      bookType: "xlsx"
+    });
+
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", "attachment; filename=ultra-pdf-to-excel.xlsx");
+    res.setHeader("X-Filename", "ultra-pdf-to-excel.xlsx");
+
+    res.send(buffer);
+
+  } catch (err) {
+    if (worker) {
+      try { await worker.terminate(); } catch {}
+    }
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
   { slug: "merge-pdf", title: "Merge PDF", description: "Combine multiple PDF files into one.", files: "multi" },
