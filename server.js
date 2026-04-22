@@ -662,7 +662,8 @@ function renderToolPage(tool) {
           "pdf-info": "info.json",
           "pdf-to-word": "converted.docx",
           "pdf-to-jpg": "pages.zip",
-          "ocr-pdf": "ocr.txt"
+          "ocr-pdf": "ocr.txt",
+          "pdf-to-excel": "ultra-pdf-to-excel.xlsx"
         };
         return map[toolSlug] || "output.pdf";
       }
