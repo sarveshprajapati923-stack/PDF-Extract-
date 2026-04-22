@@ -53,7 +53,7 @@ const upload = multer({
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-app.post("/protect-pdf", upload.single("pdf"), async (req, res) => {
+app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
   let filePath = null;
   let outputPath = null;
 
@@ -235,6 +235,67 @@ function pageBg() {
 }
 
 function buildStaticPage(title, heading, content) {
+  // ABOUT PAGE
+app.get("/about", (req, res) => {
+  res.send(buildStaticPage(
+    "About Us",
+    "About WePDFHub",
+    `<p>WePDFHub is a fast PDF tools website built for simple, secure, mobile-friendly document tasks.</p>
+     <p>Each tool has its own dedicated URL, making the site easier to browse and better for SEO.</p>`
+  ));
+});
+
+// CONTACT PAGE
+app.get("/contact", (req, res) => {
+  res.send(buildStaticPage(
+    "Contact",
+    "Contact WePDFHub",
+    `<p>Email: <a href="mailto:support@wepdfhub.click">support@wepdfhub.click</a></p>
+     <p>Use this email for tool issues, partnership queries, and website support.</p>`
+  ));
+});
+
+// PRIVACY POLICY
+app.get("/privacy", (req, res) => {
+  res.send(buildStaticPage(
+    "Privacy Policy",
+    "Privacy Policy",
+    `<p>WePDFHub processes uploaded files only for the selected action.</p>
+     <ul>
+       <li>Temporary files are deleted after processing.</li>
+       <li>Files are not stored long-term.</li>
+       <li>No user data is sold or shared.</li>
+     </ul>`
+  ));
+});
+
+// TERMS
+app.get("/terms", (req, res) => {
+  res.send(buildStaticPage(
+    "Terms of Service",
+    "Terms of Service",
+    `<p>By using WePDFHub, you agree to use the service responsibly.</p>
+     <ul>
+       <li>No illegal or harmful content allowed.</li>
+       <li>No spam or abuse of system resources.</li>
+       <li>Limits may apply for stability.</li>
+     </ul>`
+  ));
+});
+
+// RULES
+app.get("/rules", (req, res) => {
+  res.send(buildStaticPage(
+    "Rules",
+    "WePDFHub Rules",
+    `<p>Follow these rules to keep platform safe and fast.</p>
+     <ul>
+       <li>Use supported file types only.</li>
+       <li>Do not upload harmful content.</li>
+       <li>Respect copyright laws.</li>
+     </ul>`
+  ));
+});
   return `<!DOCTYPE html>
   <html lang="en">
   <head>
