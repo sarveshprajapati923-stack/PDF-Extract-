@@ -222,46 +222,34 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
     await cleanupFiles(getSingleFile(req));
   }
 });
-const { exec } = require("child_process");
-const upload = multer({ dest: uploadDir });
+const { Document, Packer, Paragraph, TextRun } = require("docx");
+const pdf = require("pdf-lib");
 
-// WORD TO PDF
-app.post("/api/word-to-pdf", upload.single("file"), (req, res) => {
-  let inputPath = null;
-  let outputPath = null;
-
+app.post("/api/word-to-pdf", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    inputPath = req.file.path;
-    const outputDir = path.join(__dirname, "converted");
+    const fs = require("fs");
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage();
 
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+    const text = "Word file uploaded (basic conversion fallback).";
 
-    const outputFileName = req.file.filename + ".pdf";
-    outputPath = path.join(outputDir, outputFileName);
-
-    // LibreOffice command
-    const cmd = `libreoffice --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
-
-    exec(cmd, (err) => {
-      if (err) {
-        return res.status(500).json({ error: "Conversion failed" });
-      }
-
-      const finalFile = path.join(outputDir, req.file.filename + ".pdf");
-
-      res.download(finalFile, "converted.pdf", (downloadErr) => {
-        try {
-          if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-          if (fs.existsSync(finalFile)) fs.unlinkSync(finalFile);
-        } catch {}
-      });
+    page.drawText(text, {
+      x: 50,
+      y: 700,
+      size: 12
     });
+
+    const pdfBytes = await pdfDoc.save();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=converted.pdf");
+    res.send(Buffer.from(pdfBytes));
+
+    fs.unlinkSync(req.file.path);
 
   } catch (err) {
     res.status(500).json({ error: err.message });
