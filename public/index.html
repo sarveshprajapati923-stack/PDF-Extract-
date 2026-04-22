@@ -246,6 +246,7 @@ body{
     <a href="/protect-pdf">Protect PDF</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
+    <a href="/word-to-pdf">Word to PDF</a>
   </div>
 
   <div class="wrap">
@@ -297,7 +298,8 @@ const icons = {
   "metadata-pdf":"🧾",
   "pdf-info":"ℹ️",
   "unlock-pdf":"🔓",
-  "pdf-to-excel":"📊"
+  "pdf-to-excel":"📊",
+  "word-to-pdf":"📄"
 };
 
 const tools = [
@@ -326,12 +328,7 @@ const tools = [
   {slug:"pdf-info", title:"PDF Info", cat:"security"},
   {slug:"unlock-pdf", title:"Unlock PDF", cat:"security"},
   {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert"},
-  {
-  slug: "word-to-pdf",
-  title: "Word to PDF",
-  description: "Convert DOC/DOCX files into PDF instantly.",
-  files: "single"
-  }
+  { slug: "word-to-pdf", title: "Word to PDF", cat: "convert" }
 ];
 
 let currentCat = "all";
