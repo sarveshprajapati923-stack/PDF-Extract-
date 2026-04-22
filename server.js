@@ -222,8 +222,6 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
     await cleanupFiles(getSingleFile(req));
   }
 });
-const { Document, Packer, Paragraph, TextRun } = require("docx");
-const pdf = require("pdf-lib");
 
 app.post("/api/word-to-pdf", upload.single("file"), async (req, res) => {
   try {
