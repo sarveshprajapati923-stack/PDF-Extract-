@@ -278,7 +278,8 @@ const tools = [
   { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
   { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
-{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" }
+{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
+  { slug: "word-to-pdf", title: "Word to PDF", description: "Convert DOCX to PDF.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
