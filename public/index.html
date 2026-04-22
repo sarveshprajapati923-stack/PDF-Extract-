@@ -8,52 +8,165 @@
 <style>
 :root{
   --bg:#f7f9ff;
+  --panel:#ffffff;
   --line:#d8e2f0;
   --text:#0f172a;
   --muted:#64748b;
   --primary:#2563eb;
+  --primary2:#0ea5e9;
+  --shadow:0 18px 50px rgba(15,23,42,.08);
 }
+
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+a{text-decoration:none;color:inherit}
 
 body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
+  padding-top:54px;
 }
 
-.wrap{max-width:1200px;margin:auto;padding:20px}
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.menu-btn{
+  position:fixed;
+  top:12px;
+  left:12px;
+  z-index:10001;
+  font-size:28px;
+  cursor:pointer;
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#fff;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+
+.backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+  z-index:10000;
+}
+
+.backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.sidebar{
+  position:fixed;
+  top:0;
+  left:-280px;
+  width:240px;
+  height:100%;
+  background:#fff;
+  border-right:1px solid var(--line);
+  transition:.3s ease;
+  padding:20px;
+  z-index:10002;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
+}
+
+.sidebar.open{
+  left:0;
+}
+
+.sidebar h3{
+  margin:0 0 14px;
+  font-size:18px;
+}
+
+.sidebar a{
+  display:block;
+  padding:12px 10px;
+  border-radius:10px;
+  text-decoration:none;
+  color:#0f172a;
+  margin-bottom:4px;
+}
+
+.sidebar a:hover{
+  background:#f3f6ff;
+}
+
+.hero{
+  margin:0 0 14px;
+  padding:18px 18px 14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+
+.hero h1{
+  margin:0 0 6px;
+  font-size:clamp(1.25rem,2.8vw,1.9rem);
+  line-height:1.15;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
+}
 
 .top-bar{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
   margin-bottom:16px;
+  align-items:center;
 }
 
 .search{
   flex:1;
-  padding:12px;
+  min-width:220px;
+  padding:12px 14px;
   border-radius:12px;
   border:1px solid var(--line);
   outline:none;
+  background:#fff;
 }
 
+.tabs{
+  display:flex;
+  gap:10px;
+  overflow:auto;
+  margin-bottom:10px;
+  padding-bottom:2px;
+}
+
+.tabs button,
 .filter-btn{
-  padding:10px 14px;
-  border-radius:12px;
+  padding:8px 14px;
   border:1px solid var(--line);
   background:#fff;
+  border-radius:20px;
   cursor:pointer;
   transition:.2s;
+  white-space:nowrap;
 }
 
+.tabs button:hover,
+.filter-btn:hover{
+  transform:translateY(-1px);
+}
+
+.tabs button.active,
 .filter-btn.active{
   background:var(--primary);
   color:#fff;
-}
-
-.filter-btn:hover{
-  transform:scale(1.05);
+  border-color:transparent;
 }
 
 .grid{
@@ -66,16 +179,18 @@ body{
   padding:16px;
   border-radius:16px;
   border:1px solid var(--line);
-  background:#fff;
+  background:linear-gradient(180deg,#fff,#f8fbff);
   display:flex;
   gap:12px;
   text-decoration:none;
   color:inherit;
   transition:.2s;
+  min-height:112px;
 }
 
 .tool-card:hover{
-  transform:translateY(-5px);
+  transform:translateY(-4px);
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
 }
 
 .tool-ico{
@@ -87,107 +202,78 @@ body{
   background:#eef4ff;
   font-weight:700;
   color:var(--primary);
-}
-h3{margin:0;font-size:16px}
-p{margin:0;font-size:13px;color:var(--muted)}
-  h3{margin:0;font-size:16px}
-p{margin:0;font-size:13px;color:var(--muted)}
-
-/* yaha add karo */
-.menu-btn{
-  font-size:26px;
-  cursor:pointer;
-  position:fixed;
-  left:15px;
-  top:15px;
+  flex:0 0 46px;
+  font-size:18px;
 }
 
-.sidebar{
-  position:fixed;
-  left:-250px;
-  top:0;
-  width:220px;
-  height:100%;
+.tool-card h3{
+  margin:0;
+  font-size:16px;
+}
+
+.tool-card p{
+  margin:4px 0 0;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.small-note{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.empty-state{
+  padding:18px;
   background:#fff;
-  border-right:1px solid #ddd;
-  transition:.3s;
-  padding:20px;
-}
-
-.sidebar a{
-  display:block;
-  padding:10px;
-  text-decoration:none;
-  }
-  .tabs{
-  display:flex;
-  gap:10px;
-  overflow:auto;
-  margin-bottom:10px;
-}
-
-.tabs button{
-  padding:8px 14px;
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:20px;
-  cursor:pointer;
-      }
-  .menu-btn{
-  position:fixed;
-  top:15px;
-  left:15px;
-  z-index:9999;
-}
-
-body{
-  padding-top:50px;
+  border:1px dashed var(--line);
+  border-radius:16px;
+  color:var(--muted);
 }
 </style>
 </head>
 
 <body>
   <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <div id="backdrop" class="backdrop" onclick="toggleMenu()"></div>
 
-<div id="sidebar" class="sidebar">
-  <a href="#">All Tools</a>
-  <a href="#">Workflows</a>
-  <a href="#">Pricing</a>
-  <a href="#">API</a>
-</div>
-
-<div class="wrap">
-  .top-bar{
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.top-bar + div{
-  margin-top:10px;
-}
-
-  <div class="top-bar">
-    <div class="tabs">
-    <button>All</button>
-    <button>Organize PDF</button>
-    <button>Convert PDF</button>
-    <button>Security</button>
-    <button>AI Tools</button>
-    </div>
-    <input id="search" class="search" placeholder="Search tools..." />
-
-    <button class="filter-btn active" data-cat="all">All</button>
-    <button class="filter-btn" data-cat="edit">Edit</button>
-    <button class="filter-btn" data-cat="convert">Convert</button>
-    <button class="filter-btn" data-cat="security">Security</button>
+  <div id="sidebar" class="sidebar">
+    <h3>WePDFHub</h3>
+    <a href="/">All Tools</a>
+    <a href="/merge-pdf">Merge PDF</a>
+    <a href="/split-pdf">Split PDF</a>
+    <a href="/protect-pdf">Protect PDF</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
   </div>
 
-  <div id="grid" class="grid"></div>
-</div>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Every tool you need to work with PDFs in one place</h1>
+      <p>Merge, split, compress, convert and protect PDFs with just a few clicks.</p>
+    </section>
+
+    <div class="tabs">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="edit">Organize PDF</button>
+      <button data-cat="convert">Convert PDF</button>
+      <button data-cat="security">Security</button>
+      <button data-cat="ai">AI Tools</button>
+    </div>
+
+    <div class="top-bar">
+      <input id="search" class="search" placeholder="Search tools..." />
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="edit">Edit</button>
+      <button class="filter-btn" data-cat="convert">Convert</button>
+      <button class="filter-btn" data-cat="security">Security</button>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
 
 <script>
-
-/* ICON MAP */
 const icons = {
   "merge-pdf":"⚡",
   "split-pdf":"✂️",
@@ -212,7 +298,6 @@ const icons = {
   "pdf-info":"ℹ️"
 };
 
-/* 21 TOOLS FINAL */
 const tools = [
   {slug:"merge-pdf", title:"Merge PDF", cat:"edit"},
   {slug:"split-pdf", title:"Split PDF", cat:"edit"},
@@ -239,88 +324,78 @@ const tools = [
   {slug:"pdf-info", title:"PDF Info", cat:"security"}
 ];
 
-let currentCat="all";
-const grid=document.getElementById("grid");
-const search=document.getElementById("search");
+let currentCat = "all";
 
-/* BACKEND HOOK (READY FOR REAL SaaS) */
-async function callBackend(slug, file){
-  const formData = new FormData();
-  if(file) formData.append("file", file);
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
+const sidebar = document.getElementById("sidebar");
+const backdrop = document.getElementById("backdrop");
 
-  const res = await fetch("/api/"+slug,{
-    method:"POST",
-    body:formData
-  });
-
-  return await res.json();
+function toggleMenu(){
+  sidebar.classList.toggle("open");
+  backdrop.classList.toggle("show");
 }
 
-/* RENDER */
+function setActiveButtons(selector, value){
+  document.querySelectorAll(selector).forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.cat === value);
+  });
+}
+
 function render(){
-  grid.innerHTML="";
+  grid.innerHTML = "";
+  const val = search.value.toLowerCase().trim();
 
-  const val = search.value.toLowerCase();
+  const filtered = tools.filter(t => {
+    const catOk = currentCat === "all" || t.cat === currentCat;
+    const searchOk = !val || t.title.toLowerCase().includes(val);
+    return catOk && searchOk;
+  });
 
-  tools
-  .filter(t => currentCat==="all" || t.cat===currentCat)
-  .filter(t => t.title.toLowerCase().includes(val))
-  .forEach(t => {
+  if (!filtered.length){
+    grid.innerHTML = '<div class="empty-state">No tools found.</div>';
+    return;
+  }
 
-    const el=document.createElement("a");
-    el.href="/"+t.slug;
-    el.className="tool-card";
+  filtered.forEach(t => {
+    const el = document.createElement("a");
+    el.href = "/" + t.slug;
+    el.className = "tool-card";
+
     el.innerHTML = `
-  <div class="tool-ico">${icons[t.slug] || "📄"}</div>
-  <div>
-    <h3>${t.title}</h3>
-    <p>${t.cat}</p>
-    <small style="color:#777">
-      Fast, secure and easy to use PDF tool for daily work.
-    </small>
-  </div>
-`;
+      <div class="tool-ico">${icons[t.slug] || "📄"}</div>
+      <div>
+        <h3>${t.title}</h3>
+        <p>Fast, secure and easy to use PDF tool for daily work.</p>
+      </div>
+    `;
 
     grid.appendChild(el);
   });
 }
 
-/* EVENTS */
-search.addEventListener("input",render);
+search.addEventListener("input", render);
 
 document.querySelectorAll(".filter-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    currentCat=btn.dataset.cat;
+  btn.onclick = () => {
+    currentCat = btn.dataset.cat;
+    setActiveButtons(".filter-btn", currentCat);
+    setActiveButtons(".tabs button", currentCat);
+    render();
+  };
+});
+
+document.querySelectorAll(".tabs button").forEach(btn=>{
+  btn.onclick = () => {
+    const text = btn.dataset.cat;
+    currentCat = text;
+    setActiveButtons(".tabs button", currentCat);
+    setActiveButtons(".filter-btn", currentCat);
     render();
   };
 });
 
 render();
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.onclick = () => {
-    const text = btn.innerText.toLowerCase();
-
-    toolsFiltered(text);
-  };
-});
-
-function toolsFiltered(type){
-  grid.innerHTML = "";
-
-  tools
-  .filter(t => {
-    if(type === "all") return true;
-    if(type.includes("organize")) return t.cat==="edit";
-    if(type.includes("convert")) return t.cat==="convert";
-    if(type.includes("security")) return t.cat==="security";
-    return true;
-  })
-  .forEach(renderCard);
-  }
-
 </script>
-
 </body>
 </html>
