@@ -54,6 +54,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
+  app.post("/api/unlock-pdf", upload.single("file"), async (req, res) => {
   let filePath = null;
   let outputPath = null;
 
