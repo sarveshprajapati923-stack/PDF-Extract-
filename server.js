@@ -245,7 +245,9 @@ const tools = [
   { slug: "pdf-to-word", title: "PDF to Word", description: "Convert PDF to DOCX.", files: "single" },
   { slug: "pdf-to-jpg", title: "PDF to JPG", description: "Convert PDF pages to JPG images.", files: "single" },
   { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
-  { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" }
+  { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
+  { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
+{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
