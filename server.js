@@ -223,6 +223,111 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
   }
 });
 
+app.post("/api/split-pdf-bookmarks", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Upload PDF file." });
+
+    const action = String(req.body.action || "preview"); // preview | split
+    const selected = new Set(
+      String(req.body.selected || "")
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean)
+    );
+
+    const bytes = await fsp.readFile(req.file.path);
+
+    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+    const pdfDoc = await PDFDocument.load(bytes);
+
+    async function resolvePageIndex(dest) {
+      try {
+        if (!dest) return null;
+        const resolved = typeof dest === "string" ? await pdfjsDoc.getDestination(dest) : dest;
+        if (!resolved || !resolved.length) return null;
+
+        const target = resolved[0];
+        if (target && typeof target === "object" && ("num" in target || "ref" in target)) {
+          return await pdfjsDoc.getPageIndex(target);
+        }
+        return typeof target === "number" ? target : null;
+      } catch {
+        return null;
+      }
+    }
+
+    async function flattenOutline(items, level = 0, out = []) {
+      for (const item of items || []) {
+        const pageIndex = await resolvePageIndex(item.dest);
+        out.push({
+          title: item.title || "Untitled",
+          level,
+          pageIndex
+        });
+        if (item.items?.length) {
+          await flattenOutline(item.items, level + 1, out);
+        }
+      }
+      return out;
+    }
+
+    const outline = await pdfjsDoc.getOutline();
+    const sections = (await flattenOutline(outline || []))
+      .filter(s => Number.isInteger(s.pageIndex))
+      .sort((a, b) => a.pageIndex - b.pageIndex);
+
+    if (!sections.length) {
+      return res.status(400).json({ error: "No bookmarks found in this PDF." });
+    }
+
+    if (action === "preview") {
+      return res.json({ sections });
+    }
+
+    const picked = selected.size
+      ? sections.filter((_, i) => selected.has(String(i)))
+      : sections;
+
+    if (!picked.length) {
+      return res.status(400).json({ error: "Select at least one bookmark." });
+    }
+
+    const sorted = [...picked].sort((a, b) => a.pageIndex - b.pageIndex);
+    const zip = new JSZip();
+
+    for (let i = 0; i < sorted.length; i++) {
+      const start = sorted[i].pageIndex;
+      const end = i < sorted.length - 1
+        ? Math.max(start, sorted[i + 1].pageIndex - 1)
+        : pdfDoc.getPageCount() - 1;
+
+      const outDoc = await PDFDocument.create();
+      const pageIndexes = [];
+      for (let p = start; p <= end; p++) pageIndexes.push(p);
+
+      const copied = await outDoc.copyPages(pdfDoc, pageIndexes);
+      copied.forEach(page => outDoc.addPage(page));
+
+      const buf = await outDoc.save();
+      const safeName = sorted[i].title.replace(/[^a-z0-9]+/gi, "_").toLowerCase() || `section_${i + 1}`;
+      zip.file(`${safeName}.pdf`, buf);
+    }
+
+    const zipBuf = await zip.generateAsync({ type: "nodebuffer" });
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", 'attachment; filename="bookmark_split.zip"');
+    res.setHeader("X-Filename", "bookmark_split.zip");
+    res.send(zipBuf);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
   { slug: "merge-pdf", title: "Merge PDF", description: "Combine multiple PDF files into one.", files: "multi" },
@@ -247,7 +352,8 @@ const tools = [
   { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
   { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
-{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" }
+{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
+  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
@@ -494,15 +600,35 @@ function renderToolPage(tool) {
   const startPageField = tool.slug === "page-number"
     ? `<div class="field"><label>Start page</label><input id="startPage" type="text" value="1" /></div>`
     : "";
+  const bookmarkSplitUI = tool.slug === "split-pdf-bookmarks"
+  ? `
+  <div class="note">This splits one PDF into separate files based on bookmarks. First load bookmarks, then select the ones you want.</div>
 
-  const note =
-    tool.slug === "pdf-to-word"
-      ? `<div class="note">This converts extracted PDF text to DOCX. Best for text-based PDFs.</div>`
-      : tool.slug === "pdf-to-jpg"
-      ? `<div class="note">This exports each page as an image and downloads a ZIP.</div>`
-      : tool.slug === "ocr-pdf"
-      ? `<div class="note">This runs OCR on page images and returns extracted text.</div>`
-      : "";
+  <div class="field">
+    <label>Split mode</label>
+    <select id="splitMode" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;">
+      <option value="preview">Preview bookmarks</option>
+      <option value="split">Split selected bookmarks</option>
+    </select>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="loadBookmarksBtn" type="button">Load Bookmarks</button>
+  </div>
+
+  <div id="bookmarkPanel" class="bookmark-panel"></div>
+  `
+  : "";
+const note =
+  tool.slug === "pdf-to-word"
+    ? `<div class="note">This converts extracted PDF text to DOCX. Best for text-based PDFs.</div>`
+    : tool.slug === "pdf-to-jpg"
+    ? `<div class="note">This exports each page as an image and downloads a ZIP.</div>`
+    : tool.slug === "ocr-pdf"
+    ? `<div class="note">This runs OCR on page images and returns extracted text.</div>`
+    : tool.slug === "split-pdf-bookmarks"
+    ? `<div class="note">This splits one PDF into separate files based on bookmarks.</div>`
+    : "";
 
   return `<!DOCTYPE html>
   <html lang="en">
@@ -563,6 +689,7 @@ function renderToolPage(tool) {
             ${fieldCrop}
             ${fieldMeta}
             ${startPageField}
+            ${bookmarkSplitUI}
 
             <div id="progressWrap" class="progress" aria-hidden="true"><div id="progressBar"></div></div>
 
