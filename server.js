@@ -782,7 +782,9 @@ const note =
       const progressWrap = document.getElementById("progressWrap");
       const uploadArea = document.querySelector(".upload");
       let downloadUrl = "";
-      let downloadName = "output.pdf";
+      let downloadName = toolSlug === "split-pdf-odd-pages"
+  ? "odd_pages.pdf"
+  : "output.pdf";
 
       function setStatus(title, text, isError = false) {
         statusEl.innerHTML = isError
