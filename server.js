@@ -479,6 +479,197 @@ app.post("/sort-pages", upload.single("file"), async (req,res)=>{
   const bytes = await newPdf.save();
   res.downloadBuffer(bytes,"sorted.pdf");
 });
+// ================= BACKEND: Sort Pages Descending =================
+app.post("/api/sort-pages-desc", upload.single("file"), async (req, res) => {
+  try {
+    const pdf = await readPdf(req.file);
+    const total = pdf.getPageCount();
+
+    const order = [...Array(total).keys()].reverse();
+
+    const outDoc = await PDFDocument.create();
+    const pages = await outDoc.copyPages(pdf, order);
+    pages.forEach(p => outDoc.addPage(p));
+
+    const out = await outDoc.save();
+    sendPdf(res, out, "sorted-desc.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+// ================= BACKEND: Add Cover Page =================
+app.post("/api/add-cover-page", upload.single("file"), async (req, res) => {
+  try {
+    const text = req.body.text || "COVER PAGE";
+
+    const pdf = await readPdf(req);
+    const newPdf = await PDFDocument.create();
+
+    const font = await newPdf.embedFont(StandardFonts.HelveticaBold);
+
+    const cover = newPdf.addPage([600, 800]);
+    cover.drawText(text, {
+      x: 200,
+      y: 400,
+      size: 28,
+      font,
+      color: rgb(0, 0, 0)
+    });
+
+    const copied = await newPdf.copyPages(pdf, pdf.getPageIndices());
+    copied.forEach(p => newPdf.addPage(p));
+
+    const out = await newPdf.save();
+    sendPdf(res, out, "cover-added.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+// ================= BACKEND: Separator Page =================
+app.post("/api/add-separator-pages", upload.single("file"), async (req, res) => {
+  try {
+    const pdf = await readPdf(req);
+    const newPdf = await PDFDocument.create();
+
+    const pages = pdf.getPages();
+
+    for (let i = 0; i < pages.length; i++) {
+      const [copied] = await newPdf.copyPages(pdf, [i]);
+      newPdf.addPage(copied);
+
+      if (i !== pages.length - 1) {
+        newPdf.addPage([600, 800]); // blank separator page
+      }
+    }
+
+    const out = await newPdf.save();
+    sendPdf(res, out, "separator.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+// ================= BACKEND: Add Header =================
+app.post("/api/add-header", upload.single("file"), async (req, res) => {
+  try {
+    const text = req.body.text || "HEADER";
+
+    const pdf = await readPdf(req);
+    const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+    pdf.getPages().forEach(page => {
+      const { width, height } = page.getSize();
+      page.drawText(text, {
+        x: 40,
+        y: height - 30,
+        size: 12,
+        font,
+        color: rgb(0, 0, 0)
+      });
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "header.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+// ================= BACKEND: Add Footer =================
+app.post("/api/add-footer", upload.single("file"), async (req, res) => {
+  try {
+    const text = req.body.text || "FOOTER";
+
+    const pdf = await readPdf(req);
+    const font = await pdf.embedFont(StandardFonts.Helvetica);
+
+    pdf.getPages().forEach(page => {
+      const { width } = page.getSize();
+      page.drawText(text, {
+        x: 40,
+        y: 20,
+        size: 10,
+        font,
+        color: rgb(0.3, 0.3, 0.3)
+      });
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "footer.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
+// ================= BACKEND: Logo Stamp =================
+const uploadImg = multer({ dest: uploadDir });
+
+app.post("/api/logo-stamp", upload.fields([
+  { name: "file", maxCount: 1 },
+  { name: "logo", maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const pdf = await readPdf(req.files.file[0]);
+    const logoBytes = await fsp.readFile(req.files.logo[0].path);
+
+    const logo = await pdf.embedPng(logoBytes);
+
+    pdf.getPages().forEach(page => {
+      const { width } = page.getSize();
+      page.drawImage(logo, {
+        x: width - 100,
+        y: 30,
+        width: 60,
+        height: 60,
+        opacity: 0.6
+      });
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "logo-stamped.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(req.files?.file || []);
+    await cleanupFiles(req.files?.logo || []);
+  }
+});
+// ================= BACKEND: Signature Image =================
+app.post("/api/add-signature", upload.fields([
+  { name: "file", maxCount: 1 },
+  { name: "signature", maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const pdf = await readPdf(req.files.file[0]);
+    const sigBytes = await fsp.readFile(req.files.signature[0].path);
+
+    const sig = await pdf.embedPng(sigBytes);
+
+    pdf.getPages().forEach(page => {
+      page.drawImage(sig, {
+        x: 50,
+        y: 50,
+        width: 120,
+        height: 60
+      });
+    });
+
+    const out = await pdf.save();
+    sendPdf(res, out, "signed.pdf");
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  } finally {
+    await cleanupFiles(req.files?.file || []);
+    await cleanupFiles(req.files?.signature || []);
+  }
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
@@ -513,7 +704,14 @@ const tools = [
   { slug: "delete-odd-pages", title: "Delete Odd Pages", description: "Remove all odd pages from a PDF.", files: "single" },
   { slug: "delete-even-pages", title: "Delete Even Pages", description: "Remove all even pages from a PDF.", files: "single" },
   { slug: "shuffle-pages", title: "Shuffle Pages", description: "Randomly shuffle all pages in a PDF.", files: "single" },
-  { slug: "sort-pages", title: "Sort Pages Ascending", description: "Arrange pages in ascending order.", files: "single" }
+  { slug: "sort-pages", title: "Sort Pages Ascending", description: "Arrange pages in ascending order.", files: "single" },
+  { slug: "sort-pages-desc", title: "Sort Pages Descending", files: "single" },
+  { slug: "add-cover-page", title: "Add Cover Page", files: "single" },
+  { slug: "add-separator-pages", title: "Separator Pages", files: "single" },
+  { slug: "add-header", title: "Add Header", files: "single" },
+  { slug: "add-footer", title: "Add Footer", files: "single" },
+  { slug: "logo-stamp", title: "Logo Stamp", files: "multi" },
+  { slug: "add-signature", title: "Add Signature", files: "multi" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
