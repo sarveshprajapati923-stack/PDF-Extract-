@@ -233,7 +233,7 @@ app.post("/api/word-to-pdf", upload.single("file"), async (req, res) => {
 
     input = req.file.path;
 
-    const cmd = `soffice --headless --convert-to pdf --outdir "${outputDir}" "${input}"`;
+    const cmd = `soffice --headless --convert-to pdf:writer_pdf_Export --outdir "${outputDir}" "${input}"`;
 
     exec(cmd, (err) => {
       if (err) {
