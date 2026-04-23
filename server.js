@@ -327,6 +327,36 @@ app.post("/api/split-pdf-bookmarks", upload.single("file"), async (req, res) => 
     await cleanupFiles(getSingleFile(req));
   }
 });
+app.post("/api/split-pdf-odd-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+
+    const oddPages = [];
+    for (let i = 0; i < total; i++) {
+      if ((i + 1) % 2 === 1) oddPages.push(i);
+    }
+
+    if (!oddPages.length) {
+      return res.status(400).json({ error: "No odd pages found." });
+    }
+
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, oddPages);
+    copied.forEach(page => outDoc.addPage(page));
+
+    const out = await outDoc.save();
+    sendPdf(res, out, "odd_pages.pdf");
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
@@ -353,7 +383,8 @@ const tools = [
   { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
 { slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
-  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" }
+  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" },
+  { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
