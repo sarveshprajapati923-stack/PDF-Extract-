@@ -357,6 +357,37 @@ app.post("/api/split-pdf-odd-pages", upload.single("file"), async (req, res) => 
     await cleanupFiles(getSingleFile(req));
   }
 });
+app.post("/api/split-pdf-even-pages", upload.single("file"), async (req, res) => {
+  const file = req.file;
+
+  try {
+    if (!file) return res.status(400).json({ error: "Upload one PDF file." });
+
+    const pdf = await readPdf(file);
+    const total = pdf.getPageCount();
+
+    const evenPages = [];
+    for (let i = 0; i < total; i++) {
+      if ((i + 1) % 2 === 0) evenPages.push(i);
+    }
+
+    if (!evenPages.length) {
+      return res.status(400).json({ error: "No even pages found." });
+    }
+
+    const outDoc = await PDFDocument.create();
+    const copied = await outDoc.copyPages(pdf, evenPages);
+    copied.forEach(page => outDoc.addPage(page));
+
+    const out = await outDoc.save();
+    sendPdf(res, out, "even_pages.pdf");
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await cleanupFiles(getSingleFile(req));
+  }
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
@@ -384,7 +415,8 @@ const tools = [
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
 { slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
   { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" },
-  { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" }
+  { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" },
+  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF."}
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
@@ -782,9 +814,12 @@ const note =
       const progressWrap = document.getElementById("progressWrap");
       const uploadArea = document.querySelector(".upload");
       let downloadUrl = "";
-      let downloadName = toolSlug === "split-pdf-odd-pages"
-  ? "odd_pages.pdf"
-  : "output.pdf";
+      let downloadName =
+  toolSlug === "split-pdf-odd-pages"
+    ? "odd_pages.pdf"
+    : toolSlug === "split-pdf-even-pages"
+    ? "even_pages.pdf"
+    : "output.pdf";
 
       function setStatus(title, text, isError = false) {
         statusEl.innerHTML = isError
