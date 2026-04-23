@@ -36,6 +36,16 @@ app.use(express.static(path.join(__dirname, "public")));
 app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
+app.use((req, res, next) => {
+  res.downloadBuffer = (buffer, filename) => {
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${filename}"`
+    });
+    res.send(buffer);
+  };
+  next();
+});
 
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
