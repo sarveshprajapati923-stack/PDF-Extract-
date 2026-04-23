@@ -388,6 +388,87 @@ app.post("/api/split-pdf-even-pages", upload.single("file"), async (req, res) =>
     await cleanupFiles(getSingleFile(req));
   }
 });
+// Extract First Page
+app.post("/extract-first-page", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const newPdf = await PDFDocument.create();
+  const [page] = await newPdf.copyPages(pdf,[0]);
+  newPdf.addPage(page);
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"first_page.pdf");
+});
+
+// Extract Last Page
+app.post("/extract-last-page", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const total = pdf.getPageCount();
+  const newPdf = await PDFDocument.create();
+  const [page] = await newPdf.copyPages(pdf,[total-1]);
+  newPdf.addPage(page);
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"last_page.pdf");
+});
+
+// Delete Odd Pages
+app.post("/delete-odd-pages", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const newPdf = await PDFDocument.create();
+  const pages = pdf.getPages();
+  for(let i=0;i<pages.length;i++){
+    if((i+1)%2===0){
+      const [p] = await newPdf.copyPages(pdf,[i]);
+      newPdf.addPage(p);
+    }
+  }
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"no_odd_pages.pdf");
+});
+
+// Delete Even Pages
+app.post("/delete-even-pages", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const newPdf = await PDFDocument.create();
+  const pages = pdf.getPages();
+  for(let i=0;i<pages.length;i++){
+    if((i+1)%2!==0){
+      const [p] = await newPdf.copyPages(pdf,[i]);
+      newPdf.addPage(p);
+    }
+  }
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"no_even_pages.pdf");
+});
+
+// Shuffle Pages
+app.post("/shuffle-pages", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const newPdf = await PDFDocument.create();
+  let indexes = pdf.getPages().map((_,i)=>i);
+
+  indexes.sort(()=>Math.random()-0.5);
+
+  for(let i of indexes){
+    const [p] = await newPdf.copyPages(pdf,[i]);
+    newPdf.addPage(p);
+  }
+
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"shuffled.pdf");
+});
+
+// Sort Pages Ascending (default reset)
+app.post("/sort-pages", upload.single("file"), async (req,res)=>{
+  const pdf = await PDFDocument.load(req.file.buffer);
+  const newPdf = await PDFDocument.create();
+
+  for(let i=0;i<pdf.getPageCount();i++){
+    const [p] = await newPdf.copyPages(pdf,[i]);
+    newPdf.addPage(p);
+  }
+
+  const bytes = await newPdf.save();
+  res.downloadBuffer(bytes,"sorted.pdf");
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
@@ -413,10 +494,16 @@ const tools = [
   { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
   { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
-{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
+  { slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
   { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" },
   { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" },
-  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF."}
+  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF."},
+  { slug: "extract-first-page", title: "Extract First Page", description: "Extract only the first page from a PDF.", files: "single" },
+  { slug: "extract-last-page", title: "Extract Last Page", description: "Extract only the last page from a PDF.", files: "single" },
+  { slug: "delete-odd-pages", title: "Delete Odd Pages", description: "Remove all odd pages from a PDF.", files: "single" },
+  { slug: "delete-even-pages", title: "Delete Even Pages", description: "Remove all even pages from a PDF.", files: "single" },
+  { slug: "shuffle-pages", title: "Shuffle Pages", description: "Randomly shuffle all pages in a PDF.", files: "single" },
+  { slug: "sort-pages", title: "Sort Pages Ascending", description: "Arrange pages in ascending order.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
@@ -815,11 +902,15 @@ const note =
       const uploadArea = document.querySelector(".upload");
       let downloadUrl = "";
       let downloadName =
-  toolSlug === "split-pdf-odd-pages"
-    ? "odd_pages.pdf"
-    : toolSlug === "split-pdf-even-pages"
-    ? "even_pages.pdf"
-    : "output.pdf";
+  toolSlug === "split-pdf-odd-pages" ? "odd_pages.pdf" :
+  toolSlug === "split-pdf-even-pages" ? "even_pages.pdf" :
+  toolSlug === "extract-first-page" ? "first_page.pdf" :
+  toolSlug === "extract-last-page" ? "last_page.pdf" :
+  toolSlug === "delete-odd-pages" ? "no_odd_pages.pdf" :
+  toolSlug === "delete-even-pages" ? "no_even_pages.pdf" :
+  toolSlug === "shuffle-pages" ? "shuffled.pdf" :
+  toolSlug === "sort-pages" ? "sorted.pdf" :
+  "output.pdf";
 
       function setStatus(title, text, isError = false) {
         statusEl.innerHTML = isError
