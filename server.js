@@ -222,40 +222,6 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
     await cleanupFiles(getSingleFile(req));
   }
 });
-const { exec } = require("child_process");
-
-app.post("/api/word-to-pdf", upload.single("file"), async (req, res) => {
-  let input = null;
-  let outputDir = uploadDir;
-
-  try {
-    if (!req.file) return res.status(400).send("No file");
-
-    input = req.file.path;
-
-    const cmd = `soffice --headless --convert-to pdf:writer_pdf_Export --outdir "${outputDir}" "${input}"`;
-
-    exec(cmd, (err) => {
-      if (err) {
-        return res.status(500).send("Conversion failed");
-      }
-
-      const outputFile = input.replace(/\.(docx|doc)$/i, ".pdf");
-
-      if (!fs.existsSync(outputFile)) {
-        return res.status(500).send("PDF not generated");
-      }
-
-      res.download(outputFile, "converted.pdf", () => {
-        if (fs.existsSync(input)) fs.unlinkSync(input);
-        if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
-      });
-    });
-
-  } catch (err) {
-    res.status(500).send("Error");
-  }
-});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
@@ -281,8 +247,7 @@ const tools = [
   { slug: "ocr-pdf", title: "OCR PDF", description: "Extract text from scanned PDFs.", files: "single" },
   { slug: "protect-pdf", title: "Protect PDF", description: "Add password to secure PDF.", files: "single" },
   { slug: "unlock-pdf", title: "Unlock PDF", description: "Remove password protection from a PDF.", files: "single" },
-{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
-  { slug: "word-to-pdf", title: "Word to PDF", description: "Convert DOCX to PDF.", files: "single" }
+{ slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" }
 ];
 
 const toolMap = new Map(tools.map(t => [t.slug, t]));
