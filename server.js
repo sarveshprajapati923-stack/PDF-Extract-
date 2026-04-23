@@ -223,34 +223,43 @@ app.post("/api/pdf-to-excel", upload.single("file"), async (req, res) => {
   }
 });
 
+const axios = require("axios");
+const FormData = require("form-data");
+
 app.post("/api/word-to-pdf", upload.single("file"), async (req, res) => {
+  let filePath = null;
+
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
+    if (!req.file) return res.status(400).send("No file");
 
-    const fs = require("fs");
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage();
+    filePath = req.file.path;
 
-    const text = "Word file uploaded (basic conversion fallback).";
+    const form = new FormData();
+    form.append("file", fs.createReadStream(filePath));
+    form.append("inputformat", "docx");
+    form.append("outputformat", "pdf");
 
-    page.drawText(text, {
-      x: 50,
-      y: 700,
-      size: 12
-    });
-
-    const pdfBytes = await pdfDoc.save();
+    const response = await axios.post(
+      "https://api.cloudconvert.com/v2/convert",
+      form,
+      {
+        headers: {
+          ...form.getHeaders(),
+          Authorization: "Bearer YOUR_API_KEY"
+        },
+        responseType: "stream"
+      }
+    );
 
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", "attachment; filename=converted.pdf");
-    res.send(Buffer.from(pdfBytes));
 
-    fs.unlinkSync(req.file.path);
+    response.data.pipe(res);
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).send("Conversion failed");
+  } finally {
+    if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
   }
 });
 
