@@ -857,7 +857,11 @@ function buildStaticPage(title, heading, content) {
         ${content}
       </section>
       <div style="margin-top:16px" class="mini">
-        <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/rules">Rules</a>
+        <a href="/about.html">About</a> · 
+<a href="/contact.html">Contact</a> · 
+<a href="/privacy-policy.html">Privacy</a> · 
+<a href="/terms.html">Terms</a> · 
+<a href="/rules.html">Rules</a>
       </div>
     </div>
   </body>
