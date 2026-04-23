@@ -670,6 +670,27 @@ app.post("/api/add-signature", upload.fields([
     await cleanupFiles(req.files?.signature || []);
   }
 });
+// ================= STATIC PAGES ROUTES =================
+
+app.get("/about", (req, res) => {
+  res.sendFile(__dirname + "/about.html");
+});
+
+app.get("/contact", (req, res) => {
+  res.sendFile(__dirname + "/contact.html");
+});
+
+app.get("/privacy-policy", (req, res) => {
+  res.sendFile(__dirname + "/privacy-policy.html");
+});
+
+app.get("/terms", (req, res) => {
+  res.sendFile(__dirname + "/terms.html");
+});
+
+app.get("/rules", (req, res) => {
+  res.sendFile(__dirname + "/rules.html");
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
