@@ -247,6 +247,26 @@ body{
     <a href="/word-to-pdf">Word to PDF</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
+    div id="sidebar" class="sidebar">
+  <h3>WePDFHub</h3>
+
+  <a href="/">All Tools</a>
+  <a href="/merge-pdf">Merge PDF</a>
+  <a href="/split-pdf">Split PDF</a>
+  <a href="/protect-pdf">Protect PDF</a>
+  <a href="/word-to-pdf">Word to PDF</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact</a>
+
+  <!-- ================= NEW SAAS TOOL LINKS ================= -->
+
+  <a href="/sort-pages-desc">Sort Pages Desc</a>
+  <a href="/add-cover-page">Cover Page</a>
+  <a href="/add-separator-pages">Separator Pages</a>
+  <a href="/add-header">Add Header</a>
+  <a href="/add-footer">Add Footer</a>
+  <a href="/logo-stamp">Logo Stamp</a>
+  <a href="/add-signature">Signature</a>
   </div>
 
   <div class="wrap">
@@ -307,7 +327,14 @@ const icons = {
 "delete-odd-pages":"❌",
 "delete-even-pages":"🚫",
 "shuffle-pages":"🔀",
-"sort-pages":"⬆️"
+"sort-pages":"⬆️",
+  "sort-pages-desc":"⬇️",
+"add-cover-page":"📄",
+"add-separator-pages":"📑",
+"add-header":"⬆️",
+"add-footer":"⬇️",
+"logo-stamp":"🏷️",
+"add-signature":"✍️"
 };
 
 const tools = [
@@ -344,7 +371,14 @@ const tools = [
   {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit"},
   {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit"},
   {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit"},
-  {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit"}
+  {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit"},
+  {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit"},
+  {slug:"add-cover-page", title:"Add Cover Page", cat:"edit"},
+  {slug:"add-separator-pages", title:"Separator Pages", cat:"edit"},
+  {slug:"add-header", title:"Add Header", cat:"edit"},
+  {slug:"add-footer", title:"Add Footer", cat:"edit"},
+  {slug:"logo-stamp", title:"Logo Stamp", cat:"security"},
+  {slug:"add-signature", title:"Add Signature", cat:"security"}
 ];
 
 let currentCat = "all";
