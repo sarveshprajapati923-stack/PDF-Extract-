@@ -299,7 +299,8 @@ const icons = {
   "pdf-info":"ℹ️",
   "unlock-pdf":"🔓",
   "pdf-to-excel":"📊",
-  "split-pdf-bookmarks":"🔖"
+  "split-pdf-bookmarks":"🔖",
+  "split-pdf-odd-pages":"1️⃣"
 };
 
 const tools = [
@@ -328,7 +329,8 @@ const tools = [
   {slug:"pdf-info", title:"PDF Info", cat:"security"},
   {slug:"unlock-pdf", title:"Unlock PDF", cat:"security"},
   {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert"},
-  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", cat: "edit" }
+  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", cat: "edit" },
+  { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" }
 ];
 
 let currentCat = "all";
