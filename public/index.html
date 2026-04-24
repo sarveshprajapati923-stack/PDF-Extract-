@@ -6,9 +6,7 @@
 <title>Free PDF Tools Online - WePDFHub</title>
 
 <meta name="description" content="Merge, Split, Compress PDF online free tool. No login required. Fast SaaS PDF tools.">
-
 <meta name="robots" content="index, follow">
-
 <meta property="og:title" content="WePDFHub PDF Tools">
 <meta property="og:description" content="Free online PDF tools for everyone">
 <meta property="og:type" content="website">
@@ -23,15 +21,14 @@
   --primary:#2563eb;
   --primary2:#0ea5e9;
   --shadow:0 18px 50px rgba(15,23,42,.08);
+  --radius:18px;
 }
 
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
 a{text-decoration:none;color:inherit}
-
-body{
-  padding-top:54px;
-}
+button,input{font:inherit}
+body{padding-top:54px;}
 
 .wrap{
   max-width:1200px;
@@ -43,7 +40,7 @@ body{
   position:fixed;
   top:12px;
   left:12px;
-  z-index:10001;
+  z-index:10006;
   font-size:28px;
   cursor:pointer;
   width:44px;
@@ -54,7 +51,9 @@ body{
   background:#fff;
   border:1px solid var(--line);
   box-shadow:var(--shadow);
+  transition:.2s ease;
 }
+.menu-btn:active{transform:scale(.96)}
 
 .backdrop{
   position:fixed;
@@ -65,7 +64,6 @@ body{
   transition:.25s ease;
   z-index:10000;
 }
-
 .backdrop.show{
   opacity:1;
   pointer-events:auto;
@@ -74,36 +72,55 @@ body{
 .sidebar{
   position:fixed;
   top:0;
-  left:-280px;
-  width:240px;
-  height:100%;
+  left:0;
+  width:280px;
+  max-width:85vw;
+  height:100vh;
   background:#fff;
   border-right:1px solid var(--line);
-  transition:.3s ease;
-  padding:20px;
+  transition:transform .28s ease;
+  transform:translateX(-100%);
+  padding:18px 16px 20px;
   z-index:10005;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
 }
-
-.sidebar.open{
-  left:0;
-}
+.sidebar.open{transform:translateX(0)}
 
 .sidebar h3{
-  margin:0 0 14px;
+  margin:6px 0 14px;
   font-size:18px;
 }
-
+.sidebar .section-title{
+  margin:14px 0 8px;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:700;
+}
 .sidebar a{
   display:block;
-  padding:12px 10px;
-  border-radius:10px;
+  padding:11px 12px;
+  border-radius:12px;
   text-decoration:none;
   color:#0f172a;
-  margin-bottom:4px;
+  margin-bottom:6px;
+  border:1px solid transparent;
+  transition:.18s ease;
 }
-
 .sidebar a:hover{
   background:#f3f6ff;
+  border-color:#e3ebff;
+  transform:translateX(2px);
+}
+.sidebar .mini{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+  line-height:1.5;
 }
 
 .hero{
@@ -114,13 +131,11 @@ body{
   border-radius:18px;
   box-shadow:var(--shadow);
 }
-
 .hero h1{
   margin:0 0 6px;
   font-size:clamp(1.25rem,2.8vw,1.9rem);
   line-height:1.15;
 }
-
 .hero p{
   margin:0;
   color:var(--muted);
@@ -134,7 +149,6 @@ body{
   margin-bottom:16px;
   align-items:center;
 }
-
 .search{
   flex:1;
   min-width:220px;
@@ -143,7 +157,9 @@ body{
   border:1px solid var(--line);
   outline:none;
   background:#fff;
+  transition:.18s ease;
 }
+.search:focus{border-color:#b7cbff; box-shadow:0 0 0 4px rgba(37,99,235,.08)}
 
 .tabs{
   display:flex;
@@ -151,29 +167,54 @@ body{
   overflow:auto;
   margin-bottom:10px;
   padding-bottom:2px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
 }
+.tabs::-webkit-scrollbar{display:none}
 
 .tabs button,
 .filter-btn{
   padding:8px 14px;
   border:1px solid var(--line);
   background:#fff;
-  border-radius:20px;
+  border-radius:999px;
   cursor:pointer;
-  transition:.2s;
+  transition:.2s ease;
   white-space:nowrap;
 }
-
 .tabs button:hover,
 .filter-btn:hover{
   transform:translateY(-1px);
 }
-
 .tabs button.active,
 .filter-btn.active{
   background:var(--primary);
   color:#fff;
   border-color:transparent;
+}
+
+.section-block{
+  margin-top:18px;
+}
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 12px;
+}
+.section-head h2{
+  margin:0;
+  font-size:18px;
+  text-transform:capitalize;
+}
+.section-head .count{
+  font-size:12px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  background:#fff;
+  padding:6px 10px;
+  border-radius:999px;
 }
 
 .grid{
@@ -191,15 +232,25 @@ body{
   gap:12px;
   text-decoration:none;
   color:inherit;
-  transition:.2s;
+  transition:.2s ease;
   min-height:112px;
+  position:relative;
+  overflow:hidden;
 }
-
+.tool-card::after{
+  content:"";
+  position:absolute;
+  inset:auto -40px -40px auto;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:rgba(37,99,235,.06);
+  pointer-events:none;
+}
 .tool-card:hover{
   transform:translateY(-4px);
   box-shadow:0 12px 30px rgba(0,0,0,.08);
 }
-
 .tool-ico{
   width:46px;
   height:46px;
@@ -212,23 +263,15 @@ body{
   flex:0 0 46px;
   font-size:18px;
 }
-
 .tool-card h3{
   margin:0;
   font-size:16px;
 }
-
 .tool-card p{
   margin:4px 0 0;
   font-size:13px;
   color:var(--muted);
   line-height:1.45;
-}
-
-.small-note{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:13px;
 }
 
 .empty-state{
@@ -238,6 +281,14 @@ body{
   border-radius:16px;
   color:var(--muted);
 }
+
+@media (max-width:640px){
+  body{padding-top:52px}
+  .wrap{padding:14px}
+  .sidebar{width:86vw}
+  .grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.45rem}
+}
 </style>
 </head>
 
@@ -245,26 +296,61 @@ body{
   <div class="menu-btn" onclick="toggleMenu()">☰</div>
   <div id="backdrop" class="backdrop" onclick="toggleMenu()"></div>
 
-  <div id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar" aria-label="Main menu">
     <h3>WePDFHub</h3>
+
+    <div class="section-title">Quick Links</div>
     <a href="/">All Tools</a>
-    <a href="/merge-pdf">Merge PDF</a>
-    <a href="/split-pdf">Split PDF</a>
-    <a href="/protect-pdf">Protect PDF</a>
-    <a href="/word-to-pdf">Word to PDF</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
 
-  <!-- ================= NEW SAAS TOOL LINKS ================= -->
+    <div class="section-title">Organize PDF</div>
+    <a href="/merge-pdf">Merge PDF</a>
+    <a href="/split-pdf">Split PDF</a>
+    <a href="/compress-pdf">Compress PDF</a>
+    <a href="/rotate-pdf">Rotate PDF</a>
+    <a href="/delete-pages">Delete Pages</a>
+    <a href="/extract-pages">Extract Pages</a>
+    <a href="/reorder-pages">Reorder Pages</a>
+    <a href="/reverse-pages">Reverse Pages</a>
+    <a href="/duplicate-pages">Duplicate Pages</a>
+    <a href="/crop-pdf">Crop PDF</a>
+    <a href="/add-blank-pages">Add Blank Pages</a>
+    <a href="/page-number">Page Number</a>
+    <a href="/split-pdf-bookmarks">Split by Bookmarks</a>
+    <a href="/split-pdf-odd-pages">Split Odd Pages</a>
+    <a href="/split-pdf-even-pages">Split Even Pages</a>
+    <a href="/extract-first-page">Extract First Page</a>
+    <a href="/extract-last-page">Extract Last Page</a>
+    <a href="/delete-odd-pages">Delete Odd Pages</a>
+    <a href="/delete-even-pages">Delete Even Pages</a>
+    <a href="/shuffle-pages">Shuffle Pages</a>
+    <a href="/sort-pages">Sort Pages Ascending</a>
+    <a href="/sort-pages-desc">Sort Pages Descending</a>
 
-  <a href="/sort-pages-desc">Sort Pages Desc</a>
-  <a href="/add-cover-page">Cover Page</a>
-  <a href="/add-separator-pages">Separator Pages</a>
-  <a href="/add-header">Add Header</a>
-  <a href="/add-footer">Add Footer</a>
-  <a href="/logo-stamp">Logo Stamp</a>
-  <a href="/add-signature">Signature</a>
-  </div>
+    <div class="section-title">Convert PDF</div>
+    <a href="/image-to-pdf">Image to PDF</a>
+    <a href="/pdf-to-word">PDF to Word</a>
+    <a href="/pdf-to-jpg">PDF to JPG</a>
+    <a href="/ocr-pdf">OCR PDF</a>
+    <a href="/extract-text">Extract Text</a>
+    <a href="/pdf-to-excel">PDF to Excel</a>
+
+    <div class="section-title">Security</div>
+    <a href="/protect-pdf">Protect PDF</a>
+    <a href="/unlock-pdf">Unlock PDF</a>
+    <a href="/metadata-pdf">Metadata</a>
+    <a href="/pdf-info">PDF Info</a>
+    <a href="/watermark-pdf">Watermark PDF</a>
+    <a href="/add-header">Add Header</a>
+    <a href="/add-footer">Add Footer</a>
+    <a href="/add-cover-page">Add Cover Page</a>
+    <a href="/add-separator-pages">Separator Pages</a>
+    <a href="/logo-stamp">Logo Stamp</a>
+    <a href="/add-signature">Signature</a>
+
+    <div class="mini">Tap any tool to open it. Scroll stays inside the menu.</div>
+  </aside>
 
   <div class="wrap">
     <section class="hero">
@@ -288,166 +374,208 @@ body{
       <button class="filter-btn" data-cat="security">Security</button>
     </div>
 
-    <div id="grid" class="grid"></div>
+    <div id="grid"></div>
   </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
-const backdrop = document.getElementById("backdrop");
+  const backdrop = document.getElementById("backdrop");
+  const search = document.getElementById("search");
   const grid = document.getElementById("grid");
-const search = document.getElementById("search");
-const icons = {
-  "merge-pdf":"⚡",
-  "split-pdf":"✂️",
-  "compress-pdf":"🗜️",
-  "rotate-pdf":"🔄",
-  "watermark-pdf":"💧",
-  "delete-pages":"🗑️",
-  "extract-pages":"📤",
-  "reorder-pages":"🔀",
-  "reverse-pages":"↩️",
-  "duplicate-pages":"📑",
-  "crop-pdf":"✂️",
-  "add-blank-pages":"➕",
-  "page-number":"🔢",
-  "image-to-pdf":"🖼️",
-  "pdf-to-word":"📄",
-  "pdf-to-jpg":"📷",
-  "ocr-pdf":"👁️",
-  "extract-text":"📝",
-  "protect-pdf":"🔒",
-  "metadata-pdf":"🧾",
-  "pdf-info":"ℹ️",
-  "unlock-pdf":"🔓",
-  "pdf-to-excel":"📊",
-  "split-pdf-bookmarks":"🔖",
-  "split-pdf-odd-pages":"1️⃣",
-  "split-pdf-even-pages":"2️⃣",
-  "extract-first-page":"1️⃣",
-"extract-last-page":"🔚",
-"delete-odd-pages":"❌",
-"delete-even-pages":"🚫",
-"shuffle-pages":"🔀",
-"sort-pages":"⬆️",
-  "sort-pages-desc":"⬇️",
-"add-cover-page":"📄",
-"add-separator-pages":"📑",
-"add-header":"⬆️",
-"add-footer":"⬇️",
-"logo-stamp":"🏷️",
-"add-signature":"✍️"
-};
 
-const tools = [
-  {slug:"merge-pdf", title:"Merge PDF", cat:"edit"},
-  {slug:"split-pdf", title:"Split PDF", cat:"edit"},
-  {slug:"compress-pdf", title:"Compress PDF", cat:"edit"},
-  {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit"},
-  {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit"},
-  {slug:"delete-pages", title:"Delete Pages", cat:"edit"},
-  {slug:"extract-pages", title:"Extract Pages", cat:"edit"},
-  {slug:"reorder-pages", title:"Reorder Pages", cat:"edit"},
-  {slug:"reverse-pages", title:"Reverse Pages", cat:"edit"},
-  {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit"},
-  {slug:"crop-pdf", title:"Crop PDF", cat:"edit"},
-  {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit"},
-  {slug:"page-number", title:"Page Number", cat:"edit"},
+  const icons = {
+    "merge-pdf":"⚡",
+    "split-pdf":"✂️",
+    "compress-pdf":"🗜️",
+    "rotate-pdf":"🔄",
+    "watermark-pdf":"💧",
+    "delete-pages":"🗑️",
+    "extract-pages":"📤",
+    "reorder-pages":"🔀",
+    "reverse-pages":"↩️",
+    "duplicate-pages":"📑",
+    "crop-pdf":"✂️",
+    "add-blank-pages":"➕",
+    "page-number":"🔢",
+    "image-to-pdf":"🖼️",
+    "pdf-to-word":"📄",
+    "pdf-to-jpg":"📷",
+    "ocr-pdf":"👁️",
+    "extract-text":"📝",
+    "protect-pdf":"🔒",
+    "metadata-pdf":"🧾",
+    "pdf-info":"ℹ️",
+    "unlock-pdf":"🔓",
+    "pdf-to-excel":"📊",
+    "split-pdf-bookmarks":"🔖",
+    "split-pdf-odd-pages":"1️⃣",
+    "split-pdf-even-pages":"2️⃣",
+    "extract-first-page":"1️⃣",
+    "extract-last-page":"🔚",
+    "delete-odd-pages":"❌",
+    "delete-even-pages":"🚫",
+    "shuffle-pages":"🔀",
+    "sort-pages":"⬆️",
+    "sort-pages-desc":"⬇️",
+    "add-cover-page":"📄",
+    "add-separator-pages":"📑",
+    "add-header":"⬆️",
+    "add-footer":"⬇️",
+    "logo-stamp":"🏷️",
+    "add-signature":"✍️"
+  };
 
-  {slug:"image-to-pdf", title:"Image to PDF", cat:"convert"},
-  {slug:"pdf-to-word", title:"PDF to Word", cat:"convert"},
-  {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert"},
-  {slug:"ocr-pdf", title:"OCR PDF", cat:"convert"},
-  {slug:"extract-text", title:"Extract Text", cat:"convert"},
+  const tools = [
+    {slug:"merge-pdf", title:"Merge PDF", cat:"edit", desc:"Combine multiple PDF files into one."},
+    {slug:"split-pdf", title:"Split PDF", cat:"edit", desc:"Split selected pages into separate PDFs."},
+    {slug:"compress-pdf", title:"Compress PDF", cat:"edit", desc:"Reduce file size with fast compression."},
+    {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit", desc:"Rotate pages left or right."},
+    {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit", desc:"Add a text watermark to every page."},
+    {slug:"delete-pages", title:"Delete Pages", cat:"edit", desc:"Remove selected pages from PDF."},
+    {slug:"extract-pages", title:"Extract Pages", cat:"edit", desc:"Keep only selected pages."},
+    {slug:"reorder-pages", title:"Reorder Pages", cat:"edit", desc:"Change page order quickly."},
+    {slug:"reverse-pages", title:"Reverse Pages", cat:"edit", desc:"Reverse all pages in one click."},
+    {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit", desc:"Duplicate selected pages."},
+    {slug:"crop-pdf", title:"Crop PDF", cat:"edit", desc:"Crop PDF page area precisely."},
+    {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit", desc:"Append blank pages to PDF."},
+    {slug:"page-number", title:"Page Number", cat:"edit", desc:"Add page numbers to each page."},
+    {slug:"split-pdf-bookmarks", title:"Split PDF by Bookmarks", cat:"edit", desc:"Split PDF using bookmarks."},
+    {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", cat:"edit", desc:"Keep only odd pages."},
+    {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", cat:"edit", desc:"Keep only even pages."},
+    {slug:"extract-first-page", title:"Extract First Page", cat:"edit", desc:"Extract the first page only."},
+    {slug:"extract-last-page", title:"Extract Last Page", cat:"edit", desc:"Extract the last page only."},
+    {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit", desc:"Remove all odd pages."},
+    {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit", desc:"Remove all even pages."},
+    {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit", desc:"Randomly shuffle pages."},
+    {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit", desc:"Restore page order ascending."},
+    {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit", desc:"Reverse page order descending."},
 
-  {slug:"protect-pdf", title:"Protect PDF", cat:"security"},
-  {slug:"metadata-pdf", title:"Metadata", cat:"security"},
-  {slug:"pdf-info", title:"PDF Info", cat:"security"},
-  {slug:"unlock-pdf", title:"Unlock PDF", cat:"security"},
-  {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert"},
-  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", cat: "edit" },
-  {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", description:"Keep only odd pages from a PDF.", cat:"edit"},
-  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF.", cat:"edit"},
-  {slug:"extract-first-page", title:"Extract First Page", cat:"edit"},
-  {slug:"extract-last-page", title:"Extract Last Page", cat:"edit"},
-  {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit"},
-  {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit"},
-  {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit"},
-  {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit"},
-  {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit"},
-  {slug:"add-cover-page", title:"Add Cover Page", cat:"edit"},
-  {slug:"add-separator-pages", title:"Separator Pages", cat:"edit"},
-  {slug:"add-header", title:"Add Header", cat:"edit"},
-  {slug:"add-footer", title:"Add Footer", cat:"edit"},
-  {slug:"logo-stamp", title:"Logo Stamp", cat:"security"},
-  {slug:"add-signature", title:"Add Signature", cat:"security"}
-];
+    {slug:"image-to-pdf", title:"Image to PDF", cat:"convert", desc:"Convert JPG or PNG to PDF."},
+    {slug:"pdf-to-word", title:"PDF to Word", cat:"convert", desc:"Convert PDF to DOCX."},
+    {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert", desc:"Convert PDF pages to images."},
+    {slug:"ocr-pdf", title:"OCR PDF", cat:"convert", desc:"Extract text from scanned PDFs."},
+    {slug:"extract-text", title:"Extract Text", cat:"convert", desc:"Extract plain text from PDF."},
+    {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert", desc:"Convert tables from PDF to Excel."},
+
+    {slug:"protect-pdf", title:"Protect PDF", cat:"security", desc:"Add password protection to PDF."},
+    {slug:"unlock-pdf", title:"Unlock PDF", cat:"security", desc:"Remove PDF password protection."},
+    {slug:"metadata-pdf", title:"Metadata", cat:"security", desc:"Edit title, author and keywords."},
+    {slug:"pdf-info", title:"PDF Info", cat:"security", desc:"View PDF metadata and page count."},
+    {slug:"add-header", title:"Add Header", cat:"security", desc:"Stamp header text on every page."},
+    {slug:"add-footer", title:"Add Footer", cat:"security", desc:"Stamp footer text on every page."},
+    {slug:"add-cover-page", title:"Add Cover Page", cat:"security", desc:"Insert a cover page at the start."},
+    {slug:"add-separator-pages", title:"Separator Pages", cat:"security", desc:"Add blank separator pages."},
+    {slug:"logo-stamp", title:"Logo Stamp", cat:"security", desc:"Stamp a logo on PDF pages."},
+    {slug:"add-signature", title:"Add Signature", cat:"security", desc:"Stamp a signature image."},
+    {slug:"watermark-pdf", title:"Watermark PDF", cat:"security", desc:"Add watermark text to pages."}
+  ];
+
+  let currentCat = "all";
+
   function toggleMenu(){
-  sidebar.classList.toggle("open");
-  backdrop.classList.toggle("show");
+    sidebar.classList.toggle("open");
+    backdrop.classList.toggle("show");
+    document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
   }
 
-let currentCat = "all";
+  window.toggleMenu = toggleMenu;
 
-function setActiveButtons(selector, value){
-  document.querySelectorAll(selector).forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.cat === value);
-  });
-}
-
-function render(){
-  grid.innerHTML = "";
-  const val = search.value.toLowerCase().trim();
-
-  const filtered = tools.filter(t => {
-    const catOk = currentCat === "all" || t.cat === currentCat;
-    const searchOk = !val || t.title.toLowerCase().includes(val);
-    return catOk && searchOk;
+  document.querySelectorAll("#sidebar a").forEach(link => {
+    link.addEventListener("click", () => {
+      sidebar.classList.remove("open");
+      backdrop.classList.remove("show");
+      document.body.style.overflow = "auto";
+    });
   });
 
-  if (!filtered.length){
-    grid.innerHTML = '<div class="empty-state">No tools found.</div>';
-    return;
+  function setActiveButtons(selector, value){
+    document.querySelectorAll(selector).forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.cat === value);
+    });
   }
 
-  filtered.forEach(t => {
-    const el = document.createElement("a");
-    el.href = "/" + t.slug;
-    el.className = "tool-card";
+  function render(){
+    grid.innerHTML = "";
+    const val = search.value.toLowerCase().trim();
 
-    el.innerHTML = `
-      <div class="tool-ico">${icons[t.slug] || "📄"}</div>
-      <div>
-        <h3>${t.title}</h3>
-        <p>Fast, secure and easy to use PDF tool for daily work.</p>
-      </div>
-    `;
+    const categories = [
+      { key:"edit", label:"Organize PDF" },
+      { key:"convert", label:"Convert PDF" },
+      { key:"security", label:"Security" }
+    ];
 
-    grid.appendChild(el);
+    const showCats = currentCat === "all" ? categories.map(c => c.key) : [currentCat];
+
+    const matchedTools = tools.filter(t => {
+      const catOk = showCats.includes(t.cat);
+      const searchOk = !val || t.title.toLowerCase().includes(val) || t.desc.toLowerCase().includes(val);
+      return catOk && searchOk;
+    });
+
+    if (!matchedTools.length){
+      grid.innerHTML = '<div class="empty-state">No tools found.</div>';
+      return;
+    }
+
+    showCats.forEach(cat => {
+      const catTools = matchedTools.filter(t => t.cat === cat);
+      if (!catTools.length) return;
+
+      const section = document.createElement("section");
+      section.className = "section-block";
+      section.innerHTML = `
+        <div class="section-head">
+          <h2>${cat === "edit" ? "Organize PDF" : cat === "convert" ? "Convert PDF" : "Security"}</h2>
+          <span class="count">${catTools.length} tools</span>
+        </div>
+        <div class="grid"></div>
+      `;
+
+      const innerGrid = section.querySelector(".grid");
+
+      catTools.forEach(t => {
+        const el = document.createElement("a");
+        el.href = "/" + t.slug;
+        el.className = "tool-card";
+        el.innerHTML = `
+          <div class="tool-ico">${icons[t.slug] || "📄"}</div>
+          <div>
+            <h3>${t.title}</h3>
+            <p>${t.desc}</p>
+          </div>
+        `;
+        innerGrid.appendChild(el);
+      });
+
+      grid.appendChild(section);
+    });
+  }
+
+  search.addEventListener("input", render);
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.onclick = () => {
+      currentCat = btn.dataset.cat;
+      setActiveButtons(".filter-btn", currentCat);
+      setActiveButtons(".tabs button", currentCat);
+      render();
+    };
   });
-}
 
-search.addEventListener("input", render);
+  document.querySelectorAll(".tabs button").forEach(btn => {
+    btn.onclick = () => {
+      currentCat = btn.dataset.cat;
+      setActiveButtons(".tabs button", currentCat);
+      setActiveButtons(".filter-btn", currentCat);
+      render();
+    };
+  });
 
-document.querySelectorAll(".filter-btn").forEach(btn=>{
-  btn.onclick = () => {
-    currentCat = btn.dataset.cat;
-    setActiveButtons(".filter-btn", currentCat);
-    setActiveButtons(".tabs button", currentCat);
-    render();
-  };
+  backdrop.addEventListener("click", toggleMenu);
+
+  render();
 });
-
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.onclick = () => {
-    const text = btn.dataset.cat;
-    currentCat = text;
-    setActiveButtons(".tabs button", currentCat);
-    setActiveButtons(".filter-btn", currentCat);
-    render();
-  };
-});
-
-render();
-</script>
+  </script>
 </body>
 </html>
