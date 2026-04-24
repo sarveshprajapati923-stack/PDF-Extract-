@@ -294,6 +294,8 @@ body{
 <script>
   const sidebar = document.getElementById("sidebar");
 const backdrop = document.getElementById("backdrop");
+  const grid = document.getElementById("grid");
+const search = document.getElementById("search");
 const icons = {
   "merge-pdf":"⚡",
   "split-pdf":"✂️",
@@ -385,9 +387,6 @@ const tools = [
   }
 
 let currentCat = "all";
-
-const grid = document.getElementById("grid");
-const search = document.getElementById("search");
 
 function setActiveButtons(selector, value){
   document.querySelectorAll(selector).forEach(btn=>{
