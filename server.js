@@ -736,6 +736,16 @@ app.get("/terms", (req, res) => {
 app.get("/rules", (req, res) => {
   res.sendFile(__dirname + "/rules.html");
 });
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`
+User-agent: *
+Allow: /
+Disallow:
+
+Sitemap: https://wepdfhub.click/sitemap.xml
+  `);
+});
 
 /* ================= TOOLS PAGE ROUTES (same as before) ================= */
 const tools = [
