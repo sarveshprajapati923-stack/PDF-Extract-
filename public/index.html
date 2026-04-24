@@ -55,6 +55,26 @@ body{
   border:1px solid var(--line);
   box-shadow:var(--shadow);
 }
+.sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:240px;
+  height:100vh;
+  background:#fff;
+  border-right:1px solid var(--line);
+  transition:transform .3s ease;
+  padding:20px;
+  z-index:10005;
+  transform:translateX(-100%);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
+.sidebar.open{
+  transform:translateX(0);
+}
 
 .backdrop{
   position:fixed;
@@ -69,24 +89,7 @@ body{
 .backdrop.show{
   opacity:1;
   pointer-events:auto;
-}
-
-.sidebar{
-  position:fixed;
-  top:0;
-  left:-280px;
-  width:240px;
-  height:100%;
-  background:#fff;
-  border-right:1px solid var(--line);
-  transition:.3s ease;
-  padding:20px;
-  z-index:10005;
-}
-
-.sidebar.open{
-  left:0;
-}
+  }
 
 .sidebar h3{
   margin:0 0 14px;
@@ -291,12 +294,6 @@ body{
     <div id="grid" class="grid"></div>
   </div>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-  const backdrop = document.getElementById("backdrop");
-  const grid = document.getElementById("grid");
-  const search = document.getElementById("search");
-
   const icons = {
     "merge-pdf":"⚡",
     "split-pdf":"✂️",
