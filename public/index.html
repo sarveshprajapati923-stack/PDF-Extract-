@@ -292,6 +292,8 @@ body{
   </div>
 
 <script>
+  const sidebar = document.getElementById("sidebar");
+const backdrop = document.getElementById("backdrop");
 const icons = {
   "merge-pdf":"⚡",
   "split-pdf":"✂️",
@@ -380,12 +382,6 @@ const tools = [
   function toggleMenu(){
   sidebar.classList.toggle("open");
   backdrop.classList.toggle("show");
-
-  if(sidebar.classList.contains("open")){
-    document.body.style.overflow = "hidden";
-  }else{
-    document.body.style.overflow = "auto";
-  }
   }
 
 let currentCat = "all";
@@ -394,11 +390,6 @@ const grid = document.getElementById("grid");
 const search = document.getElementById("search");
 const sidebar = document.getElementById("sidebar");
 const backdrop = document.getElementById("backdrop");
-
-function toggleMenu(){
-  sidebar.classList.toggle("open");
-  backdrop.classList.toggle("show");
-}
 
 function setActiveButtons(selector, value){
   document.querySelectorAll(selector).forEach(btn=>{
