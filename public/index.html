@@ -377,6 +377,16 @@ const tools = [
   {slug:"logo-stamp", title:"Logo Stamp", cat:"security"},
   {slug:"add-signature", title:"Add Signature", cat:"security"}
 ];
+  function toggleMenu(){
+  sidebar.classList.toggle("open");
+  backdrop.classList.toggle("show");
+
+  if(sidebar.classList.contains("open")){
+    document.body.style.overflow = "hidden";
+  }else{
+    document.body.style.overflow = "auto";
+  }
+  }
 
 let currentCat = "all";
 
