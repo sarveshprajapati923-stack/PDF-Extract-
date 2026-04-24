@@ -499,6 +499,51 @@ app.post("/api/sort-pages-desc", upload.single("file"), async (req, res) => {
     await cleanupFiles(getSingleFile(req));
   }
 });
+app.get("/sitemap.xml", (req, res) => {
+  res.setHeader("Content-Type", "application/xml");
+
+  const base = "https://wepdfhub.click";
+
+  const urls = [
+    "/",
+    "/merge-pdf",
+    "/split-pdf",
+    "/compress-pdf",
+    "/about",
+    "/contact",
+    "/privacy-policy",
+    "/terms",
+    "/rules"
+  ];
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `
+<url>
+  <loc>${base + u}</loc>
+</url>`).join("")}
+</urlset>`;
+
+  res.send(xml);
+});
+app.get("/tool/:name", (req, res) => {
+  const name = req.params.name;
+
+  res.send(`
+  <html>
+  <head>
+    <title>${name} - Free PDF Tool</title>
+    <meta name="description" content="Use ${name} online free PDF tool">
+  </head>
+
+  <body>
+    <h1>${name} Tool</h1>
+    <p>Best free tool for ${name}</p>
+  </body>
+  </html>
+  `);
+});
+
 // ================= BACKEND: Add Cover Page =================
 app.post("/api/add-cover-page", upload.single("file"), async (req, res) => {
   try {
