@@ -948,6 +948,7 @@ app.get("/about", (req, res) => {
     "About WePDFHub",
     `<p>WePDFHub is a fast PDF tools website built for simple, secure, mobile-friendly document tasks.</p>
      <p>Each tool has its own dedicated URL, making the site easier to browse and better for SEO.</p>`
+    req
   ));
 });
 
@@ -957,6 +958,7 @@ app.get("/contact", (req, res) => {
     "Contact WePDFHub",
     `<p>Email: <a href="mailto:support@wepdfhub.click">support@wepdfhub.click</a></p>
      <p>Use this email for tool issues, partnership queries, and website support.</p>`
+    req
   ));
 });
 
@@ -970,6 +972,7 @@ app.get("/privacy", (req, res) => {
        <li>Files are not stored long-term.</li>
        <li>No user data is sold or shared.</li>
      </ul>`
+    req
   ));
 });
 
@@ -983,6 +986,7 @@ app.get("/terms", (req, res) => {
        <li>No spam or abuse of system resources.</li>
        <li>Limits may apply for stability.</li>
      </ul>`
+    req
   ));
 });
 
@@ -996,6 +1000,7 @@ app.get("/rules", (req, res) => {
        <li>Do not upload harmful content.</li>
        <li>Respect copyright laws.</li>
      </ul>`
+    req
   ));
 });
 
