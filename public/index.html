@@ -1,537 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Free PDF Tools Online - WePDFHub</title>
-
-<meta name="description" content="Merge, Split, Compress PDF online free tool. No login required. Fast SaaS PDF tools.">
-<meta name="robots" content="index, follow">
-<meta property="og:title" content="WePDFHub PDF Tools">
-<meta property="og:description" content="Free online PDF tools for everyone">
-<meta property="og:type" content="website">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WePDFHub - PDF Tools</title>
 
 <style>
 :root{
   --bg:#f7f9ff;
-  --panel:#ffffff;
-  --line:#d8e2f0;
+  --card:#ffffff;
   --text:#0f172a;
   --muted:#64748b;
   --primary:#2563eb;
-  --primary2:#0ea5e9;
-  --shadow:0 18px 50px rgba(15,23,42,.08);
-  --radius:20px;
 }
 
-*{box-sizing:border-box}
-html,body{
+body{
   margin:0;
-  min-height:100%;
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  font-family:system-ui;
   background:var(--bg);
-  color:var(--text);
-}
-a{text-decoration:none;color:inherit}
-button,input{font:inherit}
-body{padding-top:74px;overflow-x:hidden}
-
-.wrap{
-  max-width:1200px;
-  margin:auto;
-  padding:20px;
 }
 
-.topbar{
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  background:#fff;
+  border-bottom:1px solid #eee;
   position:sticky;
   top:0;
-  z-index:9000;
-  background:rgba(247,249,255,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(216,226,240,.7);
+  z-index:1000;
 }
 
-.topbar-inner{
-  max-width:1200px;
-  margin:auto;
-  padding:14px 20px;
+.logo{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:14px;
-}
-
-.brand-wrap{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-
-.brand-avatar{
-  width:46px;
-  height:46px;
-  border-radius:16px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  display:grid;
-  place-items:center;
-  color:#fff;
-  font-weight:900;
-  font-size:1.05rem;
-  box-shadow:0 12px 25px rgba(37,99,235,.22);
-  position:relative;
-  flex:0 0 auto;
-}
-.brand-avatar::after{
-  content:"";
-  position:absolute;
-  inset:-3px;
-  border-radius:18px;
-  border:1px solid rgba(37,99,235,.15);
-}
-
-.brand-copy{
-  min-width:0;
-}
-.brand-name{
-  font-weight:900;
-  font-size:1.08rem;
-  line-height:1.1;
-}
-.brand-sub{
-  font-size:.86rem;
-  color:var(--muted);
-  margin-top:2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  max-width:42vw;
-}
-.brand-dots{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  margin-top:8px;
-  padding-left:2px;
-}
-.brand-dots span{
-  width:7px;
-  height:7px;
-  border-radius:999px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  opacity:.9;
-  box-shadow:0 4px 10px rgba(37,99,235,.18);
-}
-
-.top-actions{
-  display:flex;
   gap:10px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-.top-link{
-  padding:10px 14px;
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  font-size:.92rem;
-  transition:.18s ease;
-}
-.top-link:hover{
-  transform:translateY(-1px);
-  border-color:#c9d8ff;
-  box-shadow:0 8px 18px rgba(37,99,235,.08);
-}
-.top-link.primary{
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:#fff;
-  border-color:transparent;
 }
 
-.hero{
-  margin:0 0 14px;
-  padding:22px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:22px;
-  box-shadow:var(--shadow);
+.logo img{
+  width:38px;
+  height:38px;
 }
-.hero-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:18px;
-  flex-wrap:wrap;
-}
-.hero-copy-block{
-  min-width:min(100%, 560px);
-  flex:1;
-}
-.hero h1{
-  margin:0 0 10px;
-  font-size:clamp(1.35rem,3vw,2.35rem);
-  line-height:1.06;
-  letter-spacing:-.03em;
-}
-.hero p{
-  margin:0;
-  color:var(--muted);
-  line-height:1.6;
-  max-width:64ch;
-}
-.hero-cta{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.hero-btn{
-  border:1px solid var(--line);
-  background:#fff;
-  padding:11px 14px;
-  border-radius:12px;
+
+.logo span{
   font-weight:700;
-  transition:.18s ease;
-}
-.hero-btn.primary{
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:#fff;
-  border-color:transparent;
-}
-.hero-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 10px 22px rgba(0,0,0,.08);
-}
-
-.search-row{
-  display:flex;
-  gap:10px;
-  margin:16px 0 12px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-.search{
-  flex:1;
-  min-width:220px;
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  outline:none;
-  background:#fff;
-  transition:.18s ease;
-}
-.search:focus{
-  border-color:#b7cbff;
-  box-shadow:0 0 0 4px rgba(37,99,235,.08);
-}
-.filter-btn{
-  padding:10px 14px;
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  cursor:pointer;
-  transition:.2s ease;
-  white-space:nowrap;
-}
-.filter-btn.active{
-  background:var(--primary);
-  color:#fff;
-  border-color:transparent;
-}
-.filter-btn:hover{
-  transform:translateY(-1px);
-}
-
-.section-block{
-  margin-top:22px;
-}
-.section-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin:0 0 12px;
-}
-.section-head h2{
-  margin:0;
   font-size:18px;
 }
-.section-head .count{
-  font-size:12px;
-  color:var(--muted);
-  border:1px solid var(--line);
-  background:#fff;
-  padding:6px 10px;
-  border-radius:999px;
+
+/* 3 DOT MENU */
+.menu{
+  font-size:22px;
+  cursor:pointer;
 }
 
+/* DROPDOWN */
+.dropdown{
+  position:absolute;
+  right:10px;
+  top:60px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+  display:none;
+  flex-direction:column;
+  width:220px;
+}
+
+.dropdown a{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-decoration:none;
+  color:#000;
+}
+
+.dropdown a:hover{
+  background:#f3f6ff;
+}
+
+/* HERO */
+.hero{
+  padding:20px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:20px;
+}
+
+.hero p{
+  color:var(--muted);
+}
+
+/* CATEGORY BLOCK */
+.section{
+  padding:14px;
+}
+
+.section h2{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+/* GRID */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
-}
-.tool-card{
-  padding:16px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,#fff,#f8fbff);
-  display:flex;
-  gap:12px;
-  color:inherit;
-  transition:.2s ease;
-  min-height:112px;
-  position:relative;
-  overflow:hidden;
-}
-.tool-card::after{
-  content:"";
-  position:absolute;
-  inset:auto -40px -40px auto;
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  background:rgba(37,99,235,.06);
-  pointer-events:none;
-}
-.tool-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 30px rgba(0,0,0,.08);
-}
-.tool-ico{
-  width:46px;
-  height:46px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:#eef4ff;
-  font-weight:700;
-  color:var(--primary);
-  flex:0 0 46px;
-  font-size:18px;
-}
-.tool-card h3{
-  margin:0;
-  font-size:16px;
-}
-.tool-card p{
-  margin:4px 0 0;
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.45;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
-.empty-state{
-  padding:18px;
+.card{
   background:#fff;
-  border:1px dashed var(--line);
-  border-radius:16px;
-  color:var(--muted);
+  padding:14px;
+  border-radius:14px;
+  text-decoration:none;
+  color:#000;
+  display:block;
+  transition:.2s;
+  border:1px solid #eee;
 }
 
-@media (max-width:760px){
-  body{padding-top:70px}
-  .topbar-inner{
-    padding:12px 14px;
-    flex-direction:column;
-    align-items:stretch;
-  }
-  .brand-wrap{
-    justify-content:flex-start;
-  }
-  .brand-sub{
-    max-width:100%;
-  }
-  .top-actions{
-    justify-content:flex-start;
-  }
-  .wrap{padding:14px}
-  .hero{padding:16px}
-  .grid{grid-template-columns:1fr}
-  .hero h1{font-size:1.55rem}
+.card:hover{
+  transform:translateY(-3px);
+}
+
+.icon{
+  font-size:22px;
+}
+
+.title{
+  font-weight:600;
+  margin-top:6px;
+}
+
+.desc{
+  font-size:12px;
+  color:gray;
 }
 </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-wrap">
-        <div class="brand-avatar">W</div>
-        <div class="brand-copy">
-          <div class="brand-name">WePDFHub</div>
-          <div class="brand-sub">Free PDF tools for fast daily work</div>
-          <div class="brand-dots" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
 
-      <div class="top-actions">
-        <a class="top-link" href="/merge-pdf">Merge PDF</a>
-        <a class="top-link" href="/compress-pdf">Compress PDF</a>
-        <a class="top-link primary" href="/split-pdf">Split PDF</a>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <section class="hero">
-      <div class="hero-top">
-        <div class="hero-copy-block">
-          <h1>We make PDF easy.</h1>
-          <p>All the tools you need to merge, split, compress, convert, sign and edit PDFs in one clean SaaS workspace.</p>
-        </div>
-        <div class="hero-cta">
-          <a class="hero-btn primary" href="/merge-pdf">Start with Merge</a>
-          <a class="hero-btn" href="/compress-pdf">Try Compress</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="search-row">
-      <input id="search" class="search" placeholder="Search tools..." />
-      <button class="filter-btn active" data-cat="all">All</button>
-      <button class="filter-btn" data-cat="edit">Edit</button>
-      <button class="filter-btn" data-cat="convert">Convert</button>
-      <button class="filter-btn" data-cat="security">Security</button>
-    </div>
-
-    <div id="grid"></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <img src="logo.png">
+    <span>WePDFHub</span>
   </div>
 
+  <div class="menu" onclick="toggleMenu()">⋮</div>
+</div>
+
+<!-- DROPDOWN MENU -->
+<div id="menuBox" class="dropdown">
+  <a href="/">🏠 All Tools</a>
+  <a href="/merge-pdf">Merge PDF</a>
+  <a href="/split-pdf">Split PDF</a>
+  <a href="/compress-pdf">Compress PDF</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>All PDF tools in one place</h1>
+  <p>Fast • Secure • Free SaaS Tools</p>
+</div>
+
+<!-- ORGANIZE -->
+<div class="section">
+<h2>Organize PDF</h2>
+<div class="grid">
+
+<a href="/merge-pdf" class="card">
+<div class="icon">⚡</div>
+<div class="title">Merge PDF</div>
+<div class="desc">Combine PDFs</div>
+</a>
+
+<a href="/split-pdf" class="card">
+<div class="icon">✂️</div>
+<div class="title">Split PDF</div>
+<div class="desc">Split pages</div>
+</a>
+
+<a href="/compress-pdf" class="card">
+<div class="icon">🗜️</div>
+<div class="title">Compress PDF</div>
+<div class="desc">Reduce size</div>
+</a>
+
+</div>
+</div>
+
+<!-- CONVERT -->
+<div class="section">
+<h2>Convert PDF</h2>
+<div class="grid">
+
+<a href="/pdf-to-word" class="card">
+<div class="icon">📄</div>
+<div class="title">PDF to Word</div>
+<div class="desc">Convert PDF</div>
+</a>
+
+<a href="/image-to-pdf" class="card">
+<div class="icon">🖼️</div>
+<div class="title">Image to PDF</div>
+<div class="desc">JPG to PDF</div>
+</a>
+
+</div>
+</div>
+
+<!-- SECURITY -->
+<div class="section">
+<h2>Security</h2>
+<div class="grid">
+
+<a href="/protect-pdf" class="card">
+<div class="icon">🔒</div>
+<div class="title">Protect PDF</div>
+<div class="desc">Add password</div>
+</a>
+
+<a href="/unlock-pdf" class="card">
+<div class="icon">🔓</div>
+<div class="title">Unlock PDF</div>
+<div class="desc">Remove password</div>
+</a>
+
+</div>
+</div>
+
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const search = document.getElementById("search");
-  const grid = document.getElementById("grid");
-
-  const icons = {
-    "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
-    "watermark-pdf":"💧","delete-pages":"🗑️","extract-pages":"📤","reorder-pages":"🔀",
-    "reverse-pages":"↩️","duplicate-pages":"📑","crop-pdf":"✂️","add-blank-pages":"➕",
-    "page-number":"🔢","image-to-pdf":"🖼️","pdf-to-word":"📄","pdf-to-jpg":"📷",
-    "ocr-pdf":"👁️","extract-text":"📝","protect-pdf":"🔒","metadata-pdf":"🧾",
-    "pdf-info":"ℹ️","unlock-pdf":"🔓","pdf-to-excel":"📊","split-pdf-bookmarks":"🔖",
-    "split-pdf-odd-pages":"1️⃣","split-pdf-even-pages":"2️⃣","extract-first-page":"1️⃣",
-    "extract-last-page":"🔚","delete-odd-pages":"❌","delete-even-pages":"🚫",
-    "shuffle-pages":"🔀","sort-pages":"⬆️","sort-pages-desc":"⬇️","add-cover-page":"📄",
-    "add-separator-pages":"📑","add-header":"⬆️","add-footer":"⬇️","logo-stamp":"🏷️",
-    "add-signature":"✍️"
-  };
-
-  const tools = [
-    {slug:"merge-pdf", title:"Merge PDF", cat:"edit", desc:"Combine multiple PDF files into one."},
-    {slug:"split-pdf", title:"Split PDF", cat:"edit", desc:"Split selected pages into separate PDFs."},
-    {slug:"compress-pdf", title:"Compress PDF", cat:"edit", desc:"Reduce file size with fast compression."},
-    {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit", desc:"Rotate pages left or right."},
-    {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit", desc:"Add a text watermark to every page."},
-    {slug:"delete-pages", title:"Delete Pages", cat:"edit", desc:"Remove selected pages from PDF."},
-    {slug:"extract-pages", title:"Extract Pages", cat:"edit", desc:"Keep only selected pages."},
-    {slug:"reorder-pages", title:"Reorder Pages", cat:"edit", desc:"Change page order quickly."},
-    {slug:"reverse-pages", title:"Reverse Pages", cat:"edit", desc:"Reverse all pages in one click."},
-    {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit", desc:"Duplicate selected pages."},
-    {slug:"crop-pdf", title:"Crop PDF", cat:"edit", desc:"Crop PDF page area precisely."},
-    {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit", desc:"Append blank pages to PDF."},
-    {slug:"page-number", title:"Page Number", cat:"edit", desc:"Add page numbers to each page."},
-    {slug:"split-pdf-bookmarks", title:"Split PDF by Bookmarks", cat:"edit", desc:"Split PDF using bookmarks."},
-    {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", cat:"edit", desc:"Keep only odd pages."},
-    {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", cat:"edit", desc:"Keep only even pages."},
-    {slug:"extract-first-page", title:"Extract First Page", cat:"edit", desc:"Extract the first page only."},
-    {slug:"extract-last-page", title:"Extract Last Page", cat:"edit", desc:"Extract the last page only."},
-    {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit", desc:"Remove all odd pages."},
-    {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit", desc:"Remove all even pages."},
-    {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit", desc:"Randomly shuffle pages."},
-    {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit", desc:"Restore page order ascending."},
-    {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit", desc:"Reverse page order descending."},
-
-    {slug:"image-to-pdf", title:"Image to PDF", cat:"convert", desc:"Convert JPG or PNG to PDF."},
-    {slug:"pdf-to-word", title:"PDF to Word", cat:"convert", desc:"Convert PDF to DOCX."},
-    {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert", desc:"Convert PDF pages to images."},
-    {slug:"ocr-pdf", title:"OCR PDF", cat:"convert", desc:"Extract text from scanned PDFs."},
-    {slug:"extract-text", title:"Extract Text", cat:"convert", desc:"Extract plain text from PDF."},
-    {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert", desc:"Convert tables from PDF to Excel."},
-
-    {slug:"protect-pdf", title:"Protect PDF", cat:"security", desc:"Add password protection to PDF."},
-    {slug:"unlock-pdf", title:"Unlock PDF", cat:"security", desc:"Remove PDF password protection."},
-    {slug:"metadata-pdf", title:"Metadata", cat:"security", desc:"Edit title, author and keywords."},
-    {slug:"pdf-info", title:"PDF Info", cat:"security", desc:"View PDF metadata and page count."},
-    {slug:"add-header", title:"Add Header", cat:"security", desc:"Stamp header text on every page."},
-    {slug:"add-footer", title:"Add Footer", cat:"security", desc:"Stamp footer text on every page."},
-    {slug:"add-cover-page", title:"Add Cover Page", cat:"security", desc:"Insert a cover page at the start."},
-    {slug:"add-separator-pages", title:"Separator Pages", cat:"security", desc:"Add blank separator pages."},
-    {slug:"logo-stamp", title:"Logo Stamp", cat:"security", desc:"Stamp a logo on PDF pages."},
-    {slug:"add-signature", title:"Add Signature", cat:"security", desc:"Stamp a signature image."},
-    {slug:"watermark-pdf", title:"Watermark PDF", cat:"security", desc:"Add watermark text to pages."}
-  ];
-
-  let currentCat = "all";
-
-  function render(){
-    grid.innerHTML = "";
-    const q = search.value.toLowerCase().trim();
-
-    const categories = [
-      { key:"edit", label:"Organize PDF" },
-      { key:"convert", label:"Convert PDF" },
-      { key:"security", label:"Security" }
-    ];
-
-    const showCats = currentCat === "all" ? categories.map(c => c.key) : [currentCat];
-    const matched = tools.filter(t => {
-      const catOk = showCats.includes(t.cat);
-      const searchOk = !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
-      return catOk && searchOk;
-    });
-
-    if (!matched.length){
-      grid.innerHTML = '<div class="empty-state">No tools found.</div>';
-      return;
-    }
-
-    showCats.forEach(cat => {
-      const catTools = matched.filter(t => t.cat === cat);
-      if (!catTools.length) return;
-
-      const section = document.createElement("section");
-      section.className = "section-block";
-      section.innerHTML = `
-        <div class="section-head">
-          <h2>${cat === "edit" ? "Organize PDF" : cat === "convert" ? "Convert PDF" : "Security"}</h2>
-          <span class="count">${catTools.length} tools</span>
-        </div>
-        <div class="grid"></div>
-      `;
-
-      const innerGrid = section.querySelector(".grid");
-
-      catTools.forEach(t => {
-        const el = document.createElement("a");
-        el.href = "/" + t.slug;
-        el.className = "tool-card";
-        el.innerHTML = `
-          <div class="tool-ico">${icons[t.slug] || "📄"}</div>
-          <div>
-            <h3>${t.title}</h3>
-            <p>${t.desc}</p>
-          </div>
-        `;
-        innerGrid.appendChild(el);
-      });
-
-      grid.appendChild(section);
-    });
-  }
-
-  search.addEventListener("input", render);
-
-  document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.onclick = () => {
-      currentCat = btn.dataset.cat;
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.cat === currentCat));
-      render();
-    };
-  });
-
-  render();
-});
+function toggleMenu(){
+  const box = document.getElementById("menuBox");
+  box.style.display = box.style.display === "flex" ? "none" : "flex";
+}
 </script>
+
 </body>
 </html>
