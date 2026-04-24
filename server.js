@@ -908,7 +908,14 @@ function buildStaticPage(title, heading, content) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${escapeHtml(title)} | WePDFHub</title>
-    <meta name="description" content="${escapeHtml(heading)}" />
+
+<meta name="description" content="Use ${escapeHtml(title)} tool online free. Fast, secure and no login required.">
+
+<meta name="robots" content="index, follow">
+
+<meta property="og:title" content="${escapeHtml(title)} - WePDFHub">
+<meta property="og:description" content="Free online ${escapeHtml(title)} tool. No login required.">
+<meta property="og:type" content="website">
     <link rel="canonical" href="${BASE_URL}" />
     <style>${pageBg()}</style>
   </head>
