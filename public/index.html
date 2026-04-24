@@ -442,13 +442,6 @@ body{
   });
 
   render();
-  document.querySelectorAll("#sidebar a").forEach(link => {
-  link.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    backdrop.classList.remove("show");
-    document.body.style.overflow = "auto";
-  });
-});
   window.toggleMenu = toggleMenu;
 });
 
