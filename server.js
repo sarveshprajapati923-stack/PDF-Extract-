@@ -911,6 +911,8 @@ function buildStaticPage(title, heading, content) {
 
 <meta name="description" content="Use ${escapeHtml(title)} tool online free. Fast, secure and no login required.">
 
+<link rel="canonical" href="${BASE_URL + req.path}" />
+
 <meta name="robots" content="index, follow">
 
 <meta property="og:title" content="${escapeHtml(title)} - WePDFHub">
