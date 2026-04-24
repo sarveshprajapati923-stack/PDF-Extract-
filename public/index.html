@@ -14,21 +14,29 @@
 <style>
 :root{
   --bg:#f7f9ff;
-  --panel:#ffffff;
+  --card:#ffffff;
   --line:#d8e2f0;
   --text:#0f172a;
   --muted:#64748b;
   --primary:#2563eb;
-  --primary2:#0ea5e9;
   --shadow:0 18px 50px rgba(15,23,42,.08);
-  --radius:18px;
 }
 
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 a{text-decoration:none;color:inherit}
 button,input{font:inherit}
-body{padding-top:54px;}
+
+body{
+  padding-top:54px;
+  overflow-x:hidden;
+}
 
 .wrap{
   max-width:1200px;
@@ -52,6 +60,7 @@ body{padding-top:54px;}
   border:1px solid var(--line);
   box-shadow:var(--shadow);
   transition:.2s ease;
+  user-select:none;
 }
 .menu-btn:active{transform:scale(.96)}
 
@@ -73,24 +82,23 @@ body{padding-top:54px;}
   position:fixed;
   top:0;
   left:0;
-  width:280px;
-  max-width:85vw;
+  width:290px;
+  max-width:86vw;
   height:100vh;
   background:#fff;
   border-right:1px solid var(--line);
-  transition:transform .28s ease;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
   transform:translateX(-100%);
-  padding:18px 16px 20px;
+  transition:transform .28s ease;
   z-index:10005;
   overflow-y:auto;
-  overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
-  box-shadow:0 20px 50px rgba(0,0,0,.12);
+  overscroll-behavior:contain;
+  padding:18px 16px 22px;
 }
 .sidebar.open{transform:translateX(0)}
-
 .sidebar h3{
-  margin:6px 0 14px;
+  margin:6px 0 12px;
   font-size:18px;
 }
 .sidebar .section-title{
@@ -102,12 +110,13 @@ body{padding-top:54px;}
   font-weight:700;
 }
 .sidebar a{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:10px;
   padding:11px 12px;
   border-radius:12px;
-  text-decoration:none;
-  color:#0f172a;
   margin-bottom:6px;
+  color:var(--text);
   border:1px solid transparent;
   transition:.18s ease;
 }
@@ -159,7 +168,10 @@ body{padding-top:54px;}
   background:#fff;
   transition:.18s ease;
 }
-.search:focus{border-color:#b7cbff; box-shadow:0 0 0 4px rgba(37,99,235,.08)}
+.search:focus{
+  border-color:#b7cbff;
+  box-shadow:0 0 0 4px rgba(37,99,235,.08);
+}
 
 .tabs{
   display:flex;
@@ -206,7 +218,6 @@ body{padding-top:54px;}
 .section-head h2{
   margin:0;
   font-size:18px;
-  text-transform:capitalize;
 }
 .section-head .count{
   font-size:12px;
@@ -230,7 +241,6 @@ body{padding-top:54px;}
   background:linear-gradient(180deg,#fff,#f8fbff);
   display:flex;
   gap:12px;
-  text-decoration:none;
   color:inherit;
   transition:.2s ease;
   min-height:112px;
@@ -300,56 +310,56 @@ body{padding-top:54px;}
     <h3>WePDFHub</h3>
 
     <div class="section-title">Quick Links</div>
-    <a href="/">All Tools</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
+    <a href="/">🏠 All Tools</a>
+    <a href="/about">ℹ️ About</a>
+    <a href="/contact">✉️ Contact</a>
 
     <div class="section-title">Organize PDF</div>
-    <a href="/merge-pdf">Merge PDF</a>
-    <a href="/split-pdf">Split PDF</a>
-    <a href="/compress-pdf">Compress PDF</a>
-    <a href="/rotate-pdf">Rotate PDF</a>
-    <a href="/delete-pages">Delete Pages</a>
-    <a href="/extract-pages">Extract Pages</a>
-    <a href="/reorder-pages">Reorder Pages</a>
-    <a href="/reverse-pages">Reverse Pages</a>
-    <a href="/duplicate-pages">Duplicate Pages</a>
-    <a href="/crop-pdf">Crop PDF</a>
-    <a href="/add-blank-pages">Add Blank Pages</a>
-    <a href="/page-number">Page Number</a>
-    <a href="/split-pdf-bookmarks">Split by Bookmarks</a>
-    <a href="/split-pdf-odd-pages">Split Odd Pages</a>
-    <a href="/split-pdf-even-pages">Split Even Pages</a>
-    <a href="/extract-first-page">Extract First Page</a>
-    <a href="/extract-last-page">Extract Last Page</a>
-    <a href="/delete-odd-pages">Delete Odd Pages</a>
-    <a href="/delete-even-pages">Delete Even Pages</a>
-    <a href="/shuffle-pages">Shuffle Pages</a>
-    <a href="/sort-pages">Sort Pages Ascending</a>
-    <a href="/sort-pages-desc">Sort Pages Descending</a>
+    <a href="/merge-pdf">⚡ Merge PDF</a>
+    <a href="/split-pdf">✂️ Split PDF</a>
+    <a href="/compress-pdf">🗜️ Compress PDF</a>
+    <a href="/rotate-pdf">🔄 Rotate PDF</a>
+    <a href="/delete-pages">🗑️ Delete Pages</a>
+    <a href="/extract-pages">📤 Extract Pages</a>
+    <a href="/reorder-pages">🔀 Reorder Pages</a>
+    <a href="/reverse-pages">↩️ Reverse Pages</a>
+    <a href="/duplicate-pages">📑 Duplicate Pages</a>
+    <a href="/crop-pdf">✂️ Crop PDF</a>
+    <a href="/add-blank-pages">➕ Add Blank Pages</a>
+    <a href="/page-number">🔢 Page Number</a>
+    <a href="/split-pdf-bookmarks">🔖 Split by Bookmarks</a>
+    <a href="/split-pdf-odd-pages">1️⃣ Split Odd Pages</a>
+    <a href="/split-pdf-even-pages">2️⃣ Split Even Pages</a>
+    <a href="/extract-first-page">1️⃣ Extract First Page</a>
+    <a href="/extract-last-page">🔚 Extract Last Page</a>
+    <a href="/delete-odd-pages">❌ Delete Odd Pages</a>
+    <a href="/delete-even-pages">🚫 Delete Even Pages</a>
+    <a href="/shuffle-pages">🔀 Shuffle Pages</a>
+    <a href="/sort-pages">⬆️ Sort Pages Ascending</a>
+    <a href="/sort-pages-desc">⬇️ Sort Pages Descending</a>
 
     <div class="section-title">Convert PDF</div>
-    <a href="/image-to-pdf">Image to PDF</a>
-    <a href="/pdf-to-word">PDF to Word</a>
-    <a href="/pdf-to-jpg">PDF to JPG</a>
-    <a href="/ocr-pdf">OCR PDF</a>
-    <a href="/extract-text">Extract Text</a>
-    <a href="/pdf-to-excel">PDF to Excel</a>
+    <a href="/image-to-pdf">🖼️ Image to PDF</a>
+    <a href="/pdf-to-word">📄 PDF to Word</a>
+    <a href="/pdf-to-jpg">📷 PDF to JPG</a>
+    <a href="/ocr-pdf">👁️ OCR PDF</a>
+    <a href="/extract-text">📝 Extract Text</a>
+    <a href="/pdf-to-excel">📊 PDF to Excel</a>
 
     <div class="section-title">Security</div>
-    <a href="/protect-pdf">Protect PDF</a>
-    <a href="/unlock-pdf">Unlock PDF</a>
-    <a href="/metadata-pdf">Metadata</a>
-    <a href="/pdf-info">PDF Info</a>
-    <a href="/watermark-pdf">Watermark PDF</a>
-    <a href="/add-header">Add Header</a>
-    <a href="/add-footer">Add Footer</a>
-    <a href="/add-cover-page">Add Cover Page</a>
-    <a href="/add-separator-pages">Separator Pages</a>
-    <a href="/logo-stamp">Logo Stamp</a>
-    <a href="/add-signature">Signature</a>
+    <a href="/protect-pdf">🔒 Protect PDF</a>
+    <a href="/unlock-pdf">🔓 Unlock PDF</a>
+    <a href="/metadata-pdf">🧾 Metadata</a>
+    <a href="/pdf-info">ℹ️ PDF Info</a>
+    <a href="/watermark-pdf">💧 Watermark PDF</a>
+    <a href="/add-header">⬆️ Add Header</a>
+    <a href="/add-footer">⬇️ Add Footer</a>
+    <a href="/add-cover-page">📄 Add Cover Page</a>
+    <a href="/add-separator-pages">📑 Separator Pages</a>
+    <a href="/logo-stamp">🏷️ Logo Stamp</a>
+    <a href="/add-signature">✍️ Signature</a>
 
-    <div class="mini">Tap any tool to open it. Scroll stays inside the menu.</div>
+    <div class="mini">Scroll stays inside the menu. Tap any tool to open it.</div>
   </aside>
 
   <div class="wrap">
@@ -363,7 +373,6 @@ body{padding-top:54px;}
       <button data-cat="edit">Organize PDF</button>
       <button data-cat="convert">Convert PDF</button>
       <button data-cat="security">Security</button>
-      <button data-cat="ai">AI Tools</button>
     </div>
 
     <div class="top-bar">
@@ -481,13 +490,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.toggleMenu = toggleMenu;
 
+  function closeMenu(){
+    sidebar.classList.remove("open");
+    backdrop.classList.remove("show");
+    document.body.style.overflow = "auto";
+  }
+
   document.querySelectorAll("#sidebar a").forEach(link => {
-    link.addEventListener("click", () => {
-      sidebar.classList.remove("open");
-      backdrop.classList.remove("show");
-      document.body.style.overflow = "auto";
-    });
+    link.addEventListener("click", closeMenu);
   });
+  backdrop.addEventListener("click", closeMenu);
 
   function setActiveButtons(selector, value){
     document.querySelectorAll(selector).forEach(btn => {
@@ -506,7 +518,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const showCats = currentCat === "all" ? categories.map(c => c.key) : [currentCat];
-
     const matchedTools = tools.filter(t => {
       const catOk = showCats.includes(t.cat);
       const searchOk = !val || t.title.toLowerCase().includes(val) || t.desc.toLowerCase().includes(val);
@@ -572,10 +583,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  backdrop.addEventListener("click", toggleMenu);
-
   render();
 });
-  </script>
+</script>
 </body>
 </html>
