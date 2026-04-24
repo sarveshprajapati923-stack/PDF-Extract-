@@ -290,164 +290,164 @@ body{
 
     <div id="grid" class="grid"></div>
   </div>
-
 <script>
+document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
-const backdrop = document.getElementById("backdrop");
+  const backdrop = document.getElementById("backdrop");
   const grid = document.getElementById("grid");
-const search = document.getElementById("search");
-const icons = {
-  "merge-pdf":"⚡",
-  "split-pdf":"✂️",
-  "compress-pdf":"🗜️",
-  "rotate-pdf":"🔄",
-  "watermark-pdf":"💧",
-  "delete-pages":"🗑️",
-  "extract-pages":"📤",
-  "reorder-pages":"🔀",
-  "reverse-pages":"↩️",
-  "duplicate-pages":"📑",
-  "crop-pdf":"✂️",
-  "add-blank-pages":"➕",
-  "page-number":"🔢",
-  "image-to-pdf":"🖼️",
-  "pdf-to-word":"📄",
-  "pdf-to-jpg":"📷",
-  "ocr-pdf":"👁️",
-  "extract-text":"📝",
-  "protect-pdf":"🔒",
-  "metadata-pdf":"🧾",
-  "pdf-info":"ℹ️",
-  "unlock-pdf":"🔓",
-  "pdf-to-excel":"📊",
-  "split-pdf-bookmarks":"🔖",
-  "split-pdf-odd-pages":"1️⃣",
-  "split-pdf-even-pages":"2️⃣",
-  "extract-first-page":"1️⃣",
-"extract-last-page":"🔚",
-"delete-odd-pages":"❌",
-"delete-even-pages":"🚫",
-"shuffle-pages":"🔀",
-"sort-pages":"⬆️",
-  "sort-pages-desc":"⬇️",
-"add-cover-page":"📄",
-"add-separator-pages":"📑",
-"add-header":"⬆️",
-"add-footer":"⬇️",
-"logo-stamp":"🏷️",
-"add-signature":"✍️"
-};
+  const search = document.getElementById("search");
 
-const tools = [
-  {slug:"merge-pdf", title:"Merge PDF", cat:"edit"},
-  {slug:"split-pdf", title:"Split PDF", cat:"edit"},
-  {slug:"compress-pdf", title:"Compress PDF", cat:"edit"},
-  {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit"},
-  {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit"},
-  {slug:"delete-pages", title:"Delete Pages", cat:"edit"},
-  {slug:"extract-pages", title:"Extract Pages", cat:"edit"},
-  {slug:"reorder-pages", title:"Reorder Pages", cat:"edit"},
-  {slug:"reverse-pages", title:"Reverse Pages", cat:"edit"},
-  {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit"},
-  {slug:"crop-pdf", title:"Crop PDF", cat:"edit"},
-  {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit"},
-  {slug:"page-number", title:"Page Number", cat:"edit"},
+  const icons = {
+    "merge-pdf":"⚡",
+    "split-pdf":"✂️",
+    "compress-pdf":"🗜️",
+    "rotate-pdf":"🔄",
+    "watermark-pdf":"💧",
+    "delete-pages":"🗑️",
+    "extract-pages":"📤",
+    "reorder-pages":"🔀",
+    "reverse-pages":"↩️",
+    "duplicate-pages":"📑",
+    "crop-pdf":"✂️",
+    "add-blank-pages":"➕",
+    "page-number":"🔢",
+    "image-to-pdf":"🖼️",
+    "pdf-to-word":"📄",
+    "pdf-to-jpg":"📷",
+    "ocr-pdf":"👁️",
+    "extract-text":"📝",
+    "protect-pdf":"🔒",
+    "metadata-pdf":"🧾",
+    "pdf-info":"ℹ️",
+    "unlock-pdf":"🔓",
+    "pdf-to-excel":"📊",
+    "split-pdf-bookmarks":"🔖",
+    "split-pdf-odd-pages":"1️⃣",
+    "split-pdf-even-pages":"2️⃣",
+    "extract-first-page":"1️⃣",
+    "extract-last-page":"🔚",
+    "delete-odd-pages":"❌",
+    "delete-even-pages":"🚫",
+    "shuffle-pages":"🔀",
+    "sort-pages":"⬆️",
+    "sort-pages-desc":"⬇️",
+    "add-cover-page":"📄",
+    "add-separator-pages":"📑",
+    "add-header":"⬆️",
+    "add-footer":"⬇️",
+    "logo-stamp":"🏷️",
+    "add-signature":"✍️"
+  };
 
-  {slug:"image-to-pdf", title:"Image to PDF", cat:"convert"},
-  {slug:"pdf-to-word", title:"PDF to Word", cat:"convert"},
-  {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert"},
-  {slug:"ocr-pdf", title:"OCR PDF", cat:"convert"},
-  {slug:"extract-text", title:"Extract Text", cat:"convert"},
+  const tools = [
+    {slug:"merge-pdf", title:"Merge PDF", cat:"edit"},
+    {slug:"split-pdf", title:"Split PDF", cat:"edit"},
+    {slug:"compress-pdf", title:"Compress PDF", cat:"edit"},
+    {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit"},
+    {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit"},
+    {slug:"delete-pages", title:"Delete Pages", cat:"edit"},
+    {slug:"extract-pages", title:"Extract Pages", cat:"edit"},
+    {slug:"reorder-pages", title:"Reorder Pages", cat:"edit"},
+    {slug:"reverse-pages", title:"Reverse Pages", cat:"edit"},
+    {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit"},
+    {slug:"crop-pdf", title:"Crop PDF", cat:"edit"},
+    {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit"},
+    {slug:"page-number", title:"Page Number", cat:"edit"},
+    {slug:"image-to-pdf", title:"Image to PDF", cat:"convert"},
+    {slug:"pdf-to-word", title:"PDF to Word", cat:"convert"},
+    {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert"},
+    {slug:"ocr-pdf", title:"OCR PDF", cat:"convert"},
+    {slug:"extract-text", title:"Extract Text", cat:"convert"},
+    {slug:"protect-pdf", title:"Protect PDF", cat:"security"},
+    {slug:"metadata-pdf", title:"Metadata", cat:"security"},
+    {slug:"pdf-info", title:"PDF Info", cat:"security"},
+    {slug:"unlock-pdf", title:"Unlock PDF", cat:"security"},
+    {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert"},
+    {slug:"split-pdf-bookmarks", title:"Split PDF by Bookmarks", cat:"edit"},
+    {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", cat:"edit"},
+    {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", cat:"edit"},
+    {slug:"extract-first-page", title:"Extract First Page", cat:"edit"},
+    {slug:"extract-last-page", title:"Extract Last Page", cat:"edit"},
+    {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit"},
+    {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit"},
+    {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit"},
+    {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit"},
+    {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit"},
+    {slug:"add-cover-page", title:"Add Cover Page", cat:"edit"},
+    {slug:"add-separator-pages", title:"Separator Pages", cat:"edit"},
+    {slug:"add-header", title:"Add Header", cat:"edit"},
+    {slug:"add-footer", title:"Add Footer", cat:"edit"},
+    {slug:"logo-stamp", title:"Logo Stamp", cat:"security"},
+    {slug:"add-signature", title:"Add Signature", cat:"security"}
+  ];
 
-  {slug:"protect-pdf", title:"Protect PDF", cat:"security"},
-  {slug:"metadata-pdf", title:"Metadata", cat:"security"},
-  {slug:"pdf-info", title:"PDF Info", cat:"security"},
-  {slug:"unlock-pdf", title:"Unlock PDF", cat:"security"},
-  {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert"},
-  { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", cat: "edit" },
-  {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", description:"Keep only odd pages from a PDF.", cat:"edit"},
-  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF.", cat:"edit"},
-  {slug:"extract-first-page", title:"Extract First Page", cat:"edit"},
-  {slug:"extract-last-page", title:"Extract Last Page", cat:"edit"},
-  {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit"},
-  {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit"},
-  {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit"},
-  {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit"},
-  {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit"},
-  {slug:"add-cover-page", title:"Add Cover Page", cat:"edit"},
-  {slug:"add-separator-pages", title:"Separator Pages", cat:"edit"},
-  {slug:"add-header", title:"Add Header", cat:"edit"},
-  {slug:"add-footer", title:"Add Footer", cat:"edit"},
-  {slug:"logo-stamp", title:"Logo Stamp", cat:"security"},
-  {slug:"add-signature", title:"Add Signature", cat:"security"}
-];
-  function toggleMenu(){
-  sidebar.classList.toggle("open");
-  backdrop.classList.toggle("show");
+  let currentCat = "all";
+
+  function toggleMenu() {
+    sidebar.classList.toggle("open");
+    backdrop.classList.toggle("show");
+    document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
   }
 
-let currentCat = "all";
-
-function setActiveButtons(selector, value){
-  document.querySelectorAll(selector).forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.cat === value);
-  });
-}
-
-function render(){
-  grid.innerHTML = "";
-  const val = search.value.toLowerCase().trim();
-
-  const filtered = tools.filter(t => {
-    const catOk = currentCat === "all" || t.cat === currentCat;
-    const searchOk = !val || t.title.toLowerCase().includes(val);
-    return catOk && searchOk;
-  });
-
-  if (!filtered.length){
-    grid.innerHTML = '<div class="empty-state">No tools found.</div>';
-    return;
+  function setActiveButtons(selector, value) {
+    document.querySelectorAll(selector).forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.cat === value);
+    });
   }
 
-  filtered.forEach(t => {
-    const el = document.createElement("a");
-    el.href = "/" + t.slug;
-    el.className = "tool-card";
+  function render() {
+    grid.innerHTML = "";
+    const val = search.value.toLowerCase().trim();
 
-    el.innerHTML = `
-      <div class="tool-ico">${icons[t.slug] || "📄"}</div>
-      <div>
-        <h3>${t.title}</h3>
-        <p>Fast, secure and easy to use PDF tool for daily work.</p>
-      </div>
-    `;
+    const filtered = tools.filter(t =>
+      (currentCat === "all" || t.cat === currentCat) &&
+      (!val || t.title.toLowerCase().includes(val))
+    );
 
-    grid.appendChild(el);
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="empty-state">No tools found.</div>';
+      return;
+    }
+
+    filtered.forEach(t => {
+      const el = document.createElement("a");
+      el.href = "/" + t.slug;
+      el.className = "tool-card";
+      el.innerHTML = `
+        <div class="tool-ico">${icons[t.slug] || "📄"}</div>
+        <div>
+          <h3>${t.title}</h3>
+          <p>Fast, secure and easy to use PDF tool for daily work.</p>
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+  }
+
+  search.addEventListener("input", render);
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.onclick = () => {
+      currentCat = btn.dataset.cat;
+      setActiveButtons(".filter-btn", currentCat);
+      setActiveButtons(".tabs button", currentCat);
+      render();
+    };
   });
-}
 
-search.addEventListener("input", render);
+  document.querySelectorAll(".tabs button").forEach(btn => {
+    btn.onclick = () => {
+      currentCat = btn.dataset.cat;
+      setActiveButtons(".tabs button", currentCat);
+      setActiveButtons(".filter-btn", currentCat);
+      render();
+    };
+  });
 
-document.querySelectorAll(".filter-btn").forEach(btn=>{
-  btn.onclick = () => {
-    currentCat = btn.dataset.cat;
-    setActiveButtons(".filter-btn", currentCat);
-    setActiveButtons(".tabs button", currentCat);
-    render();
-  };
+  render();
+  window.toggleMenu = toggleMenu;
 });
 
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.onclick = () => {
-    const text = btn.dataset.cat;
-    currentCat = text;
-    setActiveButtons(".tabs button", currentCat);
-    setActiveButtons(".filter-btn", currentCat);
-    render();
-  };
-});
-
-render();
 </script>
 </body>
 </html>
