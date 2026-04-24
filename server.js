@@ -901,7 +901,7 @@ function pageBg() {
   `;
 }
 
-function buildStaticPage(title, heading, content) {
+function buildStaticPage(title, heading, content, req) {
   return `<!DOCTYPE html>
   <html lang="en">
   <head>
