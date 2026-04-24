@@ -14,12 +14,14 @@
 <style>
 :root{
   --bg:#f7f9ff;
-  --card:#ffffff;
+  --panel:#ffffff;
   --line:#d8e2f0;
   --text:#0f172a;
   --muted:#64748b;
   --primary:#2563eb;
+  --primary2:#0ea5e9;
   --shadow:0 18px 50px rgba(15,23,42,.08);
+  --radius:18px;
 }
 
 *{box-sizing:border-box}
@@ -34,7 +36,7 @@ a{text-decoration:none;color:inherit}
 button,input{font:inherit}
 
 body{
-  padding-top:54px;
+  padding-top:64px;
   overflow-x:hidden;
 }
 
@@ -44,13 +46,25 @@ body{
   padding:20px;
 }
 
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:9000;
+  background:rgba(247,249,255,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(216,226,240,.7);
+}
+
+.topbar-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
 .menu-btn{
-  position:fixed;
-  top:12px;
-  left:12px;
-  z-index:10006;
-  font-size:28px;
-  cursor:pointer;
   width:44px;
   height:44px;
   display:grid;
@@ -59,10 +73,79 @@ body{
   background:#fff;
   border:1px solid var(--line);
   box-shadow:var(--shadow);
+  cursor:pointer;
+  font-size:24px;
   transition:.2s ease;
+  flex:0 0 auto;
   user-select:none;
 }
 .menu-btn:active{transform:scale(.96)}
+
+.brand-area{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  flex:1;
+  min-width:0;
+}
+
+.brand-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.brand-mark{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:800;
+  box-shadow:0 12px 25px rgba(37,99,235,.22);
+}
+.brand-name{
+  font-weight:800;
+  font-size:1.05rem;
+  white-space:nowrap;
+}
+.brand-sub{
+  font-size:.84rem;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.quick-tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.quick-chip{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:.9rem;
+  transition:.18s ease;
+  white-space:nowrap;
+}
+.quick-chip:hover{
+  transform:translateY(-1px);
+  border-color:#c8d8ff;
+  box-shadow:0 8px 16px rgba(37,99,235,.08);
+}
 
 .backdrop{
   position:fixed;
@@ -82,7 +165,7 @@ body{
   position:fixed;
   top:0;
   left:0;
-  width:290px;
+  width:300px;
   max-width:86vw;
   height:100vh;
   background:#fff;
@@ -97,8 +180,16 @@ body{
   padding:18px 16px 22px;
 }
 .sidebar.open{transform:translateX(0)}
+
+.sidebar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
 .sidebar h3{
-  margin:6px 0 12px;
+  margin:0;
   font-size:18px;
 }
 .sidebar .section-title{
@@ -134,28 +225,89 @@ body{
 
 .hero{
   margin:0 0 14px;
-  padding:18px 18px 14px;
+  padding:20px;
   background:#fff;
   border:1px solid var(--line);
-  border-radius:18px;
+  border-radius:22px;
   box-shadow:var(--shadow);
 }
+.hero-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.hero-copy{
+  min-width:min(100%, 560px);
+  flex:1;
+}
 .hero h1{
-  margin:0 0 6px;
-  font-size:clamp(1.25rem,2.8vw,1.9rem);
-  line-height:1.15;
+  margin:0 0 8px;
+  font-size:clamp(1.35rem,3vw,2.3rem);
+  line-height:1.08;
+  letter-spacing:-.03em;
 }
 .hero p{
   margin:0;
   color:var(--muted);
-  line-height:1.5;
+  line-height:1.6;
+  max-width:62ch;
 }
+.hero-cta{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.hero-btn{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:11px 14px;
+  border-radius:12px;
+  font-weight:600;
+  transition:.18s ease;
+  box-shadow:none;
+}
+.hero-btn.primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+  border-color:transparent;
+}
+.hero-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px rgba(0,0,0,.08);
+}
+
+.pills{
+  display:flex;
+  gap:10px;
+  overflow:auto;
+  margin:18px 0 4px;
+  padding-bottom:2px;
+  scrollbar-width:none;
+}
+.pills::-webkit-scrollbar{display:none}
+.pill{
+  padding:9px 14px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  cursor:pointer;
+  transition:.2s;
+  white-space:nowrap;
+}
+.pill.active{
+  background:var(--primary);
+  color:#fff;
+  border-color:transparent;
+}
+.pill:hover{transform:translateY(-1px)}
 
 .top-bar{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-bottom:16px;
+  margin:14px 0 16px;
   align-items:center;
 }
 .search{
@@ -172,21 +324,8 @@ body{
   border-color:#b7cbff;
   box-shadow:0 0 0 4px rgba(37,99,235,.08);
 }
-
-.tabs{
-  display:flex;
-  gap:10px;
-  overflow:auto;
-  margin-bottom:10px;
-  padding-bottom:2px;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.tabs::-webkit-scrollbar{display:none}
-
-.tabs button,
 .filter-btn{
-  padding:8px 14px;
+  padding:10px 14px;
   border:1px solid var(--line);
   background:#fff;
   border-radius:999px;
@@ -194,11 +333,6 @@ body{
   transition:.2s ease;
   white-space:nowrap;
 }
-.tabs button:hover,
-.filter-btn:hover{
-  transform:translateY(-1px);
-}
-.tabs button.active,
 .filter-btn.active{
   background:var(--primary);
   color:#fff;
@@ -233,7 +367,6 @@ body{
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:14px;
 }
-
 .tool-card{
   padding:16px;
   border-radius:16px;
@@ -293,21 +426,43 @@ body{
 }
 
 @media (max-width:640px){
-  body{padding-top:52px}
-  .wrap{padding:14px}
+  body{padding-top:62px}
+  .topbar-inner{padding:10px 14px}
   .sidebar{width:86vw}
+  .hero{padding:16px}
   .grid{grid-template-columns:1fr}
-  .hero h1{font-size:1.45rem}
+  .hero h1{font-size:1.55rem}
 }
 </style>
 </head>
 
 <body>
-  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="menu-btn" onclick="toggleMenu()">☰</div>
+      <div class="brand-area">
+        <div class="brand-row">
+          <div class="brand">
+            <div class="brand-mark">W</div>
+            <div class="brand-name">WePDFHub</div>
+          </div>
+          <div class="brand-sub">Free PDF tools for fast daily work</div>
+        </div>
+        <div class="quick-tools" aria-label="Featured tools">
+          <a class="quick-chip" href="/merge-pdf">Merge PDF</a>
+          <a class="quick-chip" href="/compress-pdf">Compress PDF</a>
+          <a class="quick-chip" href="/split-pdf">Split PDF</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="backdrop" class="backdrop" onclick="toggleMenu()"></div>
 
   <aside id="sidebar" class="sidebar" aria-label="Main menu">
-    <h3>WePDFHub</h3>
+    <div class="sidebar-head">
+      <h3>WePDFHub</h3>
+    </div>
 
     <div class="section-title">Quick Links</div>
     <a href="/">🏠 All Tools</a>
@@ -364,15 +519,23 @@ body{
 
   <div class="wrap">
     <section class="hero">
-      <h1>Every tool you need to work with PDFs in one place</h1>
-      <p>Merge, split, compress, convert and protect PDFs with just a few clicks.</p>
+      <div class="hero-top">
+        <div class="hero-copy">
+          <h1>We make PDF easy.</h1>
+          <p>All the tools you need to merge, split, compress, convert, sign and edit PDFs in one clean SaaS workspace.</p>
+        </div>
+        <div class="hero-cta">
+          <a class="hero-btn primary" href="/merge-pdf">Start with Merge</a>
+          <a class="hero-btn" href="/compress-pdf">Try Compress</a>
+        </div>
+      </div>
     </section>
 
-    <div class="tabs">
-      <button class="active" data-cat="all">All</button>
-      <button data-cat="edit">Organize PDF</button>
-      <button data-cat="convert">Convert PDF</button>
-      <button data-cat="security">Security</button>
+    <div class="pills">
+      <button class="pill active" data-cat="all">All</button>
+      <button class="pill" data-cat="edit">Organize PDF</button>
+      <button class="pill" data-cat="convert">Convert PDF</button>
+      <button class="pill" data-cat="security">Security</button>
     </div>
 
     <div class="top-bar">
@@ -394,44 +557,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("grid");
 
   const icons = {
-    "merge-pdf":"⚡",
-    "split-pdf":"✂️",
-    "compress-pdf":"🗜️",
-    "rotate-pdf":"🔄",
-    "watermark-pdf":"💧",
-    "delete-pages":"🗑️",
-    "extract-pages":"📤",
-    "reorder-pages":"🔀",
-    "reverse-pages":"↩️",
-    "duplicate-pages":"📑",
-    "crop-pdf":"✂️",
-    "add-blank-pages":"➕",
-    "page-number":"🔢",
-    "image-to-pdf":"🖼️",
-    "pdf-to-word":"📄",
-    "pdf-to-jpg":"📷",
-    "ocr-pdf":"👁️",
-    "extract-text":"📝",
-    "protect-pdf":"🔒",
-    "metadata-pdf":"🧾",
-    "pdf-info":"ℹ️",
-    "unlock-pdf":"🔓",
-    "pdf-to-excel":"📊",
-    "split-pdf-bookmarks":"🔖",
-    "split-pdf-odd-pages":"1️⃣",
-    "split-pdf-even-pages":"2️⃣",
-    "extract-first-page":"1️⃣",
-    "extract-last-page":"🔚",
-    "delete-odd-pages":"❌",
-    "delete-even-pages":"🚫",
-    "shuffle-pages":"🔀",
-    "sort-pages":"⬆️",
-    "sort-pages-desc":"⬇️",
-    "add-cover-page":"📄",
-    "add-separator-pages":"📑",
-    "add-header":"⬆️",
-    "add-footer":"⬇️",
-    "logo-stamp":"🏷️",
+    "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
+    "watermark-pdf":"💧","delete-pages":"🗑️","extract-pages":"📤","reorder-pages":"🔀",
+    "reverse-pages":"↩️","duplicate-pages":"📑","crop-pdf":"✂️","add-blank-pages":"➕",
+    "page-number":"🔢","image-to-pdf":"🖼️","pdf-to-word":"📄","pdf-to-jpg":"📷",
+    "ocr-pdf":"👁️","extract-text":"📝","protect-pdf":"🔒","metadata-pdf":"🧾",
+    "pdf-info":"ℹ️","unlock-pdf":"🔓","pdf-to-excel":"📊","split-pdf-bookmarks":"🔖",
+    "split-pdf-odd-pages":"1️⃣","split-pdf-even-pages":"2️⃣","extract-first-page":"1️⃣",
+    "extract-last-page":"🔚","delete-odd-pages":"❌","delete-even-pages":"🚫",
+    "shuffle-pages":"🔀","sort-pages":"⬆️","sort-pages-desc":"⬇️","add-cover-page":"📄",
+    "add-separator-pages":"📑","add-header":"⬆️","add-footer":"⬇️","logo-stamp":"🏷️",
     "add-signature":"✍️"
   };
 
@@ -487,7 +622,6 @@ document.addEventListener("DOMContentLoaded", () => {
     backdrop.classList.toggle("show");
     document.body.style.overflow = sidebar.classList.contains("open") ? "hidden" : "auto";
   }
-
   window.toggleMenu = toggleMenu;
 
   function closeMenu(){
@@ -496,9 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "auto";
   }
 
-  document.querySelectorAll("#sidebar a").forEach(link => {
-    link.addEventListener("click", closeMenu);
-  });
+  document.querySelectorAll("#sidebar a").forEach(link => link.addEventListener("click", closeMenu));
   backdrop.addEventListener("click", closeMenu);
 
   function setActiveButtons(selector, value){
@@ -509,8 +641,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function render(){
     grid.innerHTML = "";
-    const val = search.value.toLowerCase().trim();
 
+    const val = search.value.toLowerCase().trim();
     const categories = [
       { key:"edit", label:"Organize PDF" },
       { key:"convert", label:"Convert PDF" },
@@ -565,20 +697,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   search.addEventListener("input", render);
 
-  document.querySelectorAll(".filter-btn").forEach(btn => {
+  document.querySelectorAll(".filter-btn, .pill").forEach(btn => {
     btn.onclick = () => {
       currentCat = btn.dataset.cat;
       setActiveButtons(".filter-btn", currentCat);
-      setActiveButtons(".tabs button", currentCat);
-      render();
-    };
-  });
-
-  document.querySelectorAll(".tabs button").forEach(btn => {
-    btn.onclick = () => {
-      currentCat = btn.dataset.cat;
-      setActiveButtons(".tabs button", currentCat);
-      setActiveButtons(".filter-btn", currentCat);
+      setActiveButtons(".pill", currentCat);
       render();
     };
   });
