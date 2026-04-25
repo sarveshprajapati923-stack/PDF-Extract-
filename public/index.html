@@ -14,6 +14,71 @@
 <meta property="og:type" content="website">
 
 <style>
+  .blog-section{
+  padding:50px 20px;
+  text-align:center;
+  background:#f8fafc;
+}
+
+.blog-header h2{
+  font-size:26px;
+  margin-bottom:6px;
+}
+
+.blog-header p{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:25px;
+}
+
+.blog-grid{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.blog-card{
+  width:280px;
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:18px;
+  transition:0.3s;
+  text-align:left;
+}
+
+.blog-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.blog-card h3{
+  font-size:16px;
+  margin-bottom:10px;
+}
+
+.blog-card p{
+  font-size:13px;
+  color:#64748b;
+  margin-bottom:12px;
+}
+
+.blog-card a{
+  display:inline-block;
+  font-size:13px;
+  color:#2563eb;
+  text-decoration:none;
+  border:1px solid #2563eb;
+  padding:6px 10px;
+  border-radius:8px;
+  transition:0.3s;
+}
+
+.blog-card a:hover{
+  background:#2563eb;
+  color:#fff;
+}
   .trust{
   display:flex;
   justify-content:center;
@@ -469,7 +534,36 @@ body{padding-top:74px;overflow-x:hidden}
     </div>
 
     <div id="grid"></div>
+    <!-- ================= BLOG SECTION ================= -->
+<section class="blog-section">
+
+  <div class="blog-header">
+    <h2>Latest Guides & Tips</h2>
+    <p>Learn how to use PDF tools faster and smarter</p>
   </div>
+
+  <div class="blog-grid">
+
+    <article class="blog-card">
+      <h3>How to Merge PDF Easily</h3>
+      <p>Combine multiple PDF files in seconds using our simple online tool without quality loss.</p>
+      <a href="#">Read More</a>
+    </article>
+
+    <article class="blog-card">
+      <h3>Compress PDF Without Losing Quality</h3>
+      <p>Reduce file size while keeping your PDF clear and professional for sharing.</p>
+      <a href="#">Read More</a>
+    </article>
+
+    <article class="blog-card">
+      <h3>Split PDF Files Online Free</h3>
+      <p>Extract pages or split large PDFs into smaller files instantly in your browser.</p>
+      <a href="#">Read More</a>
+    </article>
+
+  </div>
+  
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
