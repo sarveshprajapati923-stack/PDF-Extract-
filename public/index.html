@@ -350,22 +350,103 @@ body{padding-top:74px;overflow-x:hidden}
   .grid{grid-template-columns:1fr}
   .hero h1{font-size:1.55rem}
 }
+  /* ===== ADD FROM HERE ===== */
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  cursor:pointer;
+}
+
+.logo-box{
+  position:relative;
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.4);
+  backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:.4s;
+}
+
+.brand-logo{
+  width:26px;
+  height:26px;
+  object-fit:contain;
+  z-index:2;
+}
+
+.logo-glow{
+  position:absolute;
+  width:120%;
+  height:120%;
+  background:linear-gradient(45deg,#2563eb,#0ea5e9,#6366f1);
+  filter:blur(14px);
+  opacity:.6;
+  z-index:1;
+  animation:rotateGlow 6s linear infinite;
+}
+
+@keyframes rotateGlow{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+.brand:hover .logo-box{
+  transform:scale(1.1) rotate(-5deg);
+  box-shadow:0 10px 30px rgba(37,99,235,.4);
+}
+
+.logo-text{
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:-0.5px;
+  background:linear-gradient(90deg,#0f172a,#2563eb);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.logo-text span{
+  background:linear-gradient(90deg,#2563eb,#0ea5e9);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.brand:hover .logo-text{
+  letter-spacing:0.5px;
+}
+
+@media (max-width:600px){
+  .logo-text{
+    font-size:18px;
+  }
+  .logo-box{
+    width:38px;
+    height:38px;
+  }
+}
+
+/* ===== END ===== */
 </style>
 </head>
 
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand-wrap">
-  <img src="/favicon.png" alt="WePDFHub" class="brand-logo">
-  <div class="brand-copy">
-    <div class="brand-name">WePDFHub</div>
-    <div class="brand-sub">Free PDF tools for fast daily work</div>
-    <div class="brand-dots" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </div>
+      <div class="brand">
+  <div class="logo-box">
+    <img src="/favicon.png" class="brand-logo">
+    <span class="logo-glow"></span>
   </div>
-</div>
+
+  <span class="logo-text">
+    We<span>PDF</span>Hub
+  </span>
+      </div>
 
       <div class="top-actions">
         <a class="top-link" href="/merge-pdf">Merge PDF</a>
