@@ -432,6 +432,36 @@ body{padding-top:74px;overflow-x:hidden}
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  async function startUpload(){
+  const file = document.getElementById("fileInput").files[0];
+  const tool = document.getElementById("toolSelect").value;
+
+  if(!file){
+    document.getElementById("fileInput").click();
+    return;
+  }
+
+  const btn = document.querySelector(".upload-btn");
+  btn.innerText = "Processing...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/${tool}`, {
+    method:"POST",
+    body:formData
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output.pdf";
+  a.click();
+
+  btn.innerText = "📂 Upload PDF";
+  }
   const search = document.getElementById("search");
   const grid = document.getElementById("grid");
 
@@ -564,37 +594,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
-</script>
-  async function startUpload(){
-  const file = document.getElementById("fileInput").files[0];
-  const tool = document.getElementById("toolSelect").value;
-
-  if(!file){
-    document.getElementById("fileInput").click();
-    return;
-  }
-
-  const btn = document.querySelector(".upload-btn");
-  btn.innerText = "Processing...";
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`/api/${tool}`, {
-    method:"POST",
-    body:formData
-  });
-
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "output.pdf";
-  a.click();
-
-  btn.innerText = "📂 Upload PDF";
-}
 </script>
 </body>
 </html>
