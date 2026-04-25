@@ -396,7 +396,22 @@ body{padding-top:74px;overflow-x:hidden}
         <div class="hero-copy-block">
           <h1>We make PDF easy.</h1>
           <p>All the tools you need to merge, split, compress, convert, sign and edit PDFs in one clean SaaS workspace.</p>
-        </div>
+          <div class="upload-box">
+  <input type="file" id="fileInput" hidden>
+
+  <button class="upload-btn" onclick="startUpload()">
+    📂 Upload PDF
+  </button>
+
+  <select id="toolSelect" class="tool-select">
+    <option value="merge-pdf">Merge PDF</option>
+    <option value="compress-pdf">Compress PDF</option>
+    <option value="split-pdf">Split PDF</option>
+  </select>
+
+  <p class="upload-note">No signup • Instant processing</p>
+          </div>
+        
         <div class="hero-cta">
           <a class="hero-btn primary" href="/merge-pdf">Start with Merge</a>
           <a class="hero-btn" href="/compress-pdf">Try Compress</a>
@@ -549,6 +564,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+</script>
+  async function startUpload(){
+  const file = document.getElementById("fileInput").files[0];
+  const tool = document.getElementById("toolSelect").value;
+
+  if(!file){
+    document.getElementById("fileInput").click();
+    return;
+  }
+
+  const btn = document.querySelector(".upload-btn");
+  btn.innerText = "Processing...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/${tool}`, {
+    method:"POST",
+    body:formData
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output.pdf";
+  a.click();
+
+  btn.innerText = "📂 Upload PDF";
+}
 </script>
 </body>
 </html>
