@@ -1809,20 +1809,18 @@ const note =
   padding-left:20px;
   margin-top:10px;
 }
-
-.btn{
-  display:inline-block;
-  margin-top:15px;
-  padding:10px 14px;
-  border-radius:10px;
-  border:1px solid #2563eb;
-  color:#2563eb;
-  text-decoration:none;
-}
-
 .btn.primary{
   background:#2563eb;
-  color:#fff;
+  color:#ffffff;
+  border:none;
+  font-weight:600;
+  padding:12px 18px;
+  border-radius:10px;
+  transition:all 0.2s ease;
+}
+
+.btn.primary:hover{
+  background:#1d4ed8;
 }
 </style>
   </head>
