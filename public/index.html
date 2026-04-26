@@ -689,58 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // बाकी search/grid/render वाला code यहाँ रहे
 });
   
-document.addEventListener("DOMContentLoaded", () => {
-  async function startUpload(){
-  const file = document.getElementById("fileInput").files[0];
-  const tool = document.getElementById("toolSelect").value;
-
-  if(!file){
-    document.getElementById("fileInput").click();
-    return;
-  }
-
-  const btn = document.querySelector(".upload-btn");
-  btn.innerText = "Processing...";
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`/api/${tool}`, {
-    method:"POST",
-    body:formData
-  });
-
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "output.pdf";
-  a.click();
-
-  btn.innerText = "📂 Upload PDF";
-  }
-  const search = document.getElementById("search");
-  const grid = document.getElementById("grid");
-  function toggleMega(){
-  const menu = document.getElementById("megaMenu");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-
-document.addEventListener("click", function(e){
-  const menu = document.getElementById("megaMenu");
-  const btn = document.querySelector(".menu-btn");
-
-  if(!menu.contains(e.target) && !btn.contains(e.target)){
-    menu.style.display = "none";
-  }
-});
-
-  const icons = {
-    "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
-    "watermark-pdf":"💧","delete-pages":"🗑️","extract-pages":"📤","reorder-pages":"🔀",
-    "reverse-pages":"↩️","duplicate-pages":"📑","crop-pdf":"✂️","add-blank-pages":"➕",
-    "page-number":"🔢","image-to-pdf":"🖼️","pdf-to-word":"📄","pdf-to-jpg":"📷",
+     pdf-to-jpg":"📷",
     "ocr-pdf":"👁️","extract-text":"📝","protect-pdf":"🔒","metadata-pdf":"🧾",
     "pdf-info":"ℹ️","unlock-pdf":"🔓","pdf-to-excel":"📊","split-pdf-bookmarks":"🔖",
     "split-pdf-odd-pages":"1️⃣","split-pdf-even-pages":"2️⃣","extract-first-page":"1️⃣",
