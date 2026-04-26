@@ -1778,6 +1778,50 @@ const note =
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${fullUrl(tool.slug)}" />
     <style>${pageBg()}</style>
+    .tool-content{
+  max-width:850px;
+  margin:50px auto;
+  padding:24px;
+  background:#fff;
+  border-radius:20px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+.tool-content h2{
+  font-size:26px;
+  margin-bottom:10px;
+}
+
+.tool-content p{
+  color:#64748b;
+  line-height:1.7;
+}
+
+.tool-content h3{
+  margin-top:20px;
+}
+
+.tool-content ul,
+.tool-content ol{
+  padding-left:20px;
+  margin-top:10px;
+}
+
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #2563eb;
+  color:#2563eb;
+  text-decoration:none;
+}
+
+.btn.primary{
+  background:#2563eb;
+  color:#fff;
+}
   </head>
   <body>
     <div class="wrap">
@@ -1793,6 +1837,7 @@ const note =
         <p class="mini" style="margin-top:10px">Dedicated URL: /${escapeHtml(tool.slug)}</p>
         ${note}
       </section>
+      ${renderToolContent(tool.slug)}
 
       <section class="grid">
         <div class="card panel">
