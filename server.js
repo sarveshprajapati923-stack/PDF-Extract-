@@ -1258,6 +1258,7 @@ function renderToolContent(slug){
 
   return `
   <section class="tool-content">
+  <h2>How to use ${data.title}</h2>
     <h2>${data.title}</h2>
     <p>${data.intro}</p>
 
