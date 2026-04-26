@@ -715,6 +715,476 @@ app.post("/api/add-signature", upload.fields([
     await cleanupFiles(req.files?.signature || []);
   }
 });
+const blogPosts = {
+  "merge-pdf-guide": {
+    title: "How to Merge PDF Files Online",
+    description: "Combine multiple PDF files into one clean document using WePDFHub.",
+    intro: "Merging PDFs is useful when you want to keep reports, forms, notes, and invoices in one place.",
+    steps: [
+      "Open the Merge PDF tool.",
+      "Upload all files you want to join.",
+      "Arrange the file order.",
+      "Click merge and download the final PDF."
+    ],
+    faq: [
+      ["Can I merge many PDFs at once?", "Yes, you can merge multiple files in one go."],
+      ["Does merging reduce quality?", "No, merging keeps the original quality."],
+    ],
+  },
+
+  "split-pdf-guide": {
+    title: "How to Split PDF Pages Fast",
+    description: "Split large PDFs into smaller files in just a few clicks.",
+    intro: "Splitting PDFs is perfect when you need only selected pages from a large document.",
+    steps: [
+      "Open Split PDF.",
+      "Upload your PDF file.",
+      "Choose page ranges.",
+      "Download the split files."
+    ],
+    faq: [
+      ["Can I extract one page only?", "Yes, any page or range can be extracted."],
+      ["Is split PDF free?", "Yes, the tool is free to use."],
+    ],
+  },
+
+  "compress-pdf-guide": {
+    title: "How to Compress PDF Without Losing Quality",
+    description: "Reduce PDF file size for faster upload and sharing.",
+    intro: "Compression helps when a file is too large for email, forms, or cloud upload limits.",
+    steps: [
+      "Open Compress PDF.",
+      "Upload the file.",
+      "Choose compression level if available.",
+      "Download the smaller PDF."
+    ],
+    faq: [
+      ["Will text stay readable?", "Yes, the goal is to keep quality usable."],
+      ["When should I compress a PDF?", "Use it when file size is too large."],
+    ],
+  },
+
+  "pdf-to-word-guide": {
+    title: "PDF to Word Conversion Guide",
+    description: "Convert PDF files into editable Word documents.",
+    intro: "This is useful when you need to edit text, update content, or reuse sections.",
+    steps: [
+      "Open PDF to Word.",
+      "Upload the PDF.",
+      "Start conversion.",
+      "Download the DOCX file."
+    ],
+    faq: [
+      ["Can scanned PDFs convert well?", "Scanned files may need OCR for better results."],
+      ["Can I edit the Word file after conversion?", "Yes, that is the main purpose."],
+    ],
+  },
+
+  "pdf-to-jpg-guide": {
+    title: "PDF to JPG Conversion Guide",
+    description: "Turn PDF pages into images for sharing and preview.",
+    intro: "PDF to JPG is useful for thumbnails, quick previews, and image-based workflows.",
+    steps: [
+      "Open PDF to JPG.",
+      "Upload the PDF.",
+      "Convert pages to images.",
+      "Download the JPG files."
+    ],
+    faq: [
+      ["Will each PDF page become one image?", "Usually yes, each page is exported as an image."],
+      ["Is JPG good for sharing?", "Yes, especially for previews and quick sending."],
+    ],
+  },
+
+  "protect-pdf-guide": {
+    title: "How to Protect PDF with Password",
+    description: "Lock important PDF files with a password.",
+    intro: "Password protection helps keep private documents away from unauthorized access.",
+    steps: [
+      "Open Protect PDF.",
+      "Upload your file.",
+      "Set a secure password.",
+      "Download the protected PDF."
+    ],
+    faq: [
+      ["Can I remove the password later?", "Yes, with the unlock tool if you know the password."],
+      ["Should I use a strong password?", "Yes, always use a strong password."],
+    ],
+  },
+
+  "unlock-pdf-guide": {
+    title: "How to Unlock a PDF Safely",
+    description: "Remove password protection from PDFs you are allowed to access.",
+    intro: "Unlocking PDFs is helpful when you need to work with your own protected documents.",
+    steps: [
+      "Open Unlock PDF.",
+      "Upload the password-protected file.",
+      "Enter the correct password.",
+      "Download the unlocked PDF."
+    ],
+    faq: [
+      ["Do I need the correct password?", "Yes, you must have permission to unlock the file."],
+      ["Will the file quality change?", "No, unlocking does not change quality."],
+    ],
+  },
+
+  "watermark-pdf-guide": {
+    title: "How to Add Watermark to PDF",
+    description: "Stamp text or branding on your PDF pages.",
+    intro: "Watermarks are useful for branding, confidentiality, or document control.",
+    steps: [
+      "Open Watermark PDF.",
+      "Upload the document.",
+      "Enter watermark text or branding.",
+      "Download the stamped PDF."
+    ],
+    faq: [
+      ["Can I use a logo watermark?", "Yes, if the tool supports image stamping."],
+      ["Is watermarking permanent?", "Yes, it becomes part of the exported file."],
+    ],
+  },
+
+  "page-number-guide": {
+    title: "How to Add Page Numbers in PDF",
+    description: "Add page numbers to long documents automatically.",
+    intro: "Page numbers make large documents easier to read, print, and share in order.",
+    steps: [
+      "Open Page Number.",
+      "Upload the PDF.",
+      "Choose the page number position.",
+      "Download the numbered PDF."
+    ],
+    faq: [
+      ["Can I choose top or bottom?", "Yes, depending on the tool settings."],
+      ["Useful for reports?", "Yes, reports and manuals benefit a lot."],
+    ],
+  },
+
+  "header-footer-guide": {
+    title: "How to Add Header and Footer in PDF",
+    description: "Add headers and footers to every page in a PDF.",
+    intro: "Headers and footers help with branding, document naming, and page info.",
+    steps: [
+      "Open Add Header/Footer.",
+      "Upload your PDF.",
+      "Enter the header or footer text.",
+      "Download the updated PDF."
+    ],
+    faq: [
+      ["Can I add company name?", "Yes, that is a common use."],
+      ["Does it work on every page?", "Yes, that is the purpose of the tool."],
+    ],
+  },
+
+  "ocr-guide": {
+    title: "OCR PDF Explained for Scanned Files",
+    description: "Turn scanned PDF pages into searchable text.",
+    intro: "OCR is useful when a PDF is scanned from paper and the text cannot be selected.",
+    steps: [
+      "Open OCR PDF.",
+      "Upload the scanned file.",
+      "Run OCR processing.",
+      "Download the searchable output."
+    ],
+    faq: [
+      ["Does OCR help scanned documents?", "Yes, this is the main use case."],
+      ["Can it improve searchability?", "Yes, OCR makes text searchable."],
+    ],
+  },
+
+  "best-tools-guide": {
+    title: "Best Free PDF Tools for Students and Office Work",
+    description: "A helpful guide to the most useful PDF tools for daily work.",
+    intro: "Students and office users usually need merge, split, compress, convert, and protect tools the most.",
+    steps: [
+      "Use Merge PDF for joining files.",
+      "Use Split PDF for extracting pages.",
+      "Use Compress PDF for smaller file size.",
+      "Use Convert tools for editing and sharing."
+    ],
+    faq: [
+      ["Which tool is used most?", "Merge, split, and compress are the most common."],
+      ["Is this useful for office files?", "Yes, it fits daily document work very well."],
+    ],
+  },
+
+  "image-to-pdf-guide": {
+    title: "How to Convert Images to PDF",
+    description: "Convert JPG or PNG images into a single PDF file.",
+    intro: "This is useful for photos, receipts, scanned pages, and image collections.",
+    steps: [
+      "Open Image to PDF.",
+      "Upload your images.",
+      "Arrange them in order.",
+      "Download the PDF."
+    ],
+    faq: [
+      ["Can I combine multiple images?", "Yes, that is the main feature."],
+      ["Good for receipts?", "Yes, very useful for receipts and scans."],
+    ],
+  },
+
+  "pdf-info-guide": {
+    title: "How to Check PDF Information",
+    description: "View metadata, page count, and file details.",
+    intro: "PDF info tools help you understand file size, page count, title, and other metadata.",
+    steps: [
+      "Open PDF Info.",
+      "Upload the PDF.",
+      "Read the file details.",
+      "Use the information for your workflow."
+    ],
+    faq: [
+      ["What is metadata?", "Metadata is file information like title and author."],
+      ["Useful before editing?", "Yes, it helps understand the file first."],
+    ],
+  },
+
+  "reorder-pages-guide": {
+    title: "How to Reorder PDF Pages",
+    description: "Change page sequence inside a PDF file.",
+    intro: "Reordering pages is useful when documents were merged in the wrong order.",
+    steps: [
+      "Open Reorder Pages.",
+      "Upload your PDF.",
+      "Drag or arrange pages in the correct order.",
+      "Download the reordered file."
+    ],
+    faq: [
+      ["Can I move pages around?", "Yes, that is the purpose of the tool."],
+      ["Useful after merging?", "Yes, very useful if order is wrong."],
+    ],
+  }
+};
+
+function renderBlogIndex() {
+  const cards = Object.entries(blogPosts).map(([slug, post]) => `
+    <article class="card">
+      <h2>${post.title}</h2>
+      <p>${post.description}</p>
+      <a href="/${slug}">Read More</a>
+    </article>
+  `).join("");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Blog - WePDFHub</title>
+<meta name="description" content="PDF guides, tips, and tutorials from WePDFHub.">
+<style>
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+    background:#f7f9ff;
+    color:#0f172a;
+    padding:20px;
+  }
+  .wrap{
+    max-width:1100px;
+    margin:auto;
+  }
+  h1{
+    margin:0 0 12px;
+    font-size:clamp(1.8rem,4vw,2.6rem);
+  }
+  p{
+    color:#64748b;
+    line-height:1.7;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+    margin-top:20px;
+  }
+  .card{
+    background:#fff;
+    border:1px solid #d8e2f0;
+    border-radius:18px;
+    padding:18px;
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:18px;
+  }
+  .card a{
+    display:inline-block;
+    margin-top:8px;
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:700;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>WePDFHub Blog</h1>
+    <p>Useful guides for merge, split, compress, convert, security, and PDF workflow tips.</p>
+    <div class="grid">
+      ${cards}
+    </div>
+  </main>
+</body>
+</html>`;
+}
+
+function renderBlogPage(post, slug) {
+  const steps = post.steps.map(item => `<li>${item}</li>`).join("");
+  const faq = post.faq.map(([q, a]) => `
+    <div class="faq-item">
+      <h3>${q}</h3>
+      <p>${a}</p>
+    </div>
+  `).join("");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>${post.title} - WePDFHub</title>
+<meta name="description" content="${post.description}">
+<meta name="robots" content="index, follow">
+<style>
+  :root{
+    --bg:#f7f9ff;
+    --panel:#ffffff;
+    --line:#d8e2f0;
+    --text:#0f172a;
+    --muted:#64748b;
+    --primary:#2563eb;
+    --shadow:0 18px 50px rgba(15,23,42,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:20px;
+  }
+  .page{
+    max-width:900px;
+    margin:auto;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:24px;
+  }
+  .back{
+    display:inline-block;
+    margin-bottom:16px;
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:700;
+  }
+  h1{
+    margin:0 0 12px;
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    line-height:1.1;
+  }
+  .lead{
+    color:var(--muted);
+    line-height:1.7;
+    font-size:16px;
+    margin-bottom:22px;
+  }
+  .box{
+    margin:18px 0;
+    padding:18px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:#f8fbff;
+  }
+  h2{
+    margin:0 0 12px;
+    font-size:22px;
+  }
+  ul{
+    margin:0;
+    padding-left:20px;
+    line-height:1.8;
+  }
+  .faq-item{
+    padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .faq-item:first-child{
+    border-top:none;
+  }
+  .faq-item h3{
+    margin:0 0 6px;
+    font-size:16px;
+  }
+  .faq-item p{
+    margin:0;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .cta{
+    margin-top:22px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-block;
+    padding:10px 14px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:700;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--text);
+  }
+  .btn.primary{
+    background:linear-gradient(135deg,#2563eb,#0ea5e9);
+    color:#fff;
+    border-color:transparent;
+  }
+  @media (max-width:600px){
+    body{padding:10px}
+    .page{padding:16px;border-radius:18px}
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <a class="back" href="/blog">← Back to Blog</a>
+    <h1>${post.title}</h1>
+    <p class="lead">${post.intro}</p>
+
+    <section class="box">
+      <h2>Quick Steps</h2>
+      <ul>${steps}</ul>
+    </section>
+
+    <section class="box">
+      <h2>FAQ</h2>
+      ${faq}
+    </section>
+
+    <div class="cta">
+      <a class="btn primary" href="/${slug.replace("-guide", "")}">Open Tool</a>
+      <a class="btn" href="/">Back to Home</a>
+    </div>
+  </main>
+</body>
+</html>`;
+}
+
+app.get("/blog", (req, res) => {
+  res.send(renderBlogIndex());
+});
+
+Object.entries(blogPosts).forEach(([slug, post]) => {
+  app.get(`/${slug}`, (req, res) => {
+    res.send(renderBlogPage(post, slug));
+  });
+});
 // ================= STATIC PAGES ROUTES =================
 
 app.get("/about", (req, res) => {
