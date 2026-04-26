@@ -622,14 +622,12 @@ body{padding-top:74px;overflow-x:hidden}
     <div id="grid"></div>
     <!-- ================= BLOG SECTION ================= -->
 <section class="blog-section">
-
   <div class="blog-header">
     <h2>Latest Guides & Tips</h2>
     <p>Learn how to use PDF tools faster and smarter</p>
   </div>
 
   <div class="blog-grid">
-
     <article class="blog-card">
       <h3>How to Merge PDF Easily</h3>
       <p>Combine multiple PDF files in seconds using our simple online tool without quality loss.</p>
@@ -644,14 +642,53 @@ body{padding-top:74px;overflow-x:hidden}
 
     <article class="blog-card">
       <h3>Split PDF Files Online Free</h3>
-      <p>Extract pages or split large PDFs into smaller files instantly in your browser.</p>
+      <p>Extract pages or split large PDFs instantly in your browser.</p>
       <a href="#">Read More</a>
     </article>
-
   </div>
+</section>
   
-
 <script>
+  window.startUpload = async function(){
+  const file = document.getElementById("fileInput").files[0];
+  const tool = document.getElementById("toolSelect").value;
+
+  if(!file){
+    document.getElementById("fileInput").click();
+    return;
+  }
+
+  const btn = document.querySelector(".upload-btn");
+  btn.innerText = "Processing...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/${tool}`, {
+    method:"POST",
+    body:formData
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output.pdf";
+  a.click();
+
+  btn.innerText = "📂 Upload PDF";
+};
+
+window.toggleMega = function(){
+  const menu = document.getElementById("megaMenu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  // बाकी search/grid/render वाला code यहाँ रहे
+});
+  
 document.addEventListener("DOMContentLoaded", () => {
   async function startUpload(){
   const file = document.getElementById("fileInput").files[0];
