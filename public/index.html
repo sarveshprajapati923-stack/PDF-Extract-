@@ -454,74 +454,6 @@ body{padding-top:74px;overflow-x:hidden}
     height:38px;
   }
 }
-  .menu-wrapper{
-  position:relative;
-  margin-left:10px;
-}
-
-.menu-btn{
-  font-size:22px;
-  cursor:pointer;
-  padding:6px 12px;
-  border:1px solid #d8e2f0;
-  border-radius:10px;
-  background:#fff;
-  transition:0.2s;
-}
-
-.menu-btn:hover{
-  transform:scale(1.1);
-  background:#f1f5ff;
-}
-
-.mega-menu{
-  display:none;
-  position:absolute;
-  top:45px;
-  right:0;
-  width:320px;
-  background:#fff;
-  border:1px solid #e2e8f0;
-  border-radius:16px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.12);
-  padding:12px;
-  z-index:9999;
-  animation:fadeIn .2s ease;
-}
-
-.mega-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-}
-
-.mega-grid a{
-  padding:10px;
-  font-size:13px;
-  border-radius:10px;
-  border:1px solid #eef2ff;
-  background:#f8fafc;
-  transition:0.2s;
-  text-align:left;
-}
-
-.mega-grid a:hover{
-  background:#2563eb;
-  color:#fff;
-  transform:translateY(-2px);
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(-10px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-@media(max-width:600px){
-  .mega-menu{
-    width:90vw;
-    right:-10px;
-  }
-       }
 
 /* ===== END ===== */
 </style>
@@ -539,34 +471,7 @@ body{padding-top:74px;overflow-x:hidden}
   <span class="logo-text">
     We<span>PDF</span>Hub
   </span>
-        <div class="menu-wrapper">
-  <span class="menu-btn" onclick="toggleMega()">⋯</span>
-
-  <div id="megaMenu" class="mega-menu">
-
-    <div class="mega-grid">
-
-      <a href="/merge-pdf">⚡ Merge PDF</a>
-      <a href="/split-pdf">✂ Split PDF</a>
-      <a href="/compress-pdf">🗜 Compress</a>
-      <a href="/image-to-pdf">🖼 Image to PDF</a>
-
-      <a href="/pdf-to-word">📄 PDF to Word</a>
-      <a href="/pdf-to-jpg">📷 PDF to JPG</a>
-      <a href="/protect-pdf">🔒 Protect PDF</a>
-      <a href="/unlock-pdf">🔓 Unlock PDF</a>
-
-      <a href="/ocr-pdf">👁 OCR PDF</a>
-      <a href="/watermark-pdf">💧 Watermark</a>
-      <a href="/add-signature">✍ Signature</a>
-      <a href="/page-number">🔢 Page Number</a>
-
-    </div>
-  </div>
-</div>
-        
-</div>
-      
+      </div>
 
       <div class="top-actions">
         <a class="top-link" href="/merge-pdf">Merge PDF</a>
@@ -648,6 +553,7 @@ body{padding-top:74px;overflow-x:hidden}
   </div>
 </section>
   
+
 <script>
   window.startUpload = async function(){
   const file = document.getElementById("fileInput").files[0];
@@ -684,12 +590,45 @@ window.toggleMega = function(){
   const menu = document.getElementById("megaMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 };
-
 document.addEventListener("DOMContentLoaded", () => {
-  // बाकी search/grid/render वाला code यहाँ रहे
-});
-  
-     pdf-to-jpg":"📷",
+  async function startUpload(){
+  const file = document.getElementById("fileInput").files[0];
+  const tool = document.getElementById("toolSelect").value;
+
+  if(!file){
+    document.getElementById("fileInput").click();
+    return;
+  }
+
+  const btn = document.querySelector(".upload-btn");
+  btn.innerText = "Processing...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/${tool}`, {
+    method:"POST",
+    body:formData
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output.pdf";
+  a.click();
+
+  btn.innerText = "📂 Upload PDF";
+  }
+  const search = document.getElementById("search");
+  const grid = document.getElementById("grid");
+
+  const icons = {
+    "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
+    "watermark-pdf":"💧","delete-pages":"🗑️","extract-pages":"📤","reorder-pages":"🔀",
+    "reverse-pages":"↩️","duplicate-pages":"📑","crop-pdf":"✂️","add-blank-pages":"➕",
+    "page-number":"🔢","image-to-pdf":"🖼️","pdf-to-word":"📄","pdf-to-jpg":"📷",
     "ocr-pdf":"👁️","extract-text":"📝","protect-pdf":"🔒","metadata-pdf":"🧾",
     "pdf-info":"ℹ️","unlock-pdf":"🔓","pdf-to-excel":"📊","split-pdf-bookmarks":"🔖",
     "split-pdf-odd-pages":"1️⃣","split-pdf-even-pages":"2️⃣","extract-first-page":"1️⃣",
