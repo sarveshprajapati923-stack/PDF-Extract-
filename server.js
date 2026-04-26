@@ -1778,7 +1778,8 @@ const note =
     <meta property="og:description" content="${escapeHtml(tool.description)}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${fullUrl(tool.slug)}" />
-    <style>${pageBg()}</style>
+  <style>
+    ${pageBg()}
     .tool-content{
   max-width:850px;
   margin:50px auto;
@@ -1823,6 +1824,7 @@ const note =
   background:#2563eb;
   color:#fff;
 }
+</style>
   </head>
   <body>
     <div class="wrap">
