@@ -1279,6 +1279,122 @@ function renderToolContent(slug){
   </section>
   `;
     }
+app.get("/merge-pdf", (req, res) => {
+  res.send(renderToolPage("merge-pdf", `
+    <section class="hero">
+      <h1>Merge PDF</h1>
+      <p>Combine multiple PDF files into one clean document.</p>
+
+      <input type="file" id="fileInput" multiple hidden>
+      <button class="btn primary" onclick="startUpload()">📂 Upload PDF</button>
+
+      <script>
+        async function startUpload(){
+          const fileInput = document.getElementById("fileInput");
+
+          if(!fileInput.files.length){
+            fileInput.click();
+            return;
+          }
+
+          const formData = new FormData();
+          for(let file of fileInput.files){
+            formData.append("file", file);
+          }
+
+          const res = await fetch("/api/merge-pdf", {
+            method:"POST",
+            body:formData
+          });
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "merged.pdf";
+          a.click();
+        }
+      </script>
+    </section>
+  `));
+});
+app.get("/compress-pdf", (req, res) => {
+  res.send(renderToolPage("compress-pdf", `
+    <section class="hero">
+      <h1>Compress PDF</h1>
+      <p>Reduce PDF file size instantly.</p>
+
+      <input type="file" id="fileInput" hidden>
+      <button class="btn primary" onclick="startUpload()">📂 Upload PDF</button>
+
+      <script>
+        async function startUpload(){
+          const fileInput = document.getElementById("fileInput");
+
+          if(!fileInput.files[0]){
+            fileInput.click();
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+
+          const res = await fetch("/api/compress-pdf", {
+            method:"POST",
+            body:formData
+          });
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "compressed.pdf";
+          a.click();
+        }
+      </script>
+    </section>
+  `));
+});
+app.get("/split-pdf", (req, res) => {
+  res.send(renderToolPage("split-pdf", `
+    <section class="hero">
+      <h1>Split PDF</h1>
+      <p>Extract pages or split your PDF easily.</p>
+
+      <input type="file" id="fileInput" hidden>
+      <button class="btn primary" onclick="startUpload()">📂 Upload PDF</button>
+
+      <script>
+        async function startUpload(){
+          const fileInput = document.getElementById("fileInput");
+
+          if(!fileInput.files[0]){
+            fileInput.click();
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+
+          const res = await fetch("/api/split-pdf", {
+            method:"POST",
+            body:formData
+          });
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "split.zip";
+          a.click();
+        }
+      </script>
+    </section>
+  `));
+});
 // ================= STATIC PAGES ROUTES =================
 
 app.get("/about", (req, res) => {
