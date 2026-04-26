@@ -1185,6 +1185,100 @@ Object.entries(blogPosts).forEach(([slug, post]) => {
     res.send(renderBlogPage(post, slug));
   });
 });
+
+const toolContent = {
+  "merge-pdf": {
+    title: "Merge PDF Online",
+    intro: "Merge PDF tool allows you to combine multiple PDF files into one document quickly and securely.",
+    why: "This tool is useful when you have multiple files like reports, invoices, or notes and want them in one place.",
+    benefits: [
+      "Combine multiple PDFs instantly",
+      "Maintain original quality",
+      "Fast and secure processing"
+    ],
+    steps: [
+      "Upload your PDF files",
+      "Arrange them in correct order",
+      "Click merge button",
+      "Download merged PDF"
+    ],
+    tips: [
+      "Check file order before merging",
+      "Avoid very large files for faster results"
+    ]
+  },
+
+  "compress-pdf": {
+    title: "Compress PDF Online",
+    intro: "Reduce PDF file size without losing important quality.",
+    why: "Large PDFs are difficult to share via email or upload on websites.",
+    benefits: [
+      "Smaller file size",
+      "Faster uploads",
+      "Better sharing experience"
+    ],
+    steps: [
+      "Upload PDF file",
+      "Start compression",
+      "Download optimized file"
+    ],
+    tips: [
+      "Use compression before email sharing",
+      "Keep backup of original file"
+    ]
+  },
+
+  "split-pdf": {
+    title: "Split PDF Online",
+    intro: "Split PDF into multiple files or extract specific pages easily.",
+    why: "Useful when you need only selected pages from a large document.",
+    benefits: [
+      "Extract specific pages",
+      "Reduce file size",
+      "Organize documents better"
+    ],
+    steps: [
+      "Upload PDF",
+      "Select pages",
+      "Download split files"
+    ],
+    tips: [
+      "Use page range carefully",
+      "Preview pages before splitting"
+    ]
+  }
+};
+function renderToolContent(slug){
+  const data = toolContent[slug];
+  if(!data) return "";
+
+  const benefits = data.benefits.map(i=>`<li>${i}</li>`).join("");
+  const steps = data.steps.map(i=>`<li>${i}</li>`).join("");
+  const tips = data.tips.map(i=>`<li>${i}</li>`).join("");
+
+  return `
+  <section class="tool-content">
+    <h2>${data.title}</h2>
+    <p>${data.intro}</p>
+
+    <h3>Why use this tool?</h3>
+    <p>${data.why}</p>
+
+    <h3>Benefits</h3>
+    <ul>${benefits}</ul>
+
+    <h3>How to use</h3>
+    <ol>${steps}</ol>
+
+    <h3>Tips</h3>
+    <ul>${tips}</ul>
+
+    <div class="cta">
+      <a href="/${slug}" class="btn primary">Use Tool</a>
+    </div>
+  </section>
+  `;
+    }
 // ================= STATIC PAGES ROUTES =================
 
 app.get("/about", (req, res) => {
