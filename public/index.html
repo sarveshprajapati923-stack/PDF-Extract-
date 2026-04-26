@@ -685,6 +685,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const search = document.getElementById("search");
   const grid = document.getElementById("grid");
+  function toggleMega(){
+  const menu = document.getElementById("megaMenu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+document.addEventListener("click", function(e){
+  const menu = document.getElementById("megaMenu");
+  const btn = document.querySelector(".menu-btn");
+
+  if(!menu.contains(e.target) && !btn.contains(e.target)){
+    menu.style.display = "none";
+  }
+});
 
   const icons = {
     "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
