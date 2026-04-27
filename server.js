@@ -2121,12 +2121,47 @@ document.addEventListener("DOMContentLoaded", () => {
       progressWrap.style.display = "block";
       progressBar.style.width = "30%";
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const toolSlug = "${tool.slug}";
+
+  const fileInput = document.getElementById("fileInput");
+  const runBtn = document.getElementById("runBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const statusEl = document.getElementById("status");
+  const resultEl = document.getElementById("result");
+  const downloadBox = document.getElementById("downloadBox");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const progressBar = document.getElementById("progressBar");
+  const progressWrap = document.getElementById("progressWrap");
+
+  let downloadUrl = "";
+
+  // ======================
+  // RUN TOOL
+  // ======================
+  runBtn.addEventListener("click", async () => {
+
+    if (!fileInput.files.length) {
+      fileInput.click();
+      return;
+    }
+
+    runBtn.disabled = true;
+    runBtn.innerText = "Processing...";
+
+    try {
+      statusEl.innerText = "Processing...";
+      progressWrap.style.display = "block";
+      progressBar.style.width = "30%";
+
       const formData = new FormData();
-      for(let file of fileInput.files){
+      for (let file of fileInput.files) {
         formData.append("file", file);
       }
 
-      const res = await fetch('/api/' + toolSlug, {
+      const res = await fetch("/api/" + toolSlug, {
         method: "POST",
         body: formData
       });
@@ -2141,18 +2176,23 @@ document.addEventListener("DOMContentLoaded", () => {
         a.href = url;
         a.download = "output.pdf";
         a.click();
+
+        URL.revokeObjectURL(url);
       };
 
       progressBar.style.width = "100%";
       downloadBox.classList.add("show");
 
       statusEl.innerText = "Done!";
+      resultEl.innerText = "File ready to download.";
+
     } catch (err) {
       console.error(err);
       statusEl.innerText = "Error!";
+      resultEl.innerText = "Something went wrong.";
     } finally {
-      runBtn.innerText = "Run Tool";
       runBtn.disabled = false;
+      runBtn.innerText = "Run Tool";
     }
   });
 
@@ -2160,11 +2200,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // RESET
   // ======================
   resetBtn.addEventListener("click", () => {
+
     fileInput.value = "";
     statusEl.innerText = "Waiting...";
     resultEl.innerText = "No output yet.";
     progressBar.style.width = "0%";
+    progressWrap.style.display = "none";
     downloadBox.classList.remove("show");
+
   });
 
 });
