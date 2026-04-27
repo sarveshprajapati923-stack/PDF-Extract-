@@ -2081,6 +2081,19 @@ const note =
     });
   });
 </script>
+<script>
+  window.toolFaqData = ${JSON.stringify(data?.faq || [])};
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".faq-q").forEach(q => {
+    q.addEventListener("click", () => {
+      const parent = q.parentElement;
+      if (parent) parent.classList.toggle("active");
+    });
+  });
+});
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
