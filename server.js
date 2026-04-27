@@ -2121,7 +2121,7 @@ runBtn.addEventListener("click", async () => {
       formData.append("file", file);
     }
 
-    const res = await fetch(`/api/${toolSlug}`, {
+    const res = await fetch('/api/' + toolSlug, {
       method: "POST",
       body: formData
     });
