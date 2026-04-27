@@ -1473,7 +1473,7 @@ const tools = [
   { slug: "pdf-to-excel", title: "PDF to Excel", description: "Convert PDF tables to Excel.", files: "single" },
   { slug: "split-pdf-bookmarks", title: "Split PDF by Bookmarks", description: "Split one PDF into separate PDFs using bookmarks.", files: "single" },
   { slug: "split-pdf-odd-pages", title: "Split PDF by Odd Pages", description: "Keep only odd pages from a PDF.", files: "single" },
-  {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF."},
+  { slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", description:"Keep only even pages from a PDF."},
   { slug: "extract-first-page", title: "Extract First Page", description: "Extract only the first page from a PDF.", files: "single" },
   { slug: "extract-last-page", title: "Extract Last Page", description: "Extract only the last page from a PDF.", files: "single" },
   { slug: "delete-odd-pages", title: "Delete Odd Pages", description: "Remove all odd pages from a PDF.", files: "single" },
@@ -2221,6 +2221,7 @@ function setProgress(p) {
 }
 </script>
 
+     <script> 
       function inferName() {
         const map = {
           "merge-pdf": "merged.pdf",
@@ -2410,35 +2411,63 @@ function setProgress(p) {
                 return;
               }
 
-              const blob = xhr.response;
-              downloadUrl = URL.createObjectURL(blob);
-              downloadName = xhr.getResponseHeader("x-filename") || inferName();
-              downloadBox.classList.add("show");
-              setStatus("Done", "Completed successfully.");
-              resultEl.textContent = "File is ready. Click download.";
-              setProgress(100);
-            } catch (err) {
-              setStatus("Error", err.message, true);
-              resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
-              setProgress(0);
-            }
-          };
+       try {
 
-          xhr.onerror = function () {
-            setStatus("Error", "Network error.", true);
-            resultEl.innerHTML = '<span class="error">Network error.</span>';
-            setProgress(0);
-          };
+  const fd = collectFormData();
 
-          xhr.send(fd);
-        } catch (err) {
-          setStatus("Error", err.message, true);
-          resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
-          setProgress(0);
-        }
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/" + toolSlug, true);
+  xhr.responseType = "blob";
+
+  xhr.onload = function () {
+    try {
+      const ct = xhr.getResponseHeader("content-type") || "";
+
+      if (ct.includes("application/json")) {
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          const data = JSON.parse(reader.result);
+          setStatus("Done", "Completed successfully.");
+          resultEl.textContent = JSON.stringify(data, null, 2);
+          setProgress(100);
+        };
+
+        reader.readAsText(xhr.response);
+        return;
       }
 
-      runBtn.addEventListener("click", runTool);
+      const blob = xhr.response;
+      downloadUrl = URL.createObjectURL(blob);
+      downloadName = xhr.getResponseHeader("x-filename") || inferName();
+
+      downloadBox.classList.add("show");
+      setStatus("Done", "Completed successfully.");
+      resultEl.textContent = "File is ready. Click download.";
+      setProgress(100);
+
+    } catch (err) {
+      setStatus("Error", err.message, true);
+      resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
+      setProgress(0);
+    }
+  };
+
+  xhr.onerror = function () {
+    setStatus("Error", "Network error.", true);
+    resultEl.innerHTML = '<span class="error">Network error.</span>';
+    setProgress(0);
+  };
+
+  xhr.send(fd);
+
+} catch (err) {
+  setStatus("Error", err.message, true);
+  resultEl.innerHTML = '<span class="error">' + err.message + "</span>";
+  setProgress(0);
+}
+
+runBtn.addEventListener("click", runTool);       
     </script>
   </body>
   </html>`;
