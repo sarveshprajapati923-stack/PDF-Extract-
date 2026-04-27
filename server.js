@@ -2147,7 +2147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
+<script>
 let downloadUrl = "";
 
 let downloadName = (toolSlug === "split-pdf-odd-pages") ? "odd_pages.pdf" :
@@ -2161,7 +2161,6 @@ let downloadName = (toolSlug === "split-pdf-odd-pages") ? "odd_pages.pdf" :
 "output.pdf";
 
 runBtn.addEventListener("click", async () => {
-
   if(!fileInput.files.length){
     fileInput.click();
     return;
@@ -2171,7 +2170,6 @@ runBtn.addEventListener("click", async () => {
   runBtn.disabled = true;
 
   try {
-
     statusEl.innerText = "Processing your file...";
     progressWrap.style.display = "block";
     progressBar.style.width = "30%";
@@ -2195,7 +2193,6 @@ runBtn.addEventListener("click", async () => {
     downloadBtn.download = downloadName;
 
     progressBar.style.width = "100%";
-
   } catch (err) {
     console.error(err);
     statusEl.innerText = "Error processing file!";
@@ -2203,24 +2200,26 @@ runBtn.addEventListener("click", async () => {
     runBtn.innerText = "Run Tool";
     runBtn.disabled = false;
   }
-
 });
-      function setStatus(title, text, isError = false) {
-        statusEl.innerHTML = isError
-          ? '<span class="error">' + title + '</span> — ' + text
-          : title + ' — ' + text;
-      }
 
-      function resetDownload() {
-        downloadBox.classList.remove("show");
-        if (downloadUrl) URL.revokeObjectURL(downloadUrl);
-        downloadUrl = "";
-        downloadName = "output.pdf";
-      }
+// helpers
+function setStatus(title, text, isError = false) {
+  statusEl.innerHTML = isError
+    ? '<span class="error">' + title + '</span> — ' + text
+    : title + ' — ' + text;
+}
 
-      function setProgress(p) {
-        progressBar.style.width = Math.max(0, Math.min(100, p)) + "%";
-      }
+function resetDownload() {
+  downloadBox.classList.remove("show");
+  if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+  downloadUrl = "";
+  downloadName = "output.pdf";
+}
+
+function setProgress(p) {
+  progressBar.style.width = Math.max(0, Math.min(100, p)) + "%";
+}
+</script>
 
       function inferName() {
         const map = {
