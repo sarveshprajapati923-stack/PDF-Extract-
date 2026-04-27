@@ -2024,13 +2024,15 @@ const note =
           <div id="result" class="result">No output yet.</div>
         </div>
 
+        const data = toolContent[tool.slug];
+
         <div class="card panel">
           <h2 style="margin-top:0">Related tools</h2>
           <div class="chip-wrap">${related || ""}</div>
           <div style="margin-top:18px">
             <h3>SEO structure</h3>
             <h3>FAQs</h3>
-            ${data.faq.map(f=>`
+            ${(data?.faq || []).map(f=>`
             <div class="faq-item">
             <h3>${f[0]}</h3>
             <p>${f[1]}</p>
