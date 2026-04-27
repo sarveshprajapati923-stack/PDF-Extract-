@@ -1879,23 +1879,23 @@ const note =
 
 /* PRIMARY BUTTON */
 .btn.primary{
-  background:linear-gradient(135deg,#3b82f6,#60a5fa);
-  color:#ffffff !important;
-  border:none;
-  font-weight:600;
-  box-shadow:0 4px 12px rgba(59,130,246,0.3);
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff !important;
+  border: 1px solid #2563eb;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(37,99,235,0.18);
 }
 
-/* HOVER */
+/* hover softer */
 .btn.primary:hover{
-  background:linear-gradient(135deg,#2563eb,#3b82f6);
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(37,99,235,0.4);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37,99,235,0.25);
 }
 
 /* CLICK ANIMATION */
 .btn.primary:active{
-  transform:scale(0.96);
+  transform:scale(0.97);
 }
 
 /* OPTIONAL: DISABLED STATE */
