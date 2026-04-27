@@ -1258,6 +1258,7 @@ function renderToolContent(slug){
 
   return `
   <section class="tool-content">
+  ${renderRelatedTools(slug)}
   <h2>How to use ${data.title}</h2>
     <h2>${data.title}</h2>
     <p>${data.intro}</p>
@@ -1280,6 +1281,23 @@ function renderToolContent(slug){
   </section>
   `;
     }
+
+function renderRelatedTools(currentSlug){
+  const related = tools
+    .filter(t => t.slug !== currentSlug)
+    .slice(0, 8)
+    .map(t => `<a class="chip" href="/${t.slug}">${escapeHtml(t.title)}</a>`)
+    .join("");
+
+  return `
+    <section class="related-tools">
+      <h2>Related Tools</h2>
+      <div class="chip-row">
+        ${related}
+      </div>
+    </section>
+  `;
+}
 app.get("/merge-pdf", (req, res) => {
   res.send(renderToolPage("merge-pdf", `
     <section class="hero">
@@ -1591,6 +1609,44 @@ function pageBg() {
   @media (max-width:900px){.grid,.row{grid-template-columns:1fr}}
   `;
 }
+.related-tools{
+  max-width:850px;
+  margin:30px auto 0;
+  padding:24px;
+  background:#fff;
+  border-radius:20px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+.related-tools h2{
+  margin:0 0 14px;
+  font-size:22px;
+}
+
+.chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.chip{
+  display:inline-block;
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid #dbe5f5;
+  background:#f8fbff;
+  color:#0f172a;
+  text-decoration:none;
+  font-size:14px;
+  transition:0.2s ease;
+}
+
+.chip:hover{
+  background:#2563eb;
+  color:#fff;
+  transform:translateY(-2px);
+  }
 
 function buildStaticPage(title, heading, content, req) {
   return `<!DOCTYPE html>
@@ -1830,6 +1886,9 @@ const note =
         <div class="brand">WePDFHub</div>
         <a class="back" href="/">← Home</a>
       </div>
+      <div class="breadcrumb">
+  <a href="/">Home</a> <span>›</span> <a href="/${tool.slug}">${escapeHtml(tool.title)}</a>
+</div>
 
       <section class="hero">
         <span class="badge" style="display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid rgba(37,99,235,.18);background:rgba(37,99,235,.06);color:#1d4ed8;font-size:.9rem">Dedicated tool page</span>
