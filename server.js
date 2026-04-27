@@ -1959,7 +1959,7 @@ const note =
       <div class="related-tools">
   <h2>Related Tools</h2>
   <div class="chip-row">
-    ${related}
+    ${related || ""}
   </div>
 </div>
 
@@ -2026,7 +2026,7 @@ const note =
 
         <div class="card panel">
           <h2 style="margin-top:0">Related tools</h2>
-          <div class="chip-wrap">${related}</div>
+          <div class="chip-wrap">${related || ""}</div>
           <div style="margin-top:18px">
             <h3>SEO structure</h3>
             <h3>FAQs</h3>
