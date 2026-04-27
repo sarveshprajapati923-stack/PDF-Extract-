@@ -2095,6 +2095,7 @@ const note =
   /* 🔥 LOADING */
   runBtn.innerText = "Processing...";
   runBtn.disabled = true;
+  async function processFile() {
 
   statusEl.innerText = "Processing your file...";
   progressWrap.style.display = "block";
@@ -2118,6 +2119,7 @@ const note =
 
   downloadBtn.href = downloadUrl;
   downloadBtn.download = downloadName;
+  }
 
   downloadBox.style.display = "block";
 
