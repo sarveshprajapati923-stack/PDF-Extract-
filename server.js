@@ -2076,27 +2076,25 @@ const note =
 
   document.getElementById("previewLabel").after(grid);
 });
-      const runBtn = document.getElementById("runBtn");
-      const resetBtn = document.getElementById("resetBtn");
-      const statusEl = document.getElementById("status");
-      const resultEl = document.getElementById("result");
-      const downloadBox = document.getElementById("downloadBox");
-      const downloadBtn = document.getElementById("downloadBtn");
-      const progressBar = document.getElementById("progressBar");
-      const progressWrap = document.getElementById("progressWrap");
-      const uploadArea = document.querySelector(".upload");
-      runBtn.addEventListener("click", async () => {
+const runBtn = document.getElementById("runBtn");
+const resetBtn = document.getElementById("resetBtn");
+const statusEl = document.getElementById("status");
+const resultEl = document.getElementById("result");
+const downloadBox = document.getElementById("downloadBox");
+const downloadBtn = document.getElementById("downloadBtn");
+const progressBar = document.getElementById("progressBar");
+const progressWrap = document.getElementById("progressWrap");
+const uploadArea = document.querySelector(".upload");
+
+runBtn.addEventListener("click", async () => {
 
   if(!fileInput.files.length){
-  fileInput.click();
-  return;
-}
+    fileInput.click();
+    return;
+  }
 
-/* 🔥 LOADING */
-runBtn.innerText = "Processing...";
-runBtn.disabled = true;
-
-async function processFile() {
+  runBtn.innerText = "Processing...";
+  runBtn.disabled = true;
 
   try {
 
@@ -2109,7 +2107,6 @@ async function processFile() {
       formData.append("file", file);
     }
 
-    /* 🔥 API CALL */
     const res = await fetch(`/api/${toolSlug}`, {
       method: "POST",
       body: formData
@@ -2132,7 +2129,7 @@ async function processFile() {
     runBtn.disabled = false;
   }
 
-}
+});
       let downloadUrl = "";
       let downloadName =
   toolSlug === "split-pdf-odd-pages" ? "odd_pages.pdf" :
