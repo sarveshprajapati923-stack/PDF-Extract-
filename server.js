@@ -2055,7 +2055,7 @@ const note =
 </script>
 
     <script>
-      const toolSlug = ${tool.slug)};
+      const toolSlug = ${tool.slug};
       const fileInput = document.getElementById("fileInput");
       fileInput.addEventListener("change", () => {
   const oldGrid = document.querySelector(".file-grid");
