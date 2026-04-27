@@ -1878,16 +1878,54 @@ const note =
 .btn.primary:hover{
   background:#1d4ed8;
 }
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #2563eb;
+  color:#2563eb;
+  text-decoration:none;
+}
+.btn.primary{
+  background:linear-gradient(135deg,#3b82f6,#60a5fa);
+  color:#fff;
+  border:none;
+  font-weight:600;
+}
+
+/* 👉 HOVER EFFECT */
+.btn.primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(37,99,235,0.35);
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+}
+.breadcrumb{
+  max-width:850px;
+  margin:0 auto 14px;
+  color:#64748b;
+  font-size:14px;
+}
+.breadcrumb a{
+  color:#2563eb;
+  text-decoration:none;
+}
+.breadcrumb span{
+  margin:0 6px;
+}
 </style>
   </head>
   <body>
     <div class="wrap">
       <div class="top">
-        <div class="brand">WePDFHub</div>
-        <a class="back" href="/">← Home</a>
-      </div>
-      <div class="breadcrumb">
-  <a href="/">Home</a> <span>›</span> <a href="/${tool.slug}">${escapeHtml(tool.title)}</a>
+  <div class="brand">WePDFHub</div>
+  <a class="back" href="/">← Home</a>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a>
+  <span>›</span>
+  <a href="/${tool.slug}">${escapeHtml(tool.title)}</a>
 </div>
 
       <section class="hero">
