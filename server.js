@@ -1864,40 +1864,43 @@ const note =
   padding-left:20px;
   margin-top:10px;
 }
-.btn.primary{
-  background:#2563eb;
-  color:#ffffff;
-  border:none;
-  font-weight:600;
-  padding:12px 18px;
-  border-radius:10px;
-  transition:all 0.2s ease;
-}
-
-.btn.primary:hover{
-  background:#1d4ed8;
-}
 .btn{
   display:inline-block;
   margin-top:15px;
-  padding:10px 14px;
-  border-radius:10px;
+  padding:12px 18px;
+  border-radius:12px;
   border:1px solid #2563eb;
   color:#2563eb;
   text-decoration:none;
-}
-.btn.primary{
-  background:linear-gradient(135deg,#3b82f6,#60a5fa);
-  color:#fff;
-  border:none;
-  font-weight:600;
+  font-weight:500;
+  transition:all 0.25s ease;
 }
 
-/* 👉 HOVER EFFECT */
+/* PRIMARY BUTTON */
+.btn.primary{
+  background:linear-gradient(135deg,#3b82f6,#60a5fa);
+  color:#ffffff !important;
+  border:none;
+  font-weight:600;
+  box-shadow:0 4px 12px rgba(59,130,246,0.3);
+}
+
+/* HOVER */
 .btn.primary:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(37,99,235,0.35);
   background:linear-gradient(135deg,#2563eb,#3b82f6);
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(37,99,235,0.4);
+}
+
+/* CLICK ANIMATION */
+.btn.primary:active{
+  transform:scale(0.96);
+}
+
+/* OPTIONAL: DISABLED STATE */
+.btn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
 }
 .breadcrumb{
   max-width:850px;
@@ -1912,6 +1915,24 @@ const note =
 .breadcrumb span{
   margin:0 6px;
 }
+.faq-item p{
+  display:none;
+}
+
+.faq-item.active p{
+  display:block;
+  margin-top:6px;
+}
+
+.faq-item h3{
+  cursor:pointer;
+}
+.actions{
+  position:sticky;
+  bottom:10px;
+  background:#fff;
+  padding:10px;
+}
 </style>
   </head>
   <body>
@@ -1920,6 +1941,14 @@ const note =
   <div class="brand">WePDFHub</div>
   <a class="back" href="/">← Home</a>
 </div>
+<script>
+  document.querySelectorAll(".faq-item h3").forEach(item=>{
+    item.addEventListener("click",()=>{
+      const parent = item.parentElement;
+      parent.classList.toggle("active");
+    });
+  });
+  </script>
 
 <div class="breadcrumb">
   <a href="/">Home</a>
@@ -1935,6 +1964,12 @@ const note =
         ${note}
       </section>
       ${renderToolContent(tool.slug)}
+      <div class="related-tools">
+  <h2>Related Tools</h2>
+  <div class="chip-row">
+    ${related}
+  </div>
+</div>
 
       <section class="grid">
         <div class="card panel">
@@ -2002,6 +2037,13 @@ const note =
           <div class="chip-wrap">${related}</div>
           <div style="margin-top:18px">
             <h3>SEO structure</h3>
+            <h3>FAQs</h3>
+            ${data.faq.map(f=>`
+            <div class="faq-item">
+            <h3>${f[0]}</h3>
+            <p>${f[1]}</p>
+            </div>
+            `).join("")}
             <p class="mini">Each tool has its own URL, title, and description, just like competitor PDF sites.</p>
           </div>
         </div>
