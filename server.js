@@ -1941,14 +1941,6 @@ const note =
   <div class="brand">WePDFHub</div>
   <a class="back" href="/">← Home</a>
 </div>
-<script>
-  document.querySelectorAll(".faq-item h3").forEach(item=>{
-    item.addEventListener("click",()=>{
-      const parent = item.parentElement;
-      parent.classList.toggle("active");
-    });
-  });
-  </script>
 
 <div class="breadcrumb">
   <a href="/">Home</a>
@@ -2053,6 +2045,14 @@ const note =
         <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/rules">Rules</a>
       </div>
     </div>
+    <script>
+  document.querySelectorAll(".faq-item h3").forEach(item=>{
+    item.addEventListener("click",()=>{
+      const parent = item.parentElement;
+      parent.classList.toggle("active");
+    });
+  });
+</script>
 
     <script>
       const toolSlug = ${JSON.stringify(tool.slug)};
