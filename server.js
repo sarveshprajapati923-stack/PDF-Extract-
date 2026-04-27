@@ -2029,14 +2029,16 @@ const note =
           <h2 style="margin-top:0">Related tools</h2>
           <div class="chip-wrap">${related || ""}</div>
           <div style="margin-top:18px">
-            <h3>SEO structure</h3>
-            <h3>FAQs</h3>
-            ${(data?.faq || []).map(f=>`
-            <div class="faq-item">
-            <h3>${f[0]}</h3>
-            <p>${f[1]}</p>
-            </div>
-            `).join("")}
+            <div class="faq-section">
+  <h3>FAQs</h3>
+
+  ${(data && data.faq ? data.faq : []).map(f => `
+    <div class="faq-item">
+      <h3 class="faq-q">${escapeHtml(f[0] || "")}</h3>
+      <p class="faq-a">${escapeHtml(f[1] || "")}</p>
+    </div>
+  `).join("")}
+</div>
             <p class="mini">Each tool has its own URL, title, and description, just like competitor PDF sites.</p>
           </div>
         </div>
