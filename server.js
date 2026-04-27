@@ -2076,6 +2076,7 @@ const note =
 
   document.getElementById("previewLabel").after(grid);
 });
+
 const runBtn = document.getElementById("runBtn");
 const resetBtn = document.getElementById("resetBtn");
 const statusEl = document.getElementById("status");
@@ -2085,6 +2086,18 @@ const downloadBtn = document.getElementById("downloadBtn");
 const progressBar = document.getElementById("progressBar");
 const progressWrap = document.getElementById("progressWrap");
 const uploadArea = document.querySelector(".upload");
+
+let downloadUrl = "";
+
+let downloadName = (toolSlug === "split-pdf-odd-pages") ? "odd_pages.pdf" :
+(toolSlug === "split-pdf-even-pages") ? "even_pages.pdf" :
+(toolSlug === "extract-first-page") ? "first_page.pdf" :
+(toolSlug === "extract-last-page") ? "last_page.pdf" :
+(toolSlug === "delete-odd-pages") ? "no_odd_pages.pdf" :
+(toolSlug === "delete-even-pages") ? "no_even_pages.pdf" :
+(toolSlug === "shuffle-pages") ? "shuffled.pdf" :
+(toolSlug === "sort-pages") ? "sorted.pdf" :
+"output.pdf";
 
 runBtn.addEventListener("click", async () => {
 
@@ -2118,6 +2131,7 @@ runBtn.addEventListener("click", async () => {
     downloadUrl = URL.createObjectURL(blob);
 
     downloadBtn.href = downloadUrl;
+    downloadBtn.download = downloadName;
 
     progressBar.style.width = "100%";
 
@@ -2130,18 +2144,6 @@ runBtn.addEventListener("click", async () => {
   }
 
 });
-      let downloadUrl = "";
-      let downloadName =
-  toolSlug === "split-pdf-odd-pages" ? "odd_pages.pdf" :
-  toolSlug === "split-pdf-even-pages" ? "even_pages.pdf" :
-  toolSlug === "extract-first-page" ? "first_page.pdf" :
-  toolSlug === "extract-last-page" ? "last_page.pdf" :
-  toolSlug === "delete-odd-pages" ? "no_odd_pages.pdf" :
-  toolSlug === "delete-even-pages" ? "no_even_pages.pdf" :
-  toolSlug === "shuffle-pages" ? "shuffled.pdf" :
-  toolSlug === "sort-pages" ? "sorted.pdf" :
-  "output.pdf";
-
       function setStatus(title, text, isError = false) {
         statusEl.innerHTML = isError
           ? '<span class="error">' + title + '</span> — ' + text
