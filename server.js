@@ -1609,44 +1609,6 @@ function pageBg() {
   @media (max-width:900px){.grid,.row{grid-template-columns:1fr}}
   `;
 }
-.related-tools{
-  max-width:850px;
-  margin:30px auto 0;
-  padding:24px;
-  background:#fff;
-  border-radius:20px;
-  border:1px solid #e2e8f0;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-.related-tools h2{
-  margin:0 0 14px;
-  font-size:22px;
-}
-
-.chip-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.chip{
-  display:inline-block;
-  padding:9px 12px;
-  border-radius:999px;
-  border:1px solid #dbe5f5;
-  background:#f8fbff;
-  color:#0f172a;
-  text-decoration:none;
-  font-size:14px;
-  transition:0.2s ease;
-}
-
-.chip:hover{
-  background:#2563eb;
-  color:#fff;
-  transform:translateY(-2px);
-  }
 
 function buildStaticPage(title, heading, content, req) {
   return `<!DOCTYPE html>
@@ -1836,6 +1798,43 @@ const note =
     <meta property="og:url" content="${fullUrl(tool.slug)}" />
   <style>
     ${pageBg()}
+.related-tools{
+  max-width:850px;
+  margin:30px auto 0;
+  padding:24px;
+  background:#fff;
+  border-radius:20px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+.related-tools h2{
+  margin:0 0 14px;
+  font-size:22px;
+}
+
+.chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.chip{
+  display:inline-block;
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid #dbe5f5;
+  background:#f8fbff;
+  color:#0f172a;
+  text-decoration:none;
+  font-size:14px;
+  transition:0.2s ease;
+}
+
+.chip:hover{
+  background:#2563eb;
+  color:#fff;
+  transform:translateY(-2px);
+  }
     .tool-content{
   max-width:850px;
   margin:50px auto;
