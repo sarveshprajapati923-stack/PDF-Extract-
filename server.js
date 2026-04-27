@@ -2055,13 +2055,36 @@ const note =
   });
 </script>
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
   const toolSlug = "${tool.slug}";
   const fileInput = document.getElementById("fileInput");
+  const runBtn = document.getElementById("runBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const statusEl = document.getElementById("status");
+  const resultEl = document.getElementById("result");
+  const downloadBox = document.getElementById("downloadBox");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const progressBar = document.getElementById("progressBar");
+  const progressWrap = document.getElementById("progressWrap");
+  const uploadArea = document.querySelector(".upload");
 
+  // ======================
+  // FAQ toggle (optional)
+  // ======================
+  document.querySelectorAll(".faq-item h3").forEach(item=>{
+    item.addEventListener("click",()=>{
+      item.parentElement.classList.toggle("active");
+    });
+  });
+
+  // ======================
+  // FILE CHANGE PREVIEW
+  // ======================
   fileInput.addEventListener("change", () => {
 
     const oldGrid = document.querySelector(".file-grid");
-    if (oldGrid) oldGrid.remove(); // duplicate remove
+    if (oldGrid) oldGrid.remove();
 
     const grid = document.createElement("div");
     grid.className = "file-grid";
@@ -2078,18 +2101,75 @@ const note =
 
     const label = document.getElementById("previewLabel");
     if (label) label.after(grid);
-
   });
-  const runBtn = document.getElementById("runBtn");
-const resetBtn = document.getElementById("resetBtn");
-const statusEl = document.getElementById("status");
-const resultEl = document.getElementById("result");
-const downloadBox = document.getElementById("downloadBox");
-const downloadBtn = document.getElementById("downloadBtn");
-const progressBar = document.getElementById("progressBar");
-const progressWrap = document.getElementById("progressWrap");
-const uploadArea = document.querySelector(".upload");
+
+  // ======================
+  // RUN BUTTON (IMPORTANT)
+  // ======================
+  runBtn.addEventListener("click", async () => {
+
+    if(!fileInput.files.length){
+      fileInput.click();
+      return;
+    }
+
+    runBtn.innerText = "Processing...";
+    runBtn.disabled = true;
+
+    try {
+      statusEl.innerText = "Processing...";
+      progressWrap.style.display = "block";
+      progressBar.style.width = "30%";
+
+      const formData = new FormData();
+      for(let file of fileInput.files){
+        formData.append("file", file);
+      }
+
+      const res = await fetch('/api/' + toolSlug, {
+        method: "POST",
+        body: formData
+      });
+
+      progressBar.style.width = "70%";
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      downloadBtn.onclick = () => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "output.pdf";
+        a.click();
+      };
+
+      progressBar.style.width = "100%";
+      downloadBox.classList.add("show");
+
+      statusEl.innerText = "Done!";
+    } catch (err) {
+      console.error(err);
+      statusEl.innerText = "Error!";
+    } finally {
+      runBtn.innerText = "Run Tool";
+      runBtn.disabled = false;
+    }
+  });
+
+  // ======================
+  // RESET
+  // ======================
+  resetBtn.addEventListener("click", () => {
+    fileInput.value = "";
+    statusEl.innerText = "Waiting...";
+    resultEl.innerText = "No output yet.";
+    progressBar.style.width = "0%";
+    downloadBox.classList.remove("show");
+  });
+
+});
 </script>
+
 
 let downloadUrl = "";
 
