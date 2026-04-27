@@ -2025,8 +2025,6 @@ const note =
           <div id="result" class="result">No output yet.</div>
         </div>
 
-        const data = toolContent[tool.slug];
-
         <div class="card panel">
           <h2 style="margin-top:0">Related tools</h2>
           <div class="chip-wrap">${related || ""}</div>
@@ -2082,9 +2080,7 @@ const note =
     if (label) label.after(grid);
 
   });
-</script>
-
-const runBtn = document.getElementById("runBtn");
+  const runBtn = document.getElementById("runBtn");
 const resetBtn = document.getElementById("resetBtn");
 const statusEl = document.getElementById("status");
 const resultEl = document.getElementById("result");
@@ -2093,6 +2089,7 @@ const downloadBtn = document.getElementById("downloadBtn");
 const progressBar = document.getElementById("progressBar");
 const progressWrap = document.getElementById("progressWrap");
 const uploadArea = document.querySelector(".upload");
+</script>
 
 let downloadUrl = "";
 
