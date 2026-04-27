@@ -2057,6 +2057,25 @@ const note =
     <script>
       const toolSlug = ${JSON.stringify(tool.slug)};
       const fileInput = document.getElementById("fileInput");
+      fileInput.addEventListener("change", () => {
+  const oldGrid = document.querySelector(".file-grid");
+  if(oldGrid) oldGrid.remove(); // duplicate remove
+
+  const grid = document.createElement("div");
+  grid.className = "file-grid";
+
+  for(let file of fileInput.files){
+    const div = document.createElement("div");
+    div.className = "file-card";
+    div.innerText = file.name;
+    grid.appendChild(div);
+  }
+
+  const previewCanvas = document.getElementById("previewCanvas");
+  previewCanvas.style.display = "none";
+
+  document.getElementById("previewLabel").after(grid);
+});
       const runBtn = document.getElementById("runBtn");
       const resetBtn = document.getElementById("resetBtn");
       const statusEl = document.getElementById("status");
