@@ -2066,6 +2066,50 @@ const note =
       const progressBar = document.getElementById("progressBar");
       const progressWrap = document.getElementById("progressWrap");
       const uploadArea = document.querySelector(".upload");
+      runBtn.addEventListener("click", async () => {
+
+  if(!fileInput.files.length){
+    fileInput.click();
+    return;
+  }
+
+  /* 🔥 LOADING */
+  runBtn.innerText = "Processing...";
+  runBtn.disabled = true;
+
+  statusEl.innerText = "Processing your file...";
+  progressWrap.style.display = "block";
+  progressBar.style.width = "30%";
+
+  const formData = new FormData();
+  for(let file of fileInput.files){
+    formData.append("file", file);
+  }
+
+  /* 🔥 API CALL */
+  const res = await fetch(`/api/${toolSlug}`, {
+    method: "POST",
+    body: formData
+  });
+
+  progressBar.style.width = "70%";
+
+  const blob = await res.blob();
+  downloadUrl = URL.createObjectURL(blob);
+
+  downloadBtn.href = downloadUrl;
+  downloadBtn.download = downloadName;
+
+  downloadBox.style.display = "block";
+
+  /* ✅ DONE */
+  progressBar.style.width = "100%";
+  statusEl.innerText = "Done ✅";
+
+  runBtn.innerText = "Run";
+  runBtn.disabled = false;
+
+});
       let downloadUrl = "";
       let downloadName =
   toolSlug === "split-pdf-odd-pages" ? "odd_pages.pdf" :
