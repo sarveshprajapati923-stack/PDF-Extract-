@@ -1934,6 +1934,31 @@ const note =
   background:#fff;
   padding:10px;
 }
+.faq-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: #fff;
+}
+
+.faq-q {
+  margin: 0;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.faq-a {
+  display: none;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.faq-item.active .faq-a {
+  display: block;
+}
 </style>
   </head>
   <body>
@@ -2469,8 +2494,44 @@ function setProgress(p) {
   setProgress(0);
 }
 
-runBtn.addEventListener("click", runTool);       
+runBtn.addEventListener("click", runTool);  
+window.toolFaqData = data?.faq || [];
     </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".faq-q").forEach(q => {
+    q.addEventListener("click", () => {
+      const parent = q.parentElement;
+      if (parent) parent.classList.toggle("active");
+    });
+  });
+});
+</script>
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const faqs = (window.toolFaqData || []);
+
+  if (!faqs.length) return;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(f => ({
+      "@type": "Question",
+      "name": f[0],
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": f[1]
+      }
+    }))
+  };
+
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
+  script.text = JSON.stringify(schema);
+  document.head.appendChild(script);
+});
+</script>
   </body>
   </html>`;
 }
