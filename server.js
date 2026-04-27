@@ -2053,30 +2053,33 @@ const note =
     });
   });
 </script>
+<script>
+  const toolSlug = "${tool.slug}";
+  const fileInput = document.getElementById("fileInput");
 
-    <script>
-      const toolSlug = "${tool.slug}";
-const fileInput = document.getElementById("fileInput");
+  fileInput.addEventListener("change", () => {
 
-fileInput.addEventListener("change", () => {
-  const oldGrid = document.querySelector(".file-grid");
-  if (oldGrid) oldGrid.remove(); // duplicate remove
-});
-  const grid = document.createElement("div");
-  grid.className = "file-grid";
+    const oldGrid = document.querySelector(".file-grid");
+    if (oldGrid) oldGrid.remove(); // duplicate remove
 
-  for(let file of fileInput.files){
-    const div = document.createElement("div");
-    div.className = "file-card";
-    div.innerText = file.name;
-    grid.appendChild(div);
-  }
+    const grid = document.createElement("div");
+    grid.className = "file-grid";
 
-  const previewCanvas = document.getElementById("previewCanvas");
-  previewCanvas.style.display = "none";
+    for (let file of fileInput.files) {
+      const div = document.createElement("div");
+      div.className = "file-card";
+      div.innerText = file.name;
+      grid.appendChild(div);
+    }
 
-  document.getElementById("previewLabel").after(grid);
-});
+    const previewCanvas = document.getElementById("previewCanvas");
+    if (previewCanvas) previewCanvas.style.display = "none";
+
+    const label = document.getElementById("previewLabel");
+    if (label) label.after(grid);
+
+  });
+</script>
 
 const runBtn = document.getElementById("runBtn");
 const resetBtn = document.getElementById("resetBtn");
