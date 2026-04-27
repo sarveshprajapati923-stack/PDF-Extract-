@@ -1714,6 +1714,7 @@ app.get("/rules", (req, res) => {
 });
 
 function renderToolPage(tool) {
+  const data = toolContent[tool.slug] || { faq: [] };
   const related = tools
     .filter(t => t.slug !== tool.slug)
     .slice(0, 10)
