@@ -2055,12 +2055,13 @@ const note =
 </script>
 
     <script>
-      const toolSlug = ${tool.slug};
-      const fileInput = document.getElementById("fileInput");
-      fileInput.addEventListener("change", () => {
-  const oldGrid = document.querySelector(".file-grid");
-  if(oldGrid) oldGrid.remove(); // duplicate remove
+      const toolSlug = "${tool.slug}";
+const fileInput = document.getElementById("fileInput");
 
+fileInput.addEventListener("change", () => {
+  const oldGrid = document.querySelector(".file-grid");
+  if (oldGrid) oldGrid.remove(); // duplicate remove
+});
   const grid = document.createElement("div");
   grid.className = "file-grid";
 
