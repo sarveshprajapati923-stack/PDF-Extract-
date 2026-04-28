@@ -28,13 +28,16 @@ const client = new MongoClient(process.env.MONGO_URI);
 let users, tokens;
 
 async function connectDB() {
-  await client.connect();
-  const db = client.db("wepdfhub");
-  users = db.collection("users");
-  tokens = db.collection("tokens");
-  console.log("✅ Mongo Connected");
+  try {
+    await client.connect();
+    const db = client.db("wepdfhub");
+    users = db.collection("users");
+    tokens = db.collection("tokens");
+    console.log("✅ Mongo Connected");
+  } catch (err) {
+    console.log("❌ Mongo Error:", err.message);
+  }
 }
-connectDB();
 
 function generateToken(user) {
   return jwt.sign(
