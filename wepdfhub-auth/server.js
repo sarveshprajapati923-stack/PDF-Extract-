@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.use(helmet());
 app.use(cookieParser());
+app.use(express.static("public"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
