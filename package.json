@@ -8,11 +8,18 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "compression": "^1.8.1",
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "docx": "^8.5.0",
+    "dotenv": "^16.4.5",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.3.0",
     "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.6.0",
+
+    "compression": "^1.8.1",
+    "docx": "^8.5.0",
     "jszip": "^3.10.1",
     "multer": "^1.4.5-lts.2",
     "pdf-lib": "^1.17.1",
