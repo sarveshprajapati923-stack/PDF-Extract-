@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WePDFHub Auth</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --card:rgba(15,23,42,.72);
+      --card2:rgba(255,255,255,.06);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.22);
+      --accent:#60a5fa;
+      --accent2:#a78bfa;
+      --good:#22c55e;
+      --bad:#ef4444;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,.25), transparent 24%),
+        radial-gradient(circle at top right, rgba(167,139,250,.20), transparent 22%),
+        linear-gradient(180deg, #020617 0%, var(--bg1) 45%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+
+    .shell{
+      width:min(1100px,100%);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .hero,.card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      backdrop-filter:blur(18px);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+
+    .hero{
+      padding:28px;
+      position:relative;
+      min-height:640px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:22px;
+    }
+    .logo{
+      width:46px;height:46px;
+      border-radius:14px;
+      border:1px solid rgba(96,165,250,.35);
+      background:linear-gradient(135deg, rgba(96,165,250,.22), rgba(167,139,250,.2));
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      letter-spacing:.5px;
+    }
+    .brand h1{margin:0;font-size:20px}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+    .hero h2{
+      margin:18px 0 12px;
+      font-size:clamp(30px,4vw,52px);
+      line-height:1.02;
+      letter-spacing:-.03em;
+    }
+    .hero .sub{
+      max-width:56ch;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+      margin-bottom:24px;
+    }
+
+    .bullets{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:24px;
+    }
+    .bullet{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(148,163,184,.14);
+    }
+    .bullet b{display:block;margin-bottom:6px}
+    .bullet span{color:var(--muted);font-size:13px;line-height:1.5}
+
+    .panel{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:24px;
+      padding:18px;
+      border-radius:20px;
+      background:rgba(2,6,23,.35);
+      border:1px solid rgba(148,163,184,.16);
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+    }
+    .field{
+      width:100%;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:16px;
+      padding:14px 16px;
+      outline:none;
+      transition:.2s ease;
+    }
+    .field:focus{border-color:rgba(96,165,250,.7); box-shadow:0 0 0 4px rgba(96,165,250,.1)}
+    .label{font-size:12px;color:var(--muted);margin:0 0 8px 2px}
+
+    .card{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      justify-content:space-between;
+    }
+
+    .tabs{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      padding:6px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(148,163,184,.14);
+    }
+    .tab{
+      border:1px solid rgba(148,163,184,.18);
+      background:transparent;
+      color:var(--text);
+      padding:13px 14px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+      outline:none;
+    }
+    .tab.active{
+      background:linear-gradient(135deg, rgba(96,165,250,.22), rgba(167,139,250,.2));
+      border-color:rgba(96,165,250,.35);
+    }
+
+    .form{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .input-wrap{display:flex;flex-direction:column}
+    .input{
+      width:100%;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:16px;
+      padding:14px 16px;
+      outline:none;
+      transition:.2s ease;
+    }
+    .input:focus{border-color:rgba(96,165,250,.7); box-shadow:0 0 0 4px rgba(96,165,250,.1)}
+    .help{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+    .btn{
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(96,165,250,.55);
+      color:#eff6ff;
+      background:transparent;
+      border-radius:16px;
+      padding:14px 16px;
+      font-weight:800;
+      letter-spacing:.2px;
+      cursor:pointer;
+      transition:transform .15s ease, background .2s ease, border-color .2s ease;
+      outline:none;
+    }
+    .btn:hover{background:rgba(96,165,250,.12)}
+    .btn:active{transform:scale(.97)}
+    .btn.secondary{border-color:rgba(148,163,184,.24)}
+    .btn.good{border-color:rgba(34,197,94,.55)}
+    .btn.bad{border-color:rgba(239,68,68,.55)}
+    .btn.full{width:100%}
+
+    .status{
+      min-height:46px;
+      border-radius:16px;
+      padding:12px 14px;
+      border:1px solid rgba(148,163,184,.16);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+    .status.ok{color:#bbf7d0;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08)}
+    .status.err{color:#fecaca;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+
+    .dashboard{
+      display:none;
+      gap:12px;
+      margin-top:8px;
+      padding-top:6px;
+    }
+    .dashboard.show{display:grid}
+    .tokenbox{
+      font-size:12px;
+      word-break:break-all;
+      background:rgba(2,6,23,.35);
+      border:1px dashed rgba(148,163,184,.2);
+      border-radius:16px;
+      padding:12px;
+      color:#cbd5e1;
+      line-height:1.55;
+    }
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .mini{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(148,163,184,.14);
+      min-height:86px;
+    }
+    .mini span{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+    .mini strong{font-size:14px;line-height:1.5}
+
+    .hide{display:none !important}
+
+    @media (max-width: 920px){
+      .shell{grid-template-columns:1fr}
+      .hero{min-height:auto}
+    }
+    @media (max-width: 560px){
+      .wrap{padding:12px}
+      .hero,.card{border-radius:20px}
+      .hero,.card{padding:16px}
+      .bullets,.mini-grid{grid-template-columns:1fr}
+      .row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="shell">
+      <section class="hero">
+        <div class="brand">
+          <div class="logo">W</div>
+          <div>
+            <h1>WePDFHub</h1>
+            <p>Secure SaaS auth UI</p>
+          </div>
+        </div>
+
+        <h2>Modern login & register UI for your PDF SaaS.</h2>
+        <div class="sub">
+          This page connects to your Node.js <code>/register</code>, <code>/login</code>, <code>/dashboard</code> routes.
+          On mobile, use your computer’s LAN IP or a live deployed URL instead of <code>localhost</code>.
+        </div>
+
+        <div class="bullets">
+          <div class="bullet"><b>Fast setup</b><span>Single-file frontend. No build step.</span></div>
+          <div class="bullet"><b>Mobile friendly</b><span>Responsive layout with animated buttons.</span></div>
+          <div class="bullet"><b>Secure flow</b><span>JWT token saved locally and sent to protected route.</span></div>
+          <div class="bullet"><b>Easy API change</b><span>Change backend URL from the input box.</span></div>
+        </div>
+
+        <div class="panel">
+          <div>
+            <div class="label">Backend Base URL</div>
+            <input id="apiBase" class="field" value="http://localhost:3000" />
+            <div class="help">Desktop: localhost. Phone: use your PC IP, example <code>http://192.168.1.5:3000</code></div>
+          </div>
+          <div class="row">
+            <button id="pingBtn" class="btn secondary">Check Server</button>
+            <button id="clearBtn" class="btn bad">Clear Session</button>
+          </div>
+          <div id="pingStatus" class="status">Ready.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="tabs">
+          <button id="loginTab" class="tab active">Login</button>
+          <button id="registerTab" class="tab">Register</button>
+        </div>
+
+        <div id="authForm" class="form">
+          <div class="input-wrap">
+            <input id="name" class="input hide" placeholder="Full name" />
+          </div>
+          <div class="input-wrap">
+            <input id="email" class="input" type="email" placeholder="Email address" />
+          </div>
+          <div class="input-wrap">
+            <input id="password" class="input" type="password" placeholder="Password" />
+          </div>
+          <button id="submitBtn" class="btn full">Login</button>
+          <button id="dashboardBtn" class="btn secondary full">Open Dashboard</button>
+          <div id="status" class="status">Enter your details and test the backend.</div>
+        </div>
+
+        <div id="dashboard" class="dashboard">
+          <div class="tokenbox" id="whoami">Not logged in.</div>
+          <div class="mini-grid">
+            <div class="mini"><span>Access token</span><strong id="tokenState">No token yet</strong></div>
+            <div class="mini"><span>Backend</span><strong id="backendState">Not checked</strong></div>
+          </div>
+          <div class="row">
+            <button id="logoutBtn" class="btn good">Logout</button>
+            <button id="copyTokenBtn" class="btn secondary">Copy Token</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const apiBase = document.getElementById('apiBase');
+    const pingBtn = document.getElementById('pingBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const pingStatus = document.getElementById('pingStatus');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    const statusBox = document.getElementById('status');
+    const dashboard = document.getElementById('dashboard');
+    const whoami = document.getElementById('whoami');
+    const tokenState = document.getElementById('tokenState');
+    const backendState = document.getElementById('backendState');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const copyTokenBtn = document.getElementById('copyTokenBtn');
+
+    let mode = 'login';
+    let accessToken = localStorage.getItem('accessToken') || '';
+    let refreshToken = localStorage.getItem('refreshToken') || '';
+    let user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    function setStatus(el, msg, type='') {
+      el.className = 'status ' + (type || '');
+      el.textContent = msg;
+    }
+
+    function setMode(next) {
+      mode = next;
+      loginTab.classList.toggle('active', mode === 'login');
+      registerTab.classList.toggle('active', mode === 'register');
+      nameInput.classList.toggle('hide', mode === 'login');
+      submitBtn.textContent = mode === 'login' ? 'Login' : 'Create Account';
+      document.title = mode === 'login' ? 'WePDFHub Login' : 'WePDFHub Register';
+    }
+
+    function saveSession(payload) {
+      accessToken = payload.accessToken || '';
+      refreshToken = payload.refreshToken || '';
+      user = payload.user || null;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    function clearSession() {
+      accessToken = '';
+      refreshToken = '';
+      user = null;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      dashboard.classList.remove('show');
+      tokenState.textContent = 'No token yet';
+      whoami.textContent = 'Not logged in.';
+      backendState.textContent = 'Not checked';
+      setStatus(statusBox, 'Session cleared.', '');
+    }
+
+    async function callAPI(path, options = {}) {
+      const base = apiBase.value.trim().replace(/\/$/, '');
+      const res = await fetch(base + path, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options,
+      });
+      let data = null;
+      try { data = await res.json(); } catch { data = { message: await res.text() }; }
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      return data;
+    }
+
+    pingBtn.addEventListener('click', async () => {
+      setStatus(pingStatus, 'Checking server...', '');
+      try {
+        const data = await callAPI('/');
+        setStatus(pingStatus, JSON.stringify(data, null, 2), 'ok');
+        backendState.textContent = 'Server OK';
+      } catch (e) {
+        setStatus(pingStatus, e.message, 'err');
+        backendState.textContent = 'Server not reachable';
+      }
+    });
+
+    registerTab.addEventListener('click', () => setMode('register'));
+    loginTab.addEventListener('click', () => setMode('login'));
+
+    submitBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const name = nameInput.value.trim();
+
+      if (!email || !password) {
+        setStatus(statusBox, 'Email aur password required hai.', 'err');
+        return;
+      }
+
+      try {
+        submitBtn.disabled = true;
+        setStatus(statusBox, mode === 'login' ? 'Logging in...' : 'Creating account...', '');
+
+        if (mode === 'register') {
+          const data = await callAPI('/register', {
+            method: 'POST',
+            body: JSON.stringify({ email, password, name }),
+          });
+          setStatus(statusBox, data.message || 'Registered', 'ok');
+          setMode('login');
+          return;
+        }
+
+        const data = await callAPI('/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+
+        saveSession({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user || { email } });
+        setStatus(statusBox, 'Login successful. Dashboard open ho raha hai.', 'ok');
+        await openDashboard();
+      } catch (e) {
+        setStatus(statusBox, e.message, 'err');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    async function openDashboard() {
+      if (!accessToken) {
+        dashboard.classList.remove('show');
+        setStatus(statusBox, 'Pehle login karo.', 'err');
+        return;
+      }
+      dashboard.classList.add('show');
+      tokenState.textContent = accessToken.slice(0, 22) + '...';
+      whoami.textContent = user ? `${user.email || 'user'}${user.name ? ' • ' + user.name : ''}` : 'Logged in';
+
+      try {
+        const base = apiBase.value.trim().replace(/\/$/, '');
+        const res = await fetch(base + '/dashboard', {
+          headers: { Authorization: accessToken },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Dashboard failed');
+        backendState.textContent = 'Dashboard OK';
+      } catch (e) {
+        backendState.textContent = 'Dashboard error';
+        setStatus(statusBox, 'Dashboard open hua, lekin token verify fail hua. Check backend /dashboard auth.', 'err');
+      }
+    }
+
+    dashboardBtn.addEventListener('click', openDashboard);
+
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        if (refreshToken) {
+          await callAPI('/logout', {
+            method: 'POST',
+            body: JSON.stringify({ token: refreshToken }),
+          });
+        }
+      } catch {}
+      clearSession();
+    });
+
+    copyTokenBtn.addEventListener('click', async () => {
+      if (!accessToken) {
+        setStatus(statusBox, 'Token nahi hai.', 'err');
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(accessToken);
+        setStatus(statusBox, 'Token copied.', 'ok');
+      } catch {
+        setStatus(statusBox, 'Copy failed. Manual select karo.', 'err');
+      }
+    });
+
+    clearBtn.addEventListener('click', clearSession);
+
+    if (accessToken) {
+      dashboard.classList.add('show');
+      tokenState.textContent = accessToken.slice(0, 22) + '...';
+      whoami.textContent = user ? `${user.email || 'user'}${user.name ? ' • ' + user.name : ''}` : 'Logged in';
+      setStatus(statusBox, 'Saved session loaded.', 'ok');
+    }
+
+    setMode('login');
+  </script>
+</body>
+  </html>
