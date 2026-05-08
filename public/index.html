@@ -610,7 +610,6 @@ body{
 .modern-trust{
   margin-top:22px;
 }
-
 .hero-preview{
   flex:1;
   display:flex;
@@ -620,12 +619,15 @@ body{
 }
 
 .preview-card{
-  width:320px;
+  width:min(100%, 340px);
   background:#fff;
   border-radius:22px;
-  padding:20px;
+  padding:16px;
   border:1px solid #e2e8f0;
-  box-shadow:0 30px 60px rgba(37,99,235,.12);
+  box-shadow:0 20px 50px rgba(37,99,235,.12);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 
 .preview-top{
@@ -633,14 +635,18 @@ body{
   height:120px;
   border-radius:16px;
   background:linear-gradient(135deg,#2563eb,#0ea5e9);
-  margin-bottom:18px;
+}
+
+.preview-body{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 
 .preview-line{
   height:10px;
   border-radius:999px;
   background:#e2e8f0;
-  margin-bottom:10px;
 }
 
 .preview-line.w1{width:100%}
@@ -651,11 +657,11 @@ body{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:10px;
-  margin-top:18px;
+  margin-top:8px;
 }
 
 .preview-grid div{
-  height:60px;
+  height:56px;
   border-radius:14px;
   background:#eff6ff;
 }
@@ -665,13 +671,10 @@ body{
 }
 
 @keyframes float{
-  0%,100%{
-    transform:translateY(0px);
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
   }
-  50%{
-    transform:translateY(-10px);
-  }
-}
+
 
 .modern-search{
   background:#fff;
@@ -751,26 +754,24 @@ body{
 
       </div>
 
-      <div class="hero-preview">
+     <div class="hero-preview">
+  <div class="preview-card floating">
+    <div class="preview-top"></div>
 
-        <div class="preview-card floating">
-          <div class="preview-top"></div>
+    <div class="preview-body">
+      <div class="preview-line w1"></div>
+      <div class="preview-line w2"></div>
+      <div class="preview-line w3"></div>
 
-          <div class="preview-line w1"></div>
-          <div class="preview-line w2"></div>
-          <div class="preview-line w3"></div>
-
-          <div class="preview-grid">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-
+      <div class="preview-grid">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
-
     </div>
+  </div>
+     </div> 
 
   </section>
 
