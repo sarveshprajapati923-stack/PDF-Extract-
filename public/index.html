@@ -470,6 +470,14 @@ body{
   .top-actions{
     display:none;
   }
+  .hero-preview{
+  width:100%;
+  margin-top:20px;
+}
+
+.preview-card{
+  width:100%;
+}
 
   .brand{
     gap:6px;
@@ -508,10 +516,10 @@ body{
     gap:12px;
   }
 
-  .hero-copy-block{
-    min-width:0;
-    width:100%;
-  }
+.hero-copy-block{
+  flex:1;
+  min-width:320px;
+    }
 
   .hero h1{
     font-size:1.45rem;
@@ -721,57 +729,60 @@ body{
 
     <div class="hero-top">
 
-      <div class="hero-copy-block">
+  <div class="hero-copy-block">
 
-        <h1>
-          Every PDF tool you need.
-          <span>Fast. Secure. Modern.</span>
-        </h1>
+    <h1>
+      Every PDF tool you need.
+      <span>Fast. Secure. Modern.</span>
+    </h1>
 
-        <p>
-          Merge, split, compress, convert and protect PDFs
-          with beautiful ultra-fast tools built for everyone.
-        </p>
+    <p>
+      Merge, split, compress, convert and protect PDFs
+      with beautiful ultra-fast tools built for everyone.
+    </p>
 
-        <div class="hero-cta">
+    <div class="hero-cta">
 
-          <a class="hero-btn primary glow-btn" href="/merge-pdf">
-            🚀 Start Free
-          </a>
+      <a class="hero-btn primary glow-btn" href="/merge-pdf">
+        🚀 Start Free
+      </a>
 
-          <a class="hero-btn glass-btn" href="/pdf-to-excel">
-            📊 PDF to Excel
-          </a>
+      <a class="hero-btn glass-btn" href="/pdf-to-excel">
+        📊 PDF to Excel
+      </a>
 
+    </div>
+
+    <div class="trust modern-trust">
+      <div>🔒 Secure files</div>
+      <div>⚡ Instant processing</div>
+      <div>☁️ Cloud powered</div>
+      <div>✅ No signup</div>
+    </div>
+
+  </div>
+
+  <div class="hero-preview">
+    <div class="preview-card floating">
+      <div class="preview-top"></div>
+
+      <div class="preview-body">
+        <div class="preview-line w1"></div>
+        <div class="preview-line w2"></div>
+        <div class="preview-line w3"></div>
+
+        <div class="preview-grid">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-
-        <div class="trust modern-trust">
-          <div>🔒 Secure files</div>
-          <div>⚡ Instant processing</div>
-          <div>☁️ Cloud powered</div>
-          <div>✅ No signup</div>
-        </div>
-
-      </div>
-
-     <div class="hero-preview">
-  <div class="preview-card floating">
-    <div class="preview-top"></div>
-
-    <div class="preview-body">
-      <div class="preview-line w1"></div>
-      <div class="preview-line w2"></div>
-      <div class="preview-line w3"></div>
-
-      <div class="preview-grid">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
       </div>
     </div>
   </div>
-     </div> 
+
+    </div>
+
 
   </section>
 
