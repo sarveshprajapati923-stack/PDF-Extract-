@@ -1432,9 +1432,10 @@ app.get("/terms", (req, res) => {
   res.sendFile(__dirname + "/terms.html");
 });
 
-app.get("/rules", (req, res) => {
-  res.sendFile(__dirname + "/rules.html");
+app.get('/disclaimer', (req,res)=>{
+  res.sendFile(__dirname + '/disclaimer.html');
 });
+
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
   res.send(`
