@@ -570,77 +570,244 @@ body{
   }
 }
 
+  .modern-hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at top right,#dbeafe 0%,transparent 40%),
+    linear-gradient(135deg,#ffffff,#f8fbff);
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#2563eb;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+.hero h1 span{
+  display:block;
+  background:linear-gradient(90deg,#2563eb,#0ea5e9);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.glow-btn{
+  box-shadow:0 10px 30px rgba(37,99,235,.3);
+}
+
+.glass-btn{
+  backdrop-filter:blur(10px);
+  background:rgba(255,255,255,.7);
+}
+
+.modern-trust{
+  margin-top:22px;
+}
+
+.hero-preview{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-width:280px;
+}
+
+.preview-card{
+  width:320px;
+  background:#fff;
+  border-radius:22px;
+  padding:20px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 30px 60px rgba(37,99,235,.12);
+}
+
+.preview-top{
+  width:100%;
+  height:120px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);
+  margin-bottom:18px;
+}
+
+.preview-line{
+  height:10px;
+  border-radius:999px;
+  background:#e2e8f0;
+  margin-bottom:10px;
+}
+
+.preview-line.w1{width:100%}
+.preview-line.w2{width:80%}
+.preview-line.w3{width:60%}
+
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.preview-grid div{
+  height:60px;
+  border-radius:14px;
+  background:#eff6ff;
+}
+
+.floating{
+  animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{
+    transform:translateY(0px);
+  }
+  50%{
+    transform:translateY(-10px);
+  }
+}
+
+.modern-search{
+  background:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+  }
+  .hero-top{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero-copy-block{flex:1;min-width:min(100%,560px)}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.hero-btn{border:1px solid var(--line);background:#fff;padding:11px 14px;border-radius:12px;font-weight:700;transition:.18s ease}
+.hero-btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent}
+.trust{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.trust div{padding:8px 12px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:13px;color:var(--muted)}
+
 /* ===== END ===== */ 
   
 </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-  <div class="logo-box">
-    <img src="/favicon.png" class="brand-logo">
-    <span class="logo-glow"></span>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo-box">
+        <img src="/favicon.png" class="brand-logo" alt="WePDFHub logo">
+        <span class="logo-glow"></span>
+      </div>
+      <span class="logo-text">We<span>PDF</span>Hub</span>
+    </div>
+
+    <div class="top-actions">
+      <a class="top-link" href="/merge-pdf">Merge PDF</a>
+      <a class="top-link" href="/pdf-to-excel">PDF to Excel</a>
+      <a class="top-link primary" href="/split-pdf">Split PDF</a>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+
+  <section class="hero modern-hero">
+
+    <div class="hero-badge">
+      ⚡ Smart PDF Workspace
+    </div>
+
+    <div class="hero-top">
+
+      <div class="hero-copy-block">
+
+        <h1>
+          Every PDF tool you need.
+          <span>Fast. Secure. Modern.</span>
+        </h1>
+
+        <p>
+          Merge, split, compress, convert and protect PDFs
+          with beautiful ultra-fast tools built for everyone.
+        </p>
+
+        <div class="hero-cta">
+
+          <a class="hero-btn primary glow-btn" href="/merge-pdf">
+            🚀 Start Free
+          </a>
+
+          <a class="hero-btn glass-btn" href="/pdf-to-excel">
+            📊 PDF to Excel
+          </a>
+
+        </div>
+
+        <div class="trust modern-trust">
+          <div>🔒 Secure files</div>
+          <div>⚡ Instant processing</div>
+          <div>☁️ Cloud powered</div>
+          <div>✅ No signup</div>
+        </div>
+
+      </div>
+
+      <div class="hero-preview">
+
+        <div class="preview-card floating">
+          <div class="preview-top"></div>
+
+          <div class="preview-line w1"></div>
+          <div class="preview-line w2"></div>
+          <div class="preview-line w3"></div>
+
+          <div class="preview-grid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <div class="search-row">
+
+    <input
+      id="search"
+      class="search modern-search"
+      placeholder="Search PDF tools..."
+    />
+
+    <button class="filter-btn active" data-cat="all">
+      All
+    </button>
+
+    <button class="filter-btn" data-cat="edit">
+      Edit
+    </button>
+
+    <button class="filter-btn" data-cat="convert">
+      Convert
+    </button>
+
+    <button class="filter-btn" data-cat="security">
+      Security
+    </button>
+
   </div>
 
-  <span class="logo-text">
-    We<span>PDF</span>Hub
-  </span>
-      </div>
+  <div class="section-head">
+    <h2>All PDF Tools</h2>
+    <span class="count">40+ Smart Tools</span>
+  </div>
 
-      <div class="top-actions">
-        <a class="top-link" href="/merge-pdf">Merge PDF</a>
-        <a class="top-link" href="/compress-pdf">Compress PDF</a>
-        <a class="top-link primary" href="/split-pdf">Split PDF</a>
-      </div>
-    </div>
-  </header>
+  <div id="grid" class="grid"></div>
 
-  <div class="wrap">
-    <section class="hero">
-      <div class="hero-top">
-        <div class="hero-copy-block">
-          <h1>We make PDF easy.</h1>
-          <p>All the tools you need to merge, split, compress, convert, sign and edit PDFs in one clean SaaS workspace.</p>
-          <div class="upload-box">
-  <input type="file" id="fileInput" hidden>
-
-  <button class="upload-btn" onclick="startUpload()">
-    📂 Upload PDF
-  </button>
-        class="trust">
-  <div>🔒 Files auto deleted after processing</div>
-  <div>⚡ Fast & secure servers</div>
-  <div>✅ 100% Free • No signup</div>
-          </div>
-
-  <select id="toolSelect" class="tool-select">
-    <option value="merge-pdf">Merge PDF</option>
-    <option value="compress-pdf">Compress PDF</option>
-    <option value="split-pdf">Split PDF</option>
-  </select>
-
-  <p class="upload-note">No signup • Instant processing</p>
-          </div>
-        
-        <div class="hero-cta">
-          <a class="hero-btn primary" href="/merge-pdf">Start with Merge</a>
-          <a class="hero-btn" href="/compress-pdf">Try Compress</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="search-row">
-      <input id="search" class="search" placeholder="Search tools..." />
-      <button class="filter-btn active" data-cat="all">All</button>
-      <button class="filter-btn" data-cat="edit">Edit</button>
-      <button class="filter-btn" data-cat="convert">Convert</button>
-      <button class="filter-btn" data-cat="security">Security</button>
-    </div>
-
-    <div id="grid"></div>
-  
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   async function startUpload(){
