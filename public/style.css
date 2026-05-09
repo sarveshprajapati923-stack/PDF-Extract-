@@ -544,8 +544,8 @@ body{
   position:relative;
   overflow:hidden;
   background:
-  radial-gradient(circle at top right, rgba(37,99,235,.12), transparent 30%),
-  linear-gradient(180deg,#ffffff,#f6f9ff);
+  radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+  linear-gradient(180deg,#eef4ff,#f7f9ff);
 }
 
 .hero-badge{
