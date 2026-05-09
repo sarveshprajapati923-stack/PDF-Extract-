@@ -60,23 +60,26 @@ button,input{
 }
 
 body{
-  padding-top:74px;
+  margin:0;
   overflow-x:hidden;
+  padding-top:0;
 }
 
 .wrap{
   max-width:1200px;
   margin:auto;
-  padding:20px;
+  padding:95px 20px 20px;
 }
 
 .topbar{
-  position:sticky;
+  position:fixed;
   top:0;
-  z-index:9000;
-  background:rgba(247,249,255,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(216,226,240,.7);
+  left:0;
+  width:100%;
+  z-index:9999;
+  background:#ffffffee;
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #e2e8f0;
 }
 
 .topbar-inner{
