@@ -464,9 +464,7 @@ body{
 
 @media (max-width:760px){
 
-  body{
-    padding-top:58px;
-  }
+  
 
   .topbar-inner{
     padding:8px 12px;
