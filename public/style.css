@@ -72,7 +72,7 @@ body{
 }
 
 .topbar{
-  position:fixed;
+  position:sticky;
   top:0;
   left:0;
   right:0;
@@ -292,7 +292,6 @@ body{
 }
 
 .tool-card:hover{
-  transform:translateY(-4px);
   box-shadow:0 12px 30px rgba(0,0,0,.08);
 }
 
@@ -384,10 +383,9 @@ body{
 }
 
 .brand:hover .logo-box{
-  transform:scale(1.1) rotate(-5deg);
+  transform:none;
   box-shadow:0 10px 30px rgba(37,99,235,.4);
 }
-
 .logo-text{
   font-size:18px;
   font-weight:800;
