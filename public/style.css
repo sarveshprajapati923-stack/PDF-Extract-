@@ -62,13 +62,13 @@ button,input{
 body{
   margin:0;
   overflow-x:hidden;
-  padding-top:58;
+  padding-top:70px;
     }
 
 .wrap{
   max-width:1200px;
   margin:auto;
-  padding:0 20px 20px;
+  padding:20px 20px 20px;
 }
 
 .topbar{
@@ -500,7 +500,7 @@ body{
   }
 
   .wrap{
-    padding:0 10px 10px;
+    padding:14px 10px 10px;
   }
 
   .hero{
