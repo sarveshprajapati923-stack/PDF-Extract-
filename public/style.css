@@ -62,7 +62,7 @@ button,input{
 body{
   margin:0;
   overflow-x:hidden;
-  padding-top:85px;
+  padding-top:78px;
     }
 
 .wrap{
@@ -83,6 +83,7 @@ body{
   -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid #dfe8ff;
   overflow:hidden;
+  box-sizing:border-box;
 }
 .topbar-inner{
   max-width:1200px;
@@ -502,6 +503,8 @@ body{
 .logo-box{
   width:32px;
   height:32px;
+  min-width:32px;
+  min-height:32px;
   flex-shrink:0;
 }
 
@@ -545,12 +548,20 @@ body{
 @media (max-width:600px){
 
   .logo-text{
-    font-size:18px;
+    font-size:14px;
+    line-height:1;
   }
 
   .logo-box{
-    width:38px;
-    height:38px;
+    width:30px;
+    height:30px;
+    min-width:30px;
+    min-height:30px;
+  }
+
+  .brand-logo{
+    width:20px;
+    height:20px;
   }
 
 }
