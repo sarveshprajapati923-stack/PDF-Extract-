@@ -62,13 +62,13 @@ button,input{
 body{
   margin:0;
   overflow-x:hidden;
-  padding-top:62px;
+  padding-top:0;
     }
 
 .wrap{
   max-width:1200px;
   margin:auto;
-  padding:0 20px 20px;
+  padding:72px 20px 20px;
 }
 .topbar{
   position:fixed;
@@ -79,6 +79,8 @@ body{
   z-index:99999;
   background:#eef4ff;
   border-bottom:1px solid #dfe8ff;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 
 .topbar-inner{
@@ -515,7 +517,7 @@ body{
   }
 
   .wrap{
-    padding:0 10px 10px;
+    padding:68px 10px 10px;
   }
 
   .hero{
