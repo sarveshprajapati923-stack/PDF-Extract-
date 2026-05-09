@@ -62,7 +62,7 @@ button,input{
 body{
   margin:0;
   overflow-x:hidden;
-  padding-top:70px;
+  padding-top:85px;
     }
 
 .wrap{
@@ -75,15 +75,19 @@ body{
   position:fixed;
   top:0;
   left:0;
+  right:0;
   width:100%;
-  z-index:9999;
-  background:#eef4ff;
+  z-index:99999;
+  background:rgba(238,244,255,.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid #dfe8ff;
+  overflow:hidden;
 }
-
 .topbar-inner{
   max-width:1200px;
   margin:auto;
+  min-height:72px;
   padding:10px 16px;
   display:flex;
   align-items:center;
@@ -330,13 +334,16 @@ body{
   align-items:center;
   gap:8px;
   cursor:pointer;
+  min-width:0;
 }
 
 .logo-box{
   position:relative;
-  width:36px;
-  height:36px;
-  border-radius:10px;
+  width:42px;
+  height:42px;
+  min-width:42px;
+  min-height:42px;
+  border-radius:12px;
   background:#ffffff;
   display:flex;
   align-items:center;
@@ -344,14 +351,16 @@ body{
   overflow:hidden;
   transition:.3s ease;
   box-shadow:0 4px 12px rgba(37,99,235,.15);
+  flex-shrink:0;
 }
 
 .brand-logo{
-  width:30px;
-  height:30px;
+  width:28px;
+  height:28px;
   object-fit:contain;
   position:relative;
   z-index:2;
+  display:block;
 }
 
 .logo-glow{
@@ -384,6 +393,9 @@ body{
   font-weight:800;
   letter-spacing:-0.3px;
   color:#0f172a;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .logo-text span{
@@ -481,14 +493,17 @@ body{
     gap:6px;
   }
 
-  .logo-text{
-    font-size:16px;
+.logo-text{
+  font-size:15px;
+  line-height:1;
+  white-space:nowrap;
   }
 
-  .logo-box{
-    width:34px;
-    height:34px;
-  }
+.logo-box{
+  width:32px;
+  height:32px;
+  flex-shrink:0;
+}
 
   .menu-wrapper{
     margin-left:6px;
