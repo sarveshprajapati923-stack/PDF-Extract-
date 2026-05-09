@@ -68,8 +68,8 @@ body{
 .wrap{
   max-width:1200px;
   margin:auto;
-  padding:20px;
-}
+  padding:0 20px 20px;
+  }
 
 .topbar{
   position:fixed;
@@ -121,14 +121,17 @@ body{
 }
 
 .hero{
-  margin-top:12px;
+  margin-top:0;
   margin-bottom:14px;
   padding:22px;
-  background:#ffffffd9;
-  backdrop-filter:blur(10px);
-  border:1px solid #e5edff;
-  border-radius:22px;
-  box-shadow:var(--shadow);
+  background:transparent;
+  border:none;
+  border-radius:0;
+  box-shadow:none;
+  }
+.modern-hero{
+  padding-top:24px;
+  border-radius:0 0 28px 28px;
 }
 
 .hero-top{
