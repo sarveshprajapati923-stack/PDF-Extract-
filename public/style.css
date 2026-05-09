@@ -68,8 +68,8 @@ body{
 .wrap{
   max-width:1200px;
   margin:auto;
-  padding:0 20px 20px;
-  }
+  padding:74px 20px 20px;
+}
 
 .topbar{
   position:fixed;
@@ -77,10 +77,11 @@ body{
   left:0;
   width:100%;
   z-index:9999;
-  background:#ffffffee;
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid #e2e8f0;
-}
+  background:transparent;
+  backdrop-filter:none;
+  border-bottom:none;
+  box-shadow:none;
+  }
 
 .topbar-inner{
   max-width:1200px;
@@ -124,11 +125,11 @@ body{
   margin-top:0;
   margin-bottom:14px;
   padding:22px;
-  background:transparent;
-  border:none;
-  border-radius:0;
+  background:linear-gradient(180deg,#f4f7ff,#eef4ff);
+  border:1px solid #dfe8ff;
+  border-radius:28px;
   box-shadow:none;
-  }
+}
 .modern-hero{
   padding-top:24px;
   border-radius:0 0 28px 28px;
