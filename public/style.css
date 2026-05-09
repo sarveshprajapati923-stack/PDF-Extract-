@@ -62,7 +62,7 @@ button,input{
 body{
   margin:0;
   overflow-x:hidden;
-  padding-top:10px;
+  padding-top:0;
     }
 
 .wrap{
@@ -72,16 +72,14 @@ body{
 }
 
 .topbar{
-  position:fixed;
+  position:sticky;
   top:0;
   left:0;
   width:100%;
   z-index:9999;
-  background:transparent;
-  backdrop-filter:none;
-  border-bottom:none;
-  box-shadow:none;
-  }
+  background:#eef4ff;
+  border-bottom:1px solid #dfe8ff;
+}
 
 .topbar-inner{
   max-width:1200px;
