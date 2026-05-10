@@ -108,7 +108,11 @@
 
   </section>
 
-  <div class="search-row">
+<div class="search-wrap">
+
+  <div class="search-box">
+
+    <span class="search-icon">🔍</span>
 
     <input
       id="search"
@@ -116,23 +120,9 @@
       placeholder="Search PDF tools..."
     />
 
-    <button class="filter-btn active" data-cat="all">
-      All
-    </button>
-
-    <button class="filter-btn" data-cat="edit">
-      Edit
-    </button>
-
-    <button class="filter-btn" data-cat="convert">
-      Convert
-    </button>
-
-    <button class="filter-btn" data-cat="security">
-      Security
-    </button>
-
   </div>
+
+</div>
 
   <div id="grid" class="grid"></div>
 
@@ -230,7 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
     {slug:"add-signature", title:"Add Signature", cat:"security", desc:"Stamp a signature image."}
   ];
 
-  let currentCat = "all";
 
   function render(){
     grid.innerHTML = "";
@@ -242,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { key:"security", label:"Security" }
     ];
 
-    const showCats = currentCat === "all" ? categories.map(c => c.key) : [currentCat];
+    const showCats = categories.map(c => c.key);
     const matched = tools.filter(t => {
       const catOk = showCats.includes(t.cat);
       const searchOk = !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
@@ -290,13 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   search.addEventListener("input", render);
 
-  document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.onclick = () => {
-      currentCat = btn.dataset.cat;
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.cat === currentCat));
-      render();
-    };
-  });
 
   grid.style.opacity = "0";
 
