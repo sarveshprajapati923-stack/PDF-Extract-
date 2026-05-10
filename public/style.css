@@ -193,10 +193,14 @@ body{
   display:flex;
   gap:10px;
   margin:16px 0 12px;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   align-items:center;
+  position:sticky;
+  top:70px;
+  z-index:50;
+  background:#f7f9ff;
+  padding:6px 0;
 }
-
 .search{
   flex:1;
   min-width:220px;
@@ -898,11 +902,14 @@ html{
 #grid{
   transition:opacity .25s ease;
 }
-
+#grid{
+  min-height:500px;
+  contain:layout;
+}
 @media (max-width:760px){
 
-  .floating{
-    animation:none;
+  .hero-preview{
+    display:none;
   }
 
-}
+  }
