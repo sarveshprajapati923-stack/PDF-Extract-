@@ -898,3 +898,11 @@ html{
 #grid{
   transition:opacity .25s ease;
 }
+
+@media (max-width:760px){
+
+  .floating{
+    animation:none;
+  }
+
+}
