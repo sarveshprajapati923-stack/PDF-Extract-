@@ -895,3 +895,6 @@ html{
   background:#2563eb;
   color:#fff;
     }
+#grid{
+  transition:opacity .25s ease;
+}
