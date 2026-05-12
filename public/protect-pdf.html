@@ -6,7 +6,8 @@
 <title>Protect PDF - WePDFHub</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="/style.css">
+  
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
@@ -128,10 +129,18 @@ button:hover{
 <div class="tool-container">
   <h2>🔐 Protect PDF</h2>
 
-  <label class="upload-box" <div class="upload-area"> id="dropArea">
-    Click or Drop PDF Here
-    <input type="file" id="fileInput" accept="application/pdf">
-  </label>
+  <div class="upload-box">
+
+    <div class="upload-area">
+
+      <label id="dropArea">
+        Click or Drop PDF Here
+        <input type="file" id="fileInput" accept="application/pdf">
+      </label>
+
+    </div>
+
+  </div>
 
   <input type="password" id="password" placeholder="Enter Password">
 
