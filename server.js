@@ -63,6 +63,10 @@ const upload = multer({
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+/* ================= TOOL PAGE ROUTE ================= */
+app.get('/protect-pdf', (req, res) => {
+  res.sendFile(path.join(__dirname, 'protect-pdf.html'));
+});
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
   let filePath = null;
   let outputPath = null;
