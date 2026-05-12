@@ -125,10 +125,10 @@ button:hover{
 
 <body>
 
-<div class="container">
+<div class="tool-container">
   <h2>🔐 Protect PDF</h2>
 
-  <label class="upload-box" id="dropArea">
+  <label class="upload-box" <div class="upload-area"> id="dropArea">
     Click or Drop PDF Here
     <input type="file" id="fileInput" accept="application/pdf">
   </label>
@@ -141,8 +141,14 @@ button:hover{
 
   <div class="loader" id="loader">
     <div></div><div></div><div></div>
+    <div class="related-tools">
+
+  <a class="tool-card" href="/merge-pdf">Merge PDF</a>
+
+  <a class="tool-card" href="/split-pdf">Split PDF</a>
+
+    </div>
   </div>
-</div>
 
 <script>
 const fileInput = document.getElementById("fileInput");
