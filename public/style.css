@@ -891,3 +891,64 @@ html{
   }
 
   }
+.tool-container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+.upload-box,
+.related-tools{
+  background:#fff;
+  border:1px solid #dbeafe;
+  border-radius:26px;
+  padding:28px;
+  box-shadow:0 10px 30px rgba(37,99,235,.06);
+  margin-bottom:24px;
+}
+
+.upload-area{
+  border:2px dashed #bfdbfe;
+  border-radius:22px;
+  padding:45px 20px;
+  background:linear-gradient(180deg,#f8fbff,#eff6ff);
+  text-align:center;
+  transition:.25s;
+}
+
+.upload-area:hover{
+  border-color:#2563eb;
+  background:#f0f7ff;
+}
+
+.tool-card{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 18px;
+  border-radius:999px;
+  background:#f8fbff;
+  border:1px solid #dbeafe;
+  transition:.2s;
+  font-weight:600;
+}
+
+.tool-card:hover{
+  transform:translateY(-2px);
+  background:#2563eb;
+  color:#fff;
+}
+
+@media(max-width:760px){
+
+  .upload-box,
+  .related-tools{
+    padding:18px;
+    border-radius:22px;
+  }
+
+  .upload-area{
+    padding:32px 14px;
+  }
+
+                             }
