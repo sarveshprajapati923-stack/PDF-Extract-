@@ -148,7 +148,7 @@
       formData.append("password", password);
 
       try {
-        const res = await fetch("/protect-pdf", {
+        const res = await fetch("/api/protect-pdf", {
           method: "POST",
           body: formData
         });
