@@ -1092,3 +1092,105 @@ input[type="password"]{
   }
 
     }
+/* ===== FINAL TOOL PAGE FIX ===== */
+
+body{
+  background:#f7f9ff;
+  font-family:'Poppins',sans-serif;
+}
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+}
+
+.tool-container{
+  max-width:900px !important;
+  margin:auto;
+  padding:95px 18px 40px !important;
+}
+
+.upload-box{
+  background:#fff;
+  border-radius:28px;
+  border:1px solid #dbeafe;
+  padding:28px;
+  box-shadow:0 10px 30px rgba(37,99,235,.08);
+}
+
+.upload-area{
+  width:100%;
+  border:2px dashed #bfdbfe;
+  border-radius:22px;
+  padding:50px 18px;
+  text-align:center;
+  background:linear-gradient(180deg,#f8fbff,#eef6ff);
+  cursor:pointer;
+  transition:.25s;
+  color:#2563eb;
+  font-weight:600;
+}
+
+.upload-area:hover{
+  border-color:#2563eb;
+  background:#f0f7ff;
+}
+
+input[type="file"]{
+  display:none;
+}
+
+input[type="password"]{
+  width:100%;
+  height:56px;
+  border-radius:16px;
+  border:1px solid #dbeafe;
+  padding:0 16px;
+  margin-top:18px;
+  outline:none;
+  font-size:15px;
+}
+
+.related-tools{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.related-tools .tool-card{
+  min-height:auto !important;
+  padding:12px 18px !important;
+  border-radius:999px !important;
+}
+
+.logo-box{
+  background:transparent !important;
+  border-radius:50% !important;
+  box-shadow:none !important;
+}
+
+.brand-logo{
+  border-radius:50%;
+}
+
+.logo-glow{
+  display:none;
+}
+
+@media(max-width:760px){
+
+  .tool-container{
+    padding:82px 14px 30px !important;
+  }
+
+  .upload-box{
+    padding:20px;
+    border-radius:22px;
+  }
+
+  .upload-area{
+    padding:38px 14px;
+  }
+
+  }
