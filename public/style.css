@@ -335,21 +335,20 @@ body{
   cursor:pointer;
   min-width:0;
 }
-
 .logo-box{
   position:relative;
   width:42px;
   height:42px;
   min-width:42px;
   min-height:42px;
-  border-radius:12px;
-  background:#ffffff;
+  border-radius:50%;
+  background:transparent;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
   transition:.3s ease;
-  box-shadow:0 4px 12px rgba(37,99,235,.15);
+  box-shadow:none;
   flex-shrink:0;
 }
 
@@ -360,6 +359,7 @@ body{
   position:relative;
   z-index:2;
   display:block;
+  border-radius:50%;
 }
 
 .logo-glow{
@@ -891,21 +891,6 @@ html{
   }
 
   }
-.tool-container{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
-}
-
-.upload-box,
-.related-tools{
-  background:#fff;
-  border:1px solid #dbeafe;
-  border-radius:26px;
-  padding:28px;
-  box-shadow:0 10px 30px rgba(37,99,235,.06);
-  margin-bottom:24px;
-}
 
 .upload-area{
   border:2px dashed #bfdbfe;
