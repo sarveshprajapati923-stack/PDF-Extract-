@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
 });
 /* ================= TOOL PAGE ROUTE ================= */
 app.get('/protect-pdf', (req, res) => {
-  res.sendFile(path.join(__dirname, 'protect-pdf.html'));
+  res.sendFile(path.join(__dirname, 'public', 'protect-pdf.html'));
 });
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
   let filePath = null;
