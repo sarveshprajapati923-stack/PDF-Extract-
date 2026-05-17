@@ -80,7 +80,7 @@ app.get("/:tool", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "tool.html"));
 });
 app.get('/protect-pdf', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'protect-pdf.html'));
+  res.sendFile(path.join(__dirname, 'public', 'tool.html'));
 });
 app.post("/api/protect-pdf", upload.single("file"), async (req, res) => {
   let filePath = null;
