@@ -151,9 +151,11 @@ body{
       Secure your PDF files online quickly and safely with advanced encryption.
     </p>
 
-    <button class="upload-btn" id="mainBtn">
-      Select PDF File
-    </button>
+    <input type="file" id="fileInput" hidden>
+
+<button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+  Select PDF File
+</button>
 
     <div class="quick-actions">
 
@@ -246,6 +248,9 @@ else if(type === "protect"){
   "Add password security to your PDF documents online.";
 
 }
+  document.getElementById("fileInput").addEventListener("change", (e) => {
+  console.log(e.target.files[0]);
+});
 
 </script>
 
