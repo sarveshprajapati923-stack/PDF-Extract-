@@ -47,6 +47,18 @@ app.use((req, res, next) => {
   next();
 });
 
+const projectData = {
+  project: "WePDFHub",
+  owner: "Sarvesh Prajapati",
+  launch_date: "2026-04-21",
+  version: "1.0.0",
+  status: "active"
+};
+
+app.get("/api/metadata", (req, res) => {
+  res.json(projectData);
+});
+
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
