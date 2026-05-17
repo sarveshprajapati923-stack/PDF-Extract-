@@ -892,13 +892,12 @@ html{
 
   }
 .tool-layout{
-  max-width:1300px;
+  max-width:1200px;
   margin:auto;
-  padding:40px 20px;
+  padding:50px 20px;
   display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:34px;
-  align-items:start;
+  grid-template-columns:1.2fr .8fr;
+  gap:30px;
 }
 
 .tool-panel{
