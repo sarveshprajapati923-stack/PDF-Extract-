@@ -353,6 +353,16 @@ document.getElementById("openLogin").onclick = () => {
 document.getElementById("openSignup").onclick = () => {
   document.getElementById("signupModal").style.display = "block";
 };
+    document.getElementById("menuBtn").onclick = () => {
+
+  const menu = document.getElementById("authDropdown");
+
+  menu.style.display =
+  menu.style.display === "block"
+  ? "none"
+  : "block";
+
+};
   </script>
 </body>
 </html>
