@@ -1134,3 +1134,19 @@ html{
 .upload-btn:hover{
   transform:translateY(-4px) scale(1.01);
 }
+
+.auth-buttons{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.auth-buttons a{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.divider{
+  opacity:.5;
+}
