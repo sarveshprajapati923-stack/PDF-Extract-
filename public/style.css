@@ -1233,3 +1233,46 @@ html{
 .dropdown-panel a:hover{
   background:rgba(255,255,255,.08);
                          }
+
+.menu-grid-btn{
+  transition:.25s ease;
+}
+
+.menu-grid-btn:hover{
+  transform:translateY(-2px);
+  background:#273549;
+}
+
+.dropdown-panel{
+  border:1px solid rgba(255,255,255,.06);
+  backdrop-filter:blur(12px);
+}
+
+.dropdown-panel a{
+  transition:.2s;
+  font-weight:500;
+}
+
+.topbar-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+@media(max-width:768px){
+
+  .header-actions{
+    gap:8px;
+  }
+
+  .menu-grid-btn{
+    width:40px;
+    height:40px;
+    padding:9px;
+  }
+
+  .dropdown-panel{
+    min-width:170px;
+  }
+
+  }
