@@ -36,27 +36,41 @@
       <span class="logo-text">We<span>PDF</span>Hub</span>
     </div>
     
-    <div class="auth-menu">
+    <div class="header-actions">
 
-  <button id="menuBtn">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+  <div class="tools-menu">
 
-  <div id="authDropdown" class="auth-dropdown">
-    <a href="#" id="openLogin">Login</a>
-    <a href="#" id="openSignup">Sign up</a>
+    <button id="toolsBtn" class="menu-grid-btn">
+      <span></span><span></span>
+      <span></span><span></span>
+    </button>
+
+    <div id="toolsDropdown" class="dropdown-panel">
+      <a href="/merge-pdf">Merge PDF</a>
+      <a href="/split-pdf">Split PDF</a>
+      <a href="/compress-pdf">Compress PDF</a>
+      <a href="/pdf-to-excel">PDF to Excel</a>
+      <a href="/protect-pdf">Protect PDF</a>
+    </div>
+
+  </div>
+
+  <div class="auth-menu">
+
+    <button id="authBtn" class="menu-grid-btn">
+      <span></span><span></span>
+      <span></span><span></span>
+    </button>
+
+    <div id="authDropdown" class="dropdown-panel">
+      <a href="#" id="openLogin">Login</a>
+      <a href="#" id="openSignup">Signup</a>
+    </div>
+
   </div>
 
     </div>
 
-    <div class="top-actions">
-      <a class="top-link" href="/merge-pdf">Merge PDF</a>
-      <a class="top-link" href="/pdf-to-excel">PDF to Excel</a>
-      <a class="top-link primary" href="/split-pdf">Split PDF</a>
-    </div>
   </div>
 </header>
 <div class="wrap">
@@ -346,22 +360,24 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
   <script>
-document.getElementById("openLogin").onclick = () => {
+document.getElementById("toolsBtn").onclick = () => {
+  const menu = document.getElementById("toolsDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+};
+
+document.getElementById("authBtn").onclick = () => {
+  const menu = document.getElementById("authDropdown");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+};
+
+document.getElementById("openLogin").onclick = (e) => {
+  e.preventDefault();
   document.getElementById("loginModal").style.display = "block";
 };
 
-document.getElementById("openSignup").onclick = () => {
+document.getElementById("openSignup").onclick = (e) => {
+  e.preventDefault();
   document.getElementById("signupModal").style.display = "block";
-};
-    document.getElementById("menuBtn").onclick = () => {
-
-  const menu = document.getElementById("authDropdown");
-
-  menu.style.display =
-  menu.style.display === "block"
-  ? "none"
-  : "block";
-
 };
   </script>
 </body>
