@@ -1135,18 +1135,45 @@ html{
   transform:translateY(-4px) scale(1.01);
 }
 
-.auth-buttons{
-  display:flex;
-  align-items:center;
-  gap:10px;
+.auth-menu{
+  position:relative;
+  margin-right:15px;
 }
 
-.auth-buttons a{
+#menuBtn{
+  width:44px;
+  height:44px;
+  border:none;
+  border-radius:14px;
+  background:#1f2937;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:4px;
+  padding:10px;
+  cursor:pointer;
+}
+
+#menuBtn span{
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+}
+
+.auth-dropdown{
+  display:none;
+  position:absolute;
+  right:0;
+  top:55px;
+  background:#111827;
+  border-radius:14px;
+  padding:10px;
+  min-width:150px;
+}
+
+.auth-dropdown a{
+  display:block;
   color:white;
   text-decoration:none;
-  font-weight:600;
-}
-
-.divider{
-  opacity:.5;
+  padding:10px;
 }
