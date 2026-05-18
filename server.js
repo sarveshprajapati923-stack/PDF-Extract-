@@ -71,6 +71,29 @@ const upload = multer({
 });
 
 /* ================= HOME ROUTE FIX ================= */
+app.post("/signup", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await db.collection("users").insertOne({
+    username,
+    email,
+    password: hashedPassword
+  });
+
+  app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await db.collection("users").findOne({ email });
+
+  if (user && await bcrypt.compare(password, user.password)) {
+    res.send("login success");
+  } else {
+    res.send("login failed");
+  }
+});
+
 // public/index.html serve hoga
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
