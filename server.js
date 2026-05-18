@@ -82,6 +82,9 @@ app.post("/signup", async (req, res) => {
     password: hashedPassword
   });
 
+  res.send("success");
+});
+
   app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
