@@ -29,6 +29,10 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
+      <div class="auth-buttons">
+  <button id="openLogin">Login</button>
+  <button id="openSignup">Signup</button>
+      </div>
       <div class="logo-box">
         <img src="/favicon.png" class="brand-logo" alt="WePDFHub logo">
         <span class="logo-glow"></span>
@@ -311,5 +315,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   </div>
   </footer>
+
+  <div id="loginModal" style="display:none;">
+<form action="/login" method="POST">
+<input type="email" name="email" placeholder="Email">
+<input type="password" name="password" placeholder="Password">
+<button type="submit">Login</button>
+</form>
+</div>
+
+<div id="signupModal" style="display:none;">
+<form action="/signup" method="POST">
+<input type="text" name="username" placeholder="Username">
+<input type="email" name="email" placeholder="Email">
+<input type="password" name="password" placeholder="Password">
+<button type="submit">Signup</button>
+</form>
+</div>
+
+  <script>
+document.getElementById("openLogin").onclick = () => {
+  document.getElementById("loginModal").style.display = "block";
+};
+
+document.getElementById("openSignup").onclick = () => {
+  document.getElementById("signupModal").style.display = "block";
+};
+  </script>
 </body>
 </html>
