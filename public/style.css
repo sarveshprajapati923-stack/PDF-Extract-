@@ -93,9 +93,6 @@ body{
   justify-content:space-between;
   gap:10px;
 }
-.header-actions{
-  margin-left:20px;
-}
 
 .top-actions{
   display:flex;
@@ -1329,3 +1326,13 @@ html{
   font-weight:700;
   cursor:pointer;
     }
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-left:0;
+}
+
+.tools-menu{
+  margin-left:4px;
+  }
