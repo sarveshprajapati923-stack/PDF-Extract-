@@ -93,6 +93,9 @@ body{
   justify-content:space-between;
   gap:10px;
 }
+.header-actions{
+  margin-left:20px;
+}
 
 .top-actions{
   display:flex;
