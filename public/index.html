@@ -380,5 +380,20 @@ document.getElementById("openSignup").onclick = (e) => {
   document.getElementById("signupModal").style.display = "block";
 };
   </script>
+  <script>
+
+window.onclick = (e) => {
+
+  if (!e.target.closest(".tools-menu")) {
+    document.getElementById("toolsDropdown").style.display = "none";
+  }
+
+  if (!e.target.closest(".auth-menu")) {
+    document.getElementById("authDropdown").style.display = "none";
+  }
+
+};
+
+  </script>
 </body>
 </html>
