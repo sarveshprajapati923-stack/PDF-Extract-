@@ -12,6 +12,7 @@ const pdfParse = require("pdf-parse");
 const { Document, Packer, Paragraph, TextRun } = require("docx");
 const { createCanvas } = require("canvas");
 const { createWorker } = require("tesseract.js");
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
