@@ -360,43 +360,59 @@ document.addEventListener("DOMContentLoaded", () => {
 <button type="submit">Signup</button>
 </form>
 </div>
-
+  
 <script>
 
-document.getElementById("toolsBtn").onclick = () => {
-  const menu = document.getElementById("toolsDropdown");
-  menu.style.display =
-  menu.style.display === "block" ? "none" : "block";
-};
+const toolsBtn = document.getElementById("toolsBtn");
+const authBtn = document.getElementById("authBtn");
 
-document.getElementById("authBtn").onclick = () => {
-  const menu = document.getElementById("authDropdown");
-  menu.style.display =
-  menu.style.display === "block" ? "none" : "block";
-};
+const toolsDropdown = document.getElementById("toolsDropdown");
+const authDropdown = document.getElementById("authDropdown");
 
-document.getElementById("openLogin").onclick = (e) => {
-  e.preventDefault();
-  document.getElementById("loginModal").style.display = "block";
-};
+const openLogin = document.getElementById("openLogin");
+const openSignup = document.getElementById("openSignup");
 
-document.getElementById("openSignup").onclick = (e) => {
-  e.preventDefault();
-  document.getElementById("signupModal").style.display = "block";
-};
+if(toolsBtn){
+  toolsBtn.onclick = () => {
+    toolsDropdown.style.display =
+      toolsDropdown.style.display === "block" ? "none" : "block";
+  };
+}
+
+if(authBtn){
+  authBtn.onclick = () => {
+    authDropdown.style.display =
+      authDropdown.style.display === "block" ? "none" : "block";
+  };
+}
+
+if(openLogin){
+  openLogin.onclick = (e) => {
+    e.preventDefault();
+    document.getElementById("loginModal").style.display = "block";
+  };
+}
+
+if(openSignup){
+  openSignup.onclick = (e) => {
+    e.preventDefault();
+    document.getElementById("signupModal").style.display = "block";
+  };
+}
 
 window.onclick = (e) => {
 
   if (!e.target.closest(".tools-menu")) {
-    document.getElementById("toolsDropdown").style.display = "none";
+    toolsDropdown.style.display = "none";
   }
 
   if (!e.target.closest(".auth-menu")) {
-    document.getElementById("authDropdown").style.display = "none";
+    authDropdown.style.display = "none";
   }
 
 };
 
 </script>
+
 </body>
 </html>
