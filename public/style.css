@@ -88,10 +88,14 @@ body{
   margin:auto;
   height:60px;
   padding:0 16px;
+
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
+
+  gap:12px;
+}
+.header-actions{
+  margin-left:auto;
 }
 
 .top-actions{
