@@ -368,8 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <button type="submit">Signup</button>
 </form>
 </div>
-  
-<script>
+ <script>
 
 const toolsBtn = document.getElementById("toolsBtn");
 const authBtn = document.getElementById("authBtn");
@@ -380,66 +379,103 @@ const authDropdown = document.getElementById("authDropdown");
 const openLogin = document.getElementById("openLogin");
 const openSignup = document.getElementById("openSignup");
 
+/* TOOLS MENU */
+
 if(toolsBtn){
-  toolsBtn.onclick = () => {
-    toolsDropdown.style.display =
-      toolsDropdown.style.display === "block" ? "none" : "block";
-  };
+
+  toolsBtn.addEventListener("click", function(e){
+
+    e.stopPropagation();
+
+    if(toolsDropdown.style.display === "block"){
+
+      toolsDropdown.style.display = "none";
+      toolsBtn.classList.remove("active");
+
+    }else{
+
+      toolsDropdown.style.display = "block";
+      toolsBtn.classList.add("active");
+
+    }
+
+  });
+
 }
+
+/* AUTH MENU */
 
 if(authBtn){
-  authBtn.onclick = () => {
-    authDropdown.style.display =
-      authDropdown.style.display === "block" ? "none" : "block";
-  };
+
+  authBtn.addEventListener("click", function(e){
+
+    e.stopPropagation();
+
+    if(authDropdown.style.display === "block"){
+
+      authDropdown.style.display = "none";
+
+    }else{
+
+      authDropdown.style.display = "block";
+
+    }
+
+  });
+
 }
+
+/* LOGIN */
 
 if(openLogin){
+
   openLogin.onclick = (e) => {
+
     e.preventDefault();
-    document.getElementById("loginModal").style.display = "block";
+
+    document.getElementById("loginModal").style.display = "flex";
+
   };
+
 }
+
+/* SIGNUP */
 
 if(openSignup){
+
   openSignup.onclick = (e) => {
+
     e.preventDefault();
-    document.getElementById("signupModal").style.display = "block";
+
+    document.getElementById("signupModal").style.display = "flex";
+
   };
+
 }
 
-window.onclick = (e) => {
+/* OUTSIDE CLICK */
 
-  if (!e.target.closest(".tools-menu")) {
+document.addEventListener("click", function(e){
+
+  if(toolsDropdown && !e.target.closest(".tools-menu")){
+
     toolsDropdown.style.display = "none";
+
+    if(toolsBtn){
+      toolsBtn.classList.remove("active");
+    }
+
   }
 
-  if (!e.target.closest(".auth-menu")) {
+  if(authDropdown && !e.target.closest(".auth-menu")){
+
     authDropdown.style.display = "none";
-  }
-
-};
-  const toolsBtn = document.getElementById("toolsBtn");
-
-toolsBtn.onclick = () => {
-
-  const menu = document.getElementById("toolsDropdown");
-
-  if(menu.style.display === "block"){
-
-    menu.style.display = "none";
-    toolsBtn.classList.remove("active");
-
-  } else {
-
-    menu.style.display = "block";
-    toolsBtn.classList.add("active");
 
   }
 
-};
+});
 
-</script>
+  </script> 
 
 </body>
 </html>
