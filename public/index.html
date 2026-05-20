@@ -60,8 +60,10 @@
 
 <button id="authBtn" class="menu-grid-btn">
   <span></span><span></span><span></span>
-  <span></span>
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
 </button>
+    
     <div id="authDropdown" class="dropdown-panel">
       <a href="#" id="openLogin">Login</a>
       <a href="#" id="openSignup">Signup</a>
@@ -359,15 +361,18 @@ document.addEventListener("DOMContentLoaded", () => {
 </form>
 </div>
 
-  <script>
+<script>
+
 document.getElementById("toolsBtn").onclick = () => {
   const menu = document.getElementById("toolsDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  menu.style.display =
+  menu.style.display === "block" ? "none" : "block";
 };
 
 document.getElementById("authBtn").onclick = () => {
   const menu = document.getElementById("authDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  menu.style.display =
+  menu.style.display === "block" ? "none" : "block";
 };
 
 document.getElementById("openLogin").onclick = (e) => {
@@ -379,8 +384,6 @@ document.getElementById("openSignup").onclick = (e) => {
   e.preventDefault();
   document.getElementById("signupModal").style.display = "block";
 };
-  </script>
-  <script>
 
 window.onclick = (e) => {
 
@@ -394,6 +397,6 @@ window.onclick = (e) => {
 
 };
 
-  </script>
+</script>
 </body>
 </html>
