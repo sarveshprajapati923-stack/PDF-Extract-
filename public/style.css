@@ -1245,3 +1245,46 @@ html{
   }
 
   }
+
+#loginModal,
+#signupModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+}
+
+#loginModal form,
+#signupModal form{
+  width:min(92%,380px);
+  background:#fff;
+  padding:24px;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  animation:fadeIn .25s ease;
+}
+
+#loginModal input,
+#signupModal input{
+  height:52px;
+  border:1px solid #dbe4f5;
+  border-radius:14px;
+  padding:0 14px;
+  outline:none;
+}
+
+#loginModal button,
+#signupModal button{
+  height:52px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#2563eb,#0ea5e9);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+    }
