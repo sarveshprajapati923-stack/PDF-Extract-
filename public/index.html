@@ -38,15 +38,20 @@
     
     <div class="header-actions">
 
-      <div class="tools-menu">
+     <div class="tools-menu">
+
   <button id="toolsBtn" class="tools-trigger" type="button">
-    <span class="menu-grid-btn" aria-hidden="true">
+
+    <div class="tools-grid">
       <span></span><span></span><span></span>
       <span></span><span></span><span></span>
       <span></span><span></span><span></span>
-    </span>
-    <span class="tools-text">Tools</span>
-    <span class="tools-caret">▾</span>
+    </div>
+
+    <span class="tools-label">Tools</span>
+
+    <span class="tools-arrow">▼</span>
+
   </button>
 
   <div id="toolsDropdown" class="dropdown-panel">
@@ -55,11 +60,9 @@
     <a href="/compress-pdf">Compress PDF</a>
     <a href="/pdf-to-excel">PDF to Excel</a>
     <a href="/protect-pdf">Protect PDF</a>
-    <a href="/unlock-pdf">Unlock PDF</a>
-    <a href="/pdf-to-word">PDF to Word</a>
-    <a href="/pdf-to-jpg">PDF to JPG</a>
   </div>
-      </div>
+
+     </div> 
 
   <div class="auth-menu">
 
@@ -413,6 +416,25 @@ window.onclick = (e) => {
 
   if (!e.target.closest(".auth-menu")) {
     authDropdown.style.display = "none";
+  }
+
+};
+  const toolsBtn = document.getElementById("toolsBtn");
+
+toolsBtn.onclick = () => {
+
+  const menu = document.getElementById("toolsDropdown");
+
+  if(menu.style.display === "block"){
+
+    menu.style.display = "none";
+    toolsBtn.classList.remove("active");
+
+  } else {
+
+    menu.style.display = "block";
+    toolsBtn.classList.add("active");
+
   }
 
 };
