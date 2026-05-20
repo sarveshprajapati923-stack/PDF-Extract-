@@ -1340,3 +1340,10 @@ html{
 .tools-menu{
   margin-left:4px;
   }
+.logo-glow{
+  animation:rotateGlow 20s linear infinite;
+}
+
+.floating{
+  animation:floatingCard 8s ease-in-out infinite;
+  }
