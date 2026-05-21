@@ -1143,12 +1143,6 @@ html{
 }
 
 
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
 /* TOOLS MENU */
 
 .tools-menu{
@@ -1343,13 +1337,7 @@ html{
 .tools-menu{
   margin-left:4px;
   }
-.logo-glow{
-  animation:rotateGlow 20s linear infinite;
-}
 
-.floating{
-  animation:floatingCard 8s ease-in-out infinite;
-  }
 /* PERFORMANCE FIX */
 
 .dropdown-panel{
