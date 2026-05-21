@@ -355,126 +355,160 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
   </footer>
 
-  <div id="loginModal" style="display:none;">
-<form action="/login" method="POST">
-<input type="email" name="email" placeholder="Email">
-<input type="password" name="password" placeholder="Password">
-<button type="submit">Login</button>
-</form>
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="auth-modal">
+
+  <div class="auth-card">
+
+    <button class="close-auth" onclick="closeAuth()">✕</button>
+
+    <div class="auth-logo-wrap">
+      <img src="/favicon.png" alt="WePDFHub" class="auth-logo">
+    </div>
+
+    <h2>Login to your account</h2>
+
+    <div class="google-btn">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg">
+      <span>Continue with Google</span>
+    </div>
+
+    <form class="auth-form">
+
+      <div class="input-box">
+        <span>📧</span>
+        <input type="email" placeholder="Enter your email">
+      </div>
+
+      <div class="input-box">
+        <span>🔒</span>
+        <input type="password" placeholder="Password">
+      </div>
+
+      <a href="#" class="forgot-link">Forgot password?</a>
+
+      <button type="submit" class="auth-submit">
+        Login
+      </button>
+
+      <p class="auth-switch">
+        Don’t have an account?
+        <a href="#" onclick="openSignupModal()">Create account</a>
+      </p>
+
+    </form>
+
+  </div>
+
 </div>
 
-<div id="signupModal" style="display:none;">
-<form action="/signup" method="POST">
-<input type="text" name="username" placeholder="Username">
-<input type="email" name="email" placeholder="Email">
-<input type="password" name="password" placeholder="Password">
-<button type="submit">Signup</button>
-</form>
+
+<!-- SIGNUP MODAL -->
+<div id="signupModal" class="auth-modal">
+
+  <div class="auth-card">
+
+    <button class="close-auth" onclick="closeAuth()">✕</button>
+
+    <div class="auth-logo-wrap">
+      <img src="/favicon.png" alt="WePDFHub" class="auth-logo">
+    </div>
+
+    <h2>Create new account</h2>
+
+    <div class="google-btn">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg">
+      <span>Continue with Google</span>
+    </div>
+
+    <form class="auth-form">
+
+      <div class="input-box">
+        <span>👤</span>
+        <input type="text" placeholder="Full name">
+      </div>
+
+      <div class="input-box">
+        <span>📧</span>
+        <input type="email" placeholder="Email">
+      </div>
+
+      <div class="input-box">
+        <span>🔒</span>
+        <input type="password" placeholder="Password">
+      </div>
+
+      <button type="submit" class="auth-submit">
+        Create Account
+      </button>
+
+      <p class="auth-switch">
+        Already have an account?
+        <a href="#" onclick="openLoginModal()">Login</a>
+      </p>
+
+    </form>
+
+  </div>
+
 </div>
-  
  <script>
+   /* OPEN LOGIN */
 
-const toolsBtn = document.getElementById("toolsBtn");
-const authBtn = document.getElementById("authBtn");
+function openLoginModal(){
 
-const toolsDropdown = document.getElementById("toolsDropdown");
-const authDropdown = document.getElementById("authDropdown");
-
-const openLogin = document.getElementById("openLogin");
-const openSignup = document.getElementById("openSignup");
-
-/* TOOLS MENU */
-
-if(toolsBtn){
-
-  toolsBtn.addEventListener("click", function(e){
-
-    e.stopPropagation();
-
-    if(toolsDropdown.style.display === "block"){
-
-      toolsDropdown.style.display = "none";
-      toolsBtn.classList.remove("active");
-
-    }else{
-
-      toolsDropdown.style.display = "block";
-      toolsBtn.classList.add("active");
-
-    }
-
-  });
+  document.getElementById("loginModal").style.display = "flex";
+  document.getElementById("signupModal").style.display = "none";
 
 }
 
-/* AUTH MENU */
+/* OPEN SIGNUP */
 
-if(authBtn){
+function openSignupModal(){
 
-  authBtn.addEventListener("click", function(e){
-
-    e.stopPropagation();
-
-    if(authDropdown.style.display === "block"){
-
-      authDropdown.style.display = "none";
-
-    }else{
-
-      authDropdown.style.display = "block";
-
-    }
-
-  });
+  document.getElementById("signupModal").style.display = "flex";
+  document.getElementById("loginModal").style.display = "none";
 
 }
 
-/* LOGIN */
+/* CLOSE */
 
-if(openLogin){
+function closeAuth(){
 
-  openLogin.onclick = (e) => {
-
-    e.preventDefault();
-
-    document.getElementById("loginModal").style.display = "flex";
-
-  };
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("signupModal").style.display = "none";
 
 }
 
-/* SIGNUP */
+/* BUTTON EVENTS */
 
-if(openSignup){
+document.getElementById("openLogin").onclick = function(e){
 
-  openSignup.onclick = (e) => {
+  e.preventDefault();
+  openLoginModal();
 
-    e.preventDefault();
+};
 
-    document.getElementById("signupModal").style.display = "flex";
+document.getElementById("openSignup").onclick = function(e){
 
-  };
+  e.preventDefault();
+  openSignupModal();
 
-}
+};
 
 /* OUTSIDE CLICK */
 
-document.addEventListener("click", function(e){
+window.addEventListener("click", function(e){
 
-  if(toolsDropdown && !e.target.closest(".tools-menu")){
+  const loginModal = document.getElementById("loginModal");
+  const signupModal = document.getElementById("signupModal");
 
-    toolsDropdown.style.display = "none";
-
-    if(toolsBtn){
-      toolsBtn.classList.remove("active");
-    }
-
+  if(e.target === loginModal){
+    closeAuth();
   }
 
-  if(authDropdown && !e.target.closest(".auth-menu")){
-
-    authDropdown.style.display = "none";
-
+  if(e.target === signupModal){
+    closeAuth();
   }
 
 });
