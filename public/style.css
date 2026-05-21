@@ -1233,9 +1233,10 @@ html{
   z-index:99999;
 
   box-shadow:
-  0 20px 50px rgba(0,0,0,.12);
+  0 8px 22px rgba(0,0,0,.08);
 
-  backdrop-filter:blur(14px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 
 /* LINKS */
@@ -1327,12 +1328,7 @@ html{
   font-weight:700;
   cursor:pointer;
     }
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-left:0;
-}
+
 
 .tools-menu{
   margin-left:4px;
