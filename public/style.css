@@ -91,10 +91,13 @@ body{
 
   display:flex;
   align-items:center;
-
-  gap:12px;
+  justify-content:space-between;
 }
+
 .header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
   margin-left:auto;
 }
 
@@ -335,10 +338,10 @@ body{
 .brand{
   display:flex;
   align-items:center;
-  gap:8px;
-  cursor:pointer;
-  min-width:0;
+  gap:6px;
+  flex-shrink:0;
 }
+
 .logo-box{
   position:relative;
   width:42px;
