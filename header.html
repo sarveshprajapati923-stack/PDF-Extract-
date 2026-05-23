@@ -1,0 +1,53 @@
+<header class="site-header">
+  <div class="logo">WePDFHub</div>
+
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a href="/tool.html?type=protect">Tools</a>
+    <a href="/about.html">About</a>
+  </nav>
+</header>
+
+<style>
+.site-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#0f172a;
+  color:#fff;
+  border-bottom:1px solid #1e293b;
+  position:sticky;
+  top:0;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:bold;
+  color:#38bdf8;
+}
+
+.nav a{
+  margin-left:15px;
+  text-decoration:none;
+  color:#cbd5e1;
+  padding:6px 10px;
+  border:1px solid transparent;
+  border-radius:8px;
+  transition:0.3s;
+}
+
+.nav a:hover{
+  border:1px solid #38bdf8;
+  color:#38bdf8;
+  transform:scale(1.05);
+}
+
+@media(max-width:600px){
+  .nav{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+}
+</style>
