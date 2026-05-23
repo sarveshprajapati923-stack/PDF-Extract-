@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+<title>Free PDF Tools Online - WePDFHub</title>
+
+<meta name="description" content="Merge, Split, Compress PDF online free tool. No login required. Fast SaaS PDF tools.">
+<meta name="robots" content="index, follow">
+
+<meta property="og:title" content="WePDFHub PDF Tools">
+<meta property="og:description" content="Free online PDF tools for everyone">
+<meta property="og:type" content="website">
+
+<link rel="preload" href="/favicon.png" as="image">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="stylesheet" href="/style.css?v=99">
+
+<script src="https://quge5.com/88/tag.min.js" data-zone="238224" async data-cfasync="false"></script>
+<script src="https://5gvci.com/act/files/tag.min.js?z=11040451" data-cfasync="false" async></script>
+
+</head>
+
+<body>
+  
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo-box">
+        <img src="/favicon.png" class="brand-logo" alt="WePDFHub logo">
+        <span class="logo-glow"></span>
+      </div>
+      <span class="logo-text">We<span>PDF</span>Hub</span>
+    </div>
+    
+    <div class="header-actions">
+
+     <div class="tools-menu">
+
+  <button id="toolsBtn" class="tools-trigger" type="button">
+
+    <div class="tools-grid">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+
+    <span class="tools-label">Tools</span>
+
+    <span class="tools-arrow">▼</span>
+
+  </button>
+
+  <div id="toolsDropdown" class="dropdown-panel">
+    <a href="/merge-pdf">Merge PDF</a>
+    <a href="/split-pdf">Split PDF</a>
+    <a href="/compress-pdf">Compress PDF</a>
+    <a href="/pdf-to-excel">PDF to Excel</a>
+    <a href="/protect-pdf">Protect PDF</a>
+  </div>
+
+     </div> 
+
+  <div class="auth-menu">
+
+<button id="authBtn" class="menu-grid-btn">
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+</button>
+    
+    <div id="authDropdown" class="dropdown-panel">
+      <a href="#" id="openLogin">Login</a>
+      <a href="#" id="openSignup">Signup</a>
+    </div>
+
+  </div>
+
+    </div>
+
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero modern-hero">
+
+    <div class="hero-badge">
+      ⚡ Smart PDF Workspace
+    </div>
+
+    <div class="hero-top">
+
+  <div class="hero-copy-block">
+
+    <h1>
+      Every PDF tool you need.
+      <span>Fast. Secure. Modern.</span>
+    </h1>
+
+    <p>
+      Merge, split, compress, convert and protect PDFs
+      with beautiful ultra-fast tools built for everyone.
+    </p>
+
+    <div class="hero-cta">
+
+      <a class="hero-btn primary glow-btn" href="https://omg10.com/4/11040501" target="_blank">
+        🚀 Start Free
+      </a>
+
+      <a class="hero-btn glass-btn" href="/pdf-to-excel">
+        📊 PDF to Excel
+      </a>
+
+    </div>
+
+    <div class="trust modern-trust">
+      <div>🔒 Secure files</div>
+      <div>⚡ Instant processing</div>
+      <div>☁️ Cloud powered</div>
+      <div>✅ No signup</div>
+    </div>
+
+  </div>
+
+  <div class="hero-preview">
+    <div class="preview-card">
+      <div class="preview-top"></div>
+
+      <div class="preview-body">
+        <div class="preview-line w1"></div>
+        <div class="preview-line w2"></div>
+        <div class="preview-line w3"></div>
+
+        <div class="preview-grid">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+
+  </section>
+
+<div class="search-wrap">
+
+  <div class="search-box">
+
+    <span class="search-icon">🔍</span>
+
+    <input
+      id="search"
+      class="search modern-search"
+      placeholder="Search PDF tools..."
+    />
+
+  </div>
+
+</div>
+
+<div id="grid" class="grid"></div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  async function startUpload(){
+
+    const file = document.getElementById("fileInput").files[0];
+    const tool = document.getElementById("toolSelect").value;
+
+    if(!file){
+      document.getElementById("fileInput").click();
+      return;
+    }
+
+    const btn = document.querySelector(".upload-btn");
+    btn.innerText = "Processing...";
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`/api/${tool}`, {
+      method:"POST",
+      body:formData
+    });
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "output.pdf";
+    a.click();
+
+    btn.innerText = "📂 Upload PDF";
+  }
+
+  const search = document.getElementById("search");
+  const grid = document.getElementById("grid");
+
+  const icons = {
+    "merge-pdf":"⚡",
+    "split-pdf":"✂️",
+    "compress-pdf":"🗜️",
+    "rotate-pdf":"🔄",
+    "watermark-pdf":"💧",
+    "delete-pages":"🗑️",
+    "extract-pages":"📤",
+    "reorder-pages":"🔀",
+    "reverse-pages":"↩️",
+    "duplicate-pages":"📑",
+    "crop-pdf":"✂️",
+    "add-blank-pages":"➕",
+    "page-number":"🔢",
+    "image-to-pdf":"🖼️",
+    "pdf-to-word":"📄",
+    "pdf-to-jpg":"📷",
+    "ocr-pdf":"👁️",
+    "extract-text":"📝",
+    "protect-pdf":"🔒",
+    "metadata-pdf":"🧾",
+    "pdf-info":"ℹ️",
+    "unlock-pdf":"🔓",
+    "pdf-to-excel":"📊",
+    "split-pdf-bookmarks":"🔖",
+    "split-pdf-odd-pages":"1️⃣",
+    "split-pdf-even-pages":"2️⃣",
+    "extract-first-page":"1️⃣",
+    "extract-last-page":"🔚",
+    "delete-odd-pages":"❌",
+    "delete-even-pages":"🚫",
+    "shuffle-pages":"🔀",
+    "sort-pages":"⬆️",
+    "sort-pages-desc":"⬇️",
+    "add-cover-page":"📄",
+    "add-separator-pages":"📑",
+    "add-header":"⬆️",
+    "add-footer":"⬇️",
+    "logo-stamp":"🏷️",
+    "add-signature":"✍️"
+  };
+
+  const tools = [
+    {slug:"merge-pdf", title:"Merge PDF", cat:"edit", desc:"Combine multiple PDF files into one."},
+    {slug:"split-pdf", title:"Split PDF", cat:"edit", desc:"Split selected pages into separate PDFs."},
+    {slug:"compress-pdf", title:"Compress PDF", cat:"edit", desc:"Reduce file size with fast compression."},
+    {slug:"rotate-pdf", title:"Rotate PDF", cat:"edit", desc:"Rotate pages left or right."},
+    {slug:"watermark-pdf", title:"Watermark PDF", cat:"edit", desc:"Add a text watermark to every page."},
+    {slug:"delete-pages", title:"Delete Pages", cat:"edit", desc:"Remove selected pages from PDF."},
+    {slug:"extract-pages", title:"Extract Pages", cat:"edit", desc:"Keep only selected pages."},
+    {slug:"reorder-pages", title:"Reorder Pages", cat:"edit", desc:"Change page order quickly."},
+    {slug:"reverse-pages", title:"Reverse Pages", cat:"edit", desc:"Reverse all pages in one click."},
+    {slug:"duplicate-pages", title:"Duplicate Pages", cat:"edit", desc:"Duplicate selected pages."},
+    {slug:"crop-pdf", title:"Crop PDF", cat:"edit", desc:"Crop PDF page area precisely."},
+    {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit", desc:"Append blank pages to PDF."},
+    {slug:"page-number", title:"Page Number", cat:"edit", desc:"Add page numbers to each page."},
+
+    {slug:"image-to-pdf", title:"Image to PDF", cat:"convert", desc:"Convert JPG or PNG to PDF."},
+    {slug:"pdf-to-word", title:"PDF to Word", cat:"convert", desc:"Convert PDF to DOCX."},
+    {slug:"pdf-to-jpg", title:"PDF to JPG", cat:"convert", desc:"Convert PDF pages to images."},
+    {slug:"ocr-pdf", title:"OCR PDF", cat:"convert", desc:"Extract text from scanned PDFs."},
+    {slug:"extract-text", title:"Extract Text", cat:"convert", desc:"Extract plain text from PDF."},
+    {slug:"pdf-to-excel", title:"PDF to Excel", cat:"convert", desc:"Convert tables from PDF to Excel."},
+
+    {slug:"protect-pdf", title:"Protect PDF", cat:"security", desc:"Add password protection to PDF."},
+    {slug:"unlock-pdf", title:"Unlock PDF", cat:"security", desc:"Remove PDF password protection."},
+    {slug:"metadata-pdf", title:"Metadata", cat:"security", desc:"Edit title, author and keywords."},
+    {slug:"pdf-info", title:"PDF Info", cat:"security", desc:"View PDF metadata and page count."}
+  ];
+
+  function render(){
+
+    grid.innerHTML = "";
+    const q = search.value.toLowerCase().trim();
+
+    const categories = [
+      { key:"edit", label:"Organize PDF" },
+      { key:"convert", label:"Convert PDF" },
+      { key:"security", label:"Security" }
+    ];
+
+    const matched = tools.filter(t => {
+      return !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+    });
+
+    if (!matched.length){
+      grid.innerHTML = '<div class="empty-state">No tools found.</div>';
+      return;
+    }
+
+    categories.forEach(cat => {
+
+      const catTools = matched.filter(t => t.cat === cat.key);
+
+      if (!catTools.length) return;
+
+      const section = document.createElement("section");
+
+      section.className = "section-block";
+
+      section.innerHTML = `
+        <div class="section-head">
+          <h2>${cat.label}</h2>
+          <span class="count">${catTools.length} tools</span>
+        </div>
+        <div class="grid"></div>
+      `;
+
+      const innerGrid = section.querySelector(".grid");
+
+      catTools.forEach(t => {
+
+        const el = document.createElement("a");
+
+        el.href = "/" + t.slug;
+        el.className = "tool-card";
+
+        el.innerHTML = `
+          <div class="tool-ico">${icons[t.slug] || "📄"}</div>
+          <div>
+            <h3>${t.title}</h3>
+            <p>${t.desc}</p>
+          </div>
+        `;
+
+        innerGrid.appendChild(el);
+
+      });
+
+      grid.appendChild(section);
+
+    });
+
+  }
+
+  search.addEventListener("input", render);
+
+  render();
+
+});
+</script>
+
+<footer class="footer">
+
+  <div class="footer-content">
+
+    <div class="footer-brand">
+      <h3>WePDFHub</h3>
+      <p>
+        Fast, secure and modern PDF tools for everyone.
+      </p>
+    </div>
+
+    <div class="footer-links">
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <a href="/privacy-policy">Privacy Policy</a>
+      <a href="/terms">Terms</a>
+      <a href="/disclaimer">Disclaimer</a>
+    </div>
+
+    <div class="socials">
+      <a href="#">📘</a>
+      <a href="#">📸</a>
+      <a href="#">▶️</a>
+      <a href="#">💬</a>
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- LOGIN MODAL -->
+
+<div id="loginModal" class="auth-modal">
+
+  <div class="auth-card">
+
+    <button class="close-auth" onclick="closeAuth()">✕</button>
+
+    <div class="auth-logo-wrap">
+      <img src="/favicon.png" alt="WePDFHub" class="auth-logo">
+    </div>
+
+    <h2>Login to your account</h2>
+
+    <div class="google-btn">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg">
+      <span>Continue with Google</span>
+    </div>
+
+    <form class="auth-form">
+
+      <div class="input-box">
+        <span>📧</span>
+        <input type="email" placeholder="Enter your email">
+      </div>
+
+      <div class="input-box">
+        <span>🔒</span>
+        <input type="password" placeholder="Password">
+      </div>
+
+      <a href="#" class="forgot-link">Forgot password?</a>
+
+      <button type="submit" class="auth-submit">
+        Login
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+
+function openLoginModal(){
+  document.getElementById("loginModal").style.display = "flex";
+}
+
+function closeAuth(){
+  document.getElementById("loginModal").style.display = "none";
+}
+
+document.getElementById("openLogin").onclick = function(e){
+  e.preventDefault();
+  openLoginModal();
+};
+
+window.addEventListener("click", function(e){
+
+  const loginModal = document.getElementById("loginModal");
+
+  if(e.target === loginModal){
+    closeAuth();
+  }
+
+});
+
+</script>
+
+<script>
+fetch("https://wepdfhub-ka-backend-render-per-hai.onrender.com/api/test")
+  .then(res => res.json())
+  .then(data => console.log(data));
+</script>
+
+<script src="https://nap5k.com/tag.min.js?z=11040462" data-cfasync="false" async></script>
+
+</body>
+  </html>
