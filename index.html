@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="dns-prefetch" href="//fonts.googleapis.com">
 
 <title>Free PDF Tools Online - WePDFHub</title>
@@ -87,7 +87,6 @@
 
   </div>
 </header>
-
 <div class="wrap">
 
   <section class="hero modern-hero">
@@ -152,6 +151,7 @@
 
     </div>
 
+
   </section>
 
 <div class="search-wrap">
@@ -170,87 +170,55 @@
 
 </div>
 
-<div id="grid" class="grid"></div>
+  <div id="grid" class="grid"></div>
 
 </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
   async function startUpload(){
+  const file = document.getElementById("fileInput").files[0];
+  const tool = document.getElementById("toolSelect").value;
 
-    const file = document.getElementById("fileInput").files[0];
-    const tool = document.getElementById("toolSelect").value;
-
-    if(!file){
-      document.getElementById("fileInput").click();
-      return;
-    }
-
-    const btn = document.querySelector(".upload-btn");
-    btn.innerText = "Processing...";
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch(`/api/${tool}`, {
-      method:"POST",
-      body:formData
-    });
-
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "output.pdf";
-    a.click();
-
-    btn.innerText = "📂 Upload PDF";
+  if(!file){
+    document.getElementById("fileInput").click();
+    return;
   }
 
+  const btn = document.querySelector(".upload-btn");
+  btn.innerText = "Processing...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/${tool}`, {
+  method:"POST",
+  body:formData
+});
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output.pdf";
+  a.click();
+
+  btn.innerText = "📂 Upload PDF";
+  }
   const search = document.getElementById("search");
   const grid = document.getElementById("grid");
 
   const icons = {
-    "merge-pdf":"⚡",
-    "split-pdf":"✂️",
-    "compress-pdf":"🗜️",
-    "rotate-pdf":"🔄",
-    "watermark-pdf":"💧",
-    "delete-pages":"🗑️",
-    "extract-pages":"📤",
-    "reorder-pages":"🔀",
-    "reverse-pages":"↩️",
-    "duplicate-pages":"📑",
-    "crop-pdf":"✂️",
-    "add-blank-pages":"➕",
-    "page-number":"🔢",
-    "image-to-pdf":"🖼️",
-    "pdf-to-word":"📄",
-    "pdf-to-jpg":"📷",
-    "ocr-pdf":"👁️",
-    "extract-text":"📝",
-    "protect-pdf":"🔒",
-    "metadata-pdf":"🧾",
-    "pdf-info":"ℹ️",
-    "unlock-pdf":"🔓",
-    "pdf-to-excel":"📊",
-    "split-pdf-bookmarks":"🔖",
-    "split-pdf-odd-pages":"1️⃣",
-    "split-pdf-even-pages":"2️⃣",
-    "extract-first-page":"1️⃣",
-    "extract-last-page":"🔚",
-    "delete-odd-pages":"❌",
-    "delete-even-pages":"🚫",
-    "shuffle-pages":"🔀",
-    "sort-pages":"⬆️",
-    "sort-pages-desc":"⬇️",
-    "add-cover-page":"📄",
-    "add-separator-pages":"📑",
-    "add-header":"⬆️",
-    "add-footer":"⬇️",
-    "logo-stamp":"🏷️",
+    "merge-pdf":"⚡","split-pdf":"✂️","compress-pdf":"🗜️","rotate-pdf":"🔄",
+    "watermark-pdf":"💧","delete-pages":"🗑️","extract-pages":"📤","reorder-pages":"🔀",
+    "reverse-pages":"↩️","duplicate-pages":"📑","crop-pdf":"✂️","add-blank-pages":"➕",
+    "page-number":"🔢","image-to-pdf":"🖼️","pdf-to-word":"📄","pdf-to-jpg":"📷",
+    "ocr-pdf":"👁️","extract-text":"📝","protect-pdf":"🔒","metadata-pdf":"🧾",
+    "pdf-info":"ℹ️","unlock-pdf":"🔓","pdf-to-excel":"📊","split-pdf-bookmarks":"🔖",
+    "split-pdf-odd-pages":"1️⃣","split-pdf-even-pages":"2️⃣","extract-first-page":"1️⃣",
+    "extract-last-page":"🔚","delete-odd-pages":"❌","delete-even-pages":"🚫",
+    "shuffle-pages":"🔀","sort-pages":"⬆️","sort-pages-desc":"⬇️","add-cover-page":"📄",
+    "add-separator-pages":"📑","add-header":"⬆️","add-footer":"⬇️","logo-stamp":"🏷️",
     "add-signature":"✍️"
   };
 
@@ -268,6 +236,16 @@ document.addEventListener("DOMContentLoaded", () => {
     {slug:"crop-pdf", title:"Crop PDF", cat:"edit", desc:"Crop PDF page area precisely."},
     {slug:"add-blank-pages", title:"Add Blank Pages", cat:"edit", desc:"Append blank pages to PDF."},
     {slug:"page-number", title:"Page Number", cat:"edit", desc:"Add page numbers to each page."},
+    {slug:"split-pdf-bookmarks", title:"Split PDF by Bookmarks", cat:"edit", desc:"Split PDF using bookmarks."},
+    {slug:"split-pdf-odd-pages", title:"Split PDF by Odd Pages", cat:"edit", desc:"Keep only odd pages."},
+    {slug:"split-pdf-even-pages", title:"Split PDF by Even Pages", cat:"edit", desc:"Keep only even pages."},
+    {slug:"extract-first-page", title:"Extract First Page", cat:"edit", desc:"Extract the first page only."},
+    {slug:"extract-last-page", title:"Extract Last Page", cat:"edit", desc:"Extract the last page only."},
+    {slug:"delete-odd-pages", title:"Delete Odd Pages", cat:"edit", desc:"Remove all odd pages."},
+    {slug:"delete-even-pages", title:"Delete Even Pages", cat:"edit", desc:"Remove all even pages."},
+    {slug:"shuffle-pages", title:"Shuffle Pages", cat:"edit", desc:"Randomly shuffle pages."},
+    {slug:"sort-pages", title:"Sort Pages Ascending", cat:"edit", desc:"Restore page order ascending."},
+    {slug:"sort-pages-desc", title:"Sort Pages Descending", cat:"edit", desc:"Reverse page order descending."},
 
     {slug:"image-to-pdf", title:"Image to PDF", cat:"convert", desc:"Convert JPG or PNG to PDF."},
     {slug:"pdf-to-word", title:"PDF to Word", cat:"convert", desc:"Convert PDF to DOCX."},
@@ -279,11 +257,17 @@ document.addEventListener("DOMContentLoaded", () => {
     {slug:"protect-pdf", title:"Protect PDF", cat:"security", desc:"Add password protection to PDF."},
     {slug:"unlock-pdf", title:"Unlock PDF", cat:"security", desc:"Remove PDF password protection."},
     {slug:"metadata-pdf", title:"Metadata", cat:"security", desc:"Edit title, author and keywords."},
-    {slug:"pdf-info", title:"PDF Info", cat:"security", desc:"View PDF metadata and page count."}
+    {slug:"pdf-info", title:"PDF Info", cat:"security", desc:"View PDF metadata and page count."},
+    {slug:"add-header", title:"Add Header", cat:"security", desc:"Stamp header text on every page."},
+    {slug:"add-footer", title:"Add Footer", cat:"security", desc:"Stamp footer text on every page."},
+    {slug:"add-cover-page", title:"Add Cover Page", cat:"security", desc:"Insert a cover page at the start."},
+    {slug:"add-separator-pages", title:"Separator Pages", cat:"security", desc:"Add blank separator pages."},
+    {slug:"logo-stamp", title:"Logo Stamp", cat:"security", desc:"Stamp a logo on PDF pages."},
+    {slug:"add-signature", title:"Add Signature", cat:"security", desc:"Stamp a signature image."}
   ];
 
-  function render(){
 
+  function render(){
     grid.innerHTML = "";
     const q = search.value.toLowerCase().trim();
 
@@ -293,8 +277,11 @@ document.addEventListener("DOMContentLoaded", () => {
       { key:"security", label:"Security" }
     ];
 
+    const showCats = categories.map(c => c.key);
     const matched = tools.filter(t => {
-      return !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+      const catOk = showCats.includes(t.cat);
+      const searchOk = !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+      return catOk && searchOk;
     });
 
     if (!matched.length){
@@ -302,19 +289,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    categories.forEach(cat => {
-
-      const catTools = matched.filter(t => t.cat === cat.key);
-
+    showCats.forEach(cat => {
+      const catTools = matched.filter(t => t.cat === cat);
       if (!catTools.length) return;
 
       const section = document.createElement("section");
-
       section.className = "section-block";
-
       section.innerHTML = `
         <div class="section-head">
-          <h2>${cat.label}</h2>
+          <h2>${cat === "edit" ? "Organize PDF" : cat === "convert" ? "Convert PDF" : "Security"}</h2>
           <span class="count">${catTools.length} tools</span>
         </div>
         <div class="grid"></div>
@@ -323,12 +306,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const innerGrid = section.querySelector(".grid");
 
       catTools.forEach(t => {
-
         const el = document.createElement("a");
-
         el.href = "/" + t.slug;
         el.className = "tool-card";
-
         el.innerHTML = `
           <div class="tool-ico">${icons[t.slug] || "📄"}</div>
           <div>
@@ -336,26 +316,20 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>${t.desc}</p>
           </div>
         `;
-
         innerGrid.appendChild(el);
-
       });
 
       grid.appendChild(section);
-
     });
-
   }
 
   search.addEventListener("input", render);
 
-  render();
 
+  render();
 });
 </script>
-
-<footer class="footer">
-
+  <footer class="footer">
   <div class="footer-content">
 
     <div class="footer-brand">
@@ -372,20 +346,17 @@ document.addEventListener("DOMContentLoaded", () => {
       <a href="/terms">Terms</a>
       <a href="/disclaimer">Disclaimer</a>
     </div>
-
     <div class="socials">
-      <a href="#">📘</a>
-      <a href="#">📸</a>
-      <a href="#">▶️</a>
-      <a href="#">💬</a>
+  <a href="#">📘</a>
+  <a href="#">📸</a>
+  <a href="#">▶️</a>
+  <a href="#">💬</a>
     </div>
 
   </div>
-
-</footer>
+  </footer>
 
 <!-- LOGIN MODAL -->
-
 <div id="loginModal" class="auth-modal">
 
   <div class="auth-card">
@@ -421,46 +392,136 @@ document.addEventListener("DOMContentLoaded", () => {
         Login
       </button>
 
+      <p class="auth-switch">
+        Don’t have an account?
+        <a href="#" onclick="openSignupModal()">Create account</a>
+      </p>
+
     </form>
 
   </div>
 
 </div>
 
-<script>
+
+<!-- SIGNUP MODAL -->
+<div id="signupModal" class="auth-modal">
+
+  <div class="auth-card">
+
+    <button class="close-auth" onclick="closeAuth()">✕</button>
+
+    <div class="auth-logo-wrap">
+      <img src="/favicon.png" alt="WePDFHub" class="auth-logo">
+    </div>
+
+    <h2>Create new account</h2>
+
+    <div class="google-btn">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg">
+      <span>Continue with Google</span>
+    </div>
+
+    <form class="auth-form">
+
+      <div class="input-box">
+        <span>👤</span>
+        <input type="text" placeholder="Full name">
+      </div>
+
+      <div class="input-box">
+        <span>📧</span>
+        <input type="email" placeholder="Email">
+      </div>
+
+      <div class="input-box">
+        <span>🔒</span>
+        <input type="password" placeholder="Password">
+      </div>
+
+      <button type="submit" class="auth-submit">
+        Create Account
+      </button>
+
+      <p class="auth-switch">
+        Already have an account?
+        <a href="#" onclick="openLoginModal()">Login</a>
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
+ <script>
+   /* OPEN LOGIN */
 
 function openLoginModal(){
+
   document.getElementById("loginModal").style.display = "flex";
+  document.getElementById("signupModal").style.display = "none";
+
 }
+
+/* OPEN SIGNUP */
+
+function openSignupModal(){
+
+  document.getElementById("signupModal").style.display = "flex";
+  document.getElementById("loginModal").style.display = "none";
+
+}
+
+/* CLOSE */
 
 function closeAuth(){
+
   document.getElementById("loginModal").style.display = "none";
+  document.getElementById("signupModal").style.display = "none";
+
 }
 
+/* BUTTON EVENTS */
+
 document.getElementById("openLogin").onclick = function(e){
+
   e.preventDefault();
   openLoginModal();
+
 };
+
+document.getElementById("openSignup").onclick = function(e){
+
+  e.preventDefault();
+  openSignupModal();
+
+};
+
+/* OUTSIDE CLICK */
 
 window.addEventListener("click", function(e){
 
   const loginModal = document.getElementById("loginModal");
+  const signupModal = document.getElementById("signupModal");
 
   if(e.target === loginModal){
     closeAuth();
   }
 
+  if(e.target === signupModal){
+    closeAuth();
+  }
+
 });
 
-</script>
+  </script> 
 
-<script>
+  <script>
 fetch("https://wepdfhub-ka-backend-render-per-hai.onrender.com/api/test")
   .then(res => res.json())
   .then(data => console.log(data));
-</script>
+        </script>
 
-<script src="https://nap5k.com/tag.min.js?z=11040462" data-cfasync="false" async></script>
-
+  <script src="https://nap5k.com/tag.min.js?z=11040462" data-cfasync="false" async></script>
 </body>
-  </html>
+</html>
