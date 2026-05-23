@@ -307,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       catTools.forEach(t => {
         const el = document.createElement("a");
-        el.href = "/" + t.slug;
+        el.href = "/tools";
         el.className = "tool-card";
         el.innerHTML = `
           <div class="tool-ico">${icons[t.slug] || "📄"}</div>
