@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/tools", "destination": "/tools.html" },
+    { "source": "/header", "destination": "/header.html" },
+    { "source": "/footer", "destination": "/footer.html" }
+  ]
+}
