@@ -464,68 +464,104 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </div>
  <script>
-   /* OPEN LOGIN */
 
-function openLoginModal(){
-
-  document.getElementById("loginModal").style.display = "flex";
-  document.getElementById("signupModal").style.display = "none";
-
-}
-
-/* OPEN SIGNUP */
-
-function openSignupModal(){
-
-  document.getElementById("signupModal").style.display = "flex";
-  document.getElementById("loginModal").style.display = "none";
-
-}
-
-/* CLOSE */
-
-function closeAuth(){
-
-  document.getElementById("loginModal").style.display = "none";
-  document.getElementById("signupModal").style.display = "none";
-
-}
-
-/* BUTTON EVENTS */
-
-document.getElementById("openLogin").onclick = function(e){
-
-  e.preventDefault();
-  openLoginModal();
-
-};
-
-document.getElementById("openSignup").onclick = function(e){
-
-  e.preventDefault();
-  openSignupModal();
-
-};
-
-/* OUTSIDE CLICK */
-
-window.addEventListener("click", function(e){
-
-  const loginModal = document.getElementById("loginModal");
-  const signupModal = document.getElementById("signupModal");
-
-  if(e.target === loginModal){
-    closeAuth();
-  }
-
-  if(e.target === signupModal){
-    closeAuth();
-  }
-
+/* LOAD HEADER */
+fetch("/header.html")
+.then(res => res.text())
+.then(data => {
+  document.getElementById("header").innerHTML = data;
 });
 
-  </script> 
+/* LOAD FOOTER */
+fetch("/footer.html")
+.then(res => res.text())
+.then(data => {
+  document.getElementById("footer").innerHTML = data;
+});
 
+/* DYNAMIC TOOL SYSTEM */
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
+
+const title = document.getElementById("toolTitle");
+const desc = document.getElementById("toolDesc");
+
+if(type === "merge"){
+  title.innerText = "Merge PDF Files";
+  desc.innerText = "Combine multiple PDF files into one document.";
+}
+else if(type === "split"){
+  title.innerText = "Split PDF File";
+  desc.innerText = "Separate PDF pages easily.";
+}
+else if(type === "compress"){
+  title.innerText = "Compress PDF File";
+  desc.innerText = "Reduce PDF size without losing quality.";
+}
+else if(type === "protect"){
+  title.innerText = "Protect PDF File";
+  desc.innerText = "Add password security to your PDF.";
+}
+
+/* 🔥 SaaS FILE UPLOAD + DOWNLOAD SYSTEM */
+const fileInput = document.getElementById("fileInput");
+
+// CHANGE THIS to your Render backend URL
+const API_URL = "https://wepdfhub-ka-backend-render-per-hai.onrender.com/upload";
+
+fileInput.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  let btn = document.getElementById("downloadBtn");
+
+  try {
+    btn = btn || document.createElement("button");
+
+    btn.id = "downloadBtn";
+    btn.innerText = "Processing...";
+
+    btn.style.cssText = `
+      margin-top:25px;
+      padding:18px 25px;
+      font-size:20px;
+      border:2px solid #2563eb;
+      background:#fff;
+      color:#2563eb;
+      border-radius:14px;
+      cursor:pointer;
+    `;
+
+    document.querySelector(".tool-box").appendChild(btn);
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!data.downloadUrl) {
+      btn.innerText = "Failed";
+      return;
+    }
+
+    btn.innerText = "Download File";
+
+    btn.onclick = () => {
+      window.open(data.downloadUrl, "_blank");
+    };
+
+  } catch (err) {
+    console.log(err);
+    alert("Server error");
+  }
+});
+
+</script>
   <script>
 fetch("https://wepdfhub-ka-backend-render-per-hai.onrender.com/api/test")
   .then(res => res.json())
