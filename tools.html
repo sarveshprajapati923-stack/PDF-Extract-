@@ -260,6 +260,8 @@ else if(type === "protect"){
 }
  const fileInput = document.getElementById("fileInput");
 
+ const uploadBtn = document.querySelector(".upload-btn");
+
 const API_URL = "https://wepdfhub-ka-backend-render-per-hai.onrender.com/upload";
 
 fileInput.addEventListener("change", async (e) => {
@@ -271,29 +273,9 @@ fileInput.addEventListener("change", async (e) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  let btn = document.getElementById("downloadBtn");
 
-  if (!btn) {
 
-    btn = document.createElement("button");
-
-    btn.id = "downloadBtn";
-
-    btn.style.cssText = `
-      margin-top:25px;
-      padding:18px 25px;
-      font-size:20px;
-      border:2px solid #2563eb;
-      background:#fff;
-      color:#2563eb;
-      border-radius:14px;
-      cursor:pointer;
-    `;
-
-    document.querySelector(".tool-box").appendChild(btn);
-  }
-
-  btn.innerText = "Processing...";
+ uploadBtn.innerText = "Processing...";
 
   try {
 
@@ -305,13 +287,13 @@ fileInput.addEventListener("change", async (e) => {
     const data = await response.json();
 
     if (!data.downloadUrl) {
-      btn.innerText = "Failed";
+      uploadBtn.innerText = "Failed";
       return;
     }
 
-    btn.innerText = "Download File";
+    uploadBtn.innerText = "Download File";
 
-    btn.onclick = () => {
+    uploadBtn.onclick = () => {
       window.open(data.downloadUrl, "_blank");
     };
 
@@ -319,7 +301,7 @@ fileInput.addEventListener("change", async (e) => {
 
     console.log(err);
 
-    btn.innerText = "Server Error";
+    uploadBtn.innerText = "Server Error";
 
   }
 
