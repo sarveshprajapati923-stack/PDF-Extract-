@@ -1,19 +1,106 @@
 <footer class="site-footer">
-  <p>© 2026 WePDFHub. All rights reserved.</p>
-  <p>Fast • Secure • Free PDF Tools</p>
+
+  <div class="footer-brand">
+    <h2>WePDFHub</h2>
+    <p>Fast • Secure • Free PDF Tools</p>
+  </div>
+
+  <div class="footer-links">
+
+    <a href="/about.html">About</a>
+
+    <a href="/contact.html">Contact</a>
+
+    <a href="/privacy.html">Privacy Policy</a>
+
+    <a href="/terms.html">Terms</a>
+
+  </div>
+
+  <div class="footer-info">
+    <p>
+      WePDFHub provides secure online PDF tools for merge, compress,
+      split and protect PDF files instantly.
+    </p>
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 WePDFHub. All rights reserved.
+  </div>
+
 </footer>
 
 <style>
+
 .site-footer{
-  text-align:center;
-  padding:20px;
   background:#0b1224;
-  color:#94a3b8;
-  margin-top:30px;
+  color:#cbd5e1;
+  margin-top:40px;
+  padding:40px 20px 25px;
+  text-align:center;
   border-top:1px solid #1e293b;
 }
 
-.site-footer p{
-  margin:5px 0;
+.footer-brand h2{
+  margin:0;
+  font-size:28px;
+  color:#fff;
 }
-</style>
+
+.footer-brand p{
+  margin-top:10px;
+  color:#94a3b8;
+  font-size:15px;
+}
+
+.footer-links{
+  margin-top:25px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:18px;
+}
+
+.footer-links a{
+  color:#60a5fa;
+  text-decoration:none;
+  font-size:15px;
+  transition:.3s;
+}
+
+.footer-links a:hover{
+  color:#fff;
+  transform:translateY(-2px);
+}
+
+.footer-info{
+  max-width:700px;
+  margin:25px auto 0;
+  color:#94a3b8;
+  line-height:1.7;
+  font-size:15px;
+}
+
+.footer-bottom{
+  margin-top:30px;
+  padding-top:20px;
+  border-top:1px solid #1e293b;
+  color:#64748b;
+  font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  .footer-brand h2{
+    font-size:24px;
+  }
+
+  .footer-links{
+    gap:12px;
+  }
+
+}
+
+  </style>
