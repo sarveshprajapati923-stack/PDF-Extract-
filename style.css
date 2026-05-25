@@ -1693,4 +1693,21 @@ html{
   }
 
   }
+
+body{
+  margin:0;
+  padding:0;
+}
+
+.modern-header{
+  margin:12px 16px 0;
+}
+
+.wrap{
+  padding-top:10px !important;
+}
+
+.hero.modern-hero{
+  margin-top:0 !important;
+    }
   
