@@ -1550,7 +1550,7 @@ html{
   position:sticky;
   top:0;
   z-index:999;
-  width:calc(100% - 30px);
+  width:calc(100% - 16px);
   max-width:1600px;
   margin:15px auto;
   padding:18px 22px;
@@ -1697,17 +1697,22 @@ html{
 body{
   margin:0;
   padding:0;
+  background:#f3f4f6;
 }
 
 .modern-header{
-  margin:12px 16px 0;
+  margin:8px 8px 0;
+  padding:14px 18px;
+  background:#ffffff;
+  border-radius:22px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
 }
 
 .wrap{
-  padding-top:10px !important;
+  padding-top:0 !important;
 }
 
 .hero.modern-hero{
-  margin-top:0 !important;
-    }
-  
+  margin-top:2px !important;
+  padding-top:0 !important;
+  }
