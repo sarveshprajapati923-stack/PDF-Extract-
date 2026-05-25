@@ -9,12 +9,12 @@ import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, incr
 
 // ⚠️ APNA FIREBASE CONFIG YAHAN PASTE KARO
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDN9QEaGDaE5oyE6pKgetdc56hKg-RQ6SA",
+  authDomain: "wepdfhub-admin.firebaseapp.com",
+  projectId: "wepdfhub-admin",
+  storageBucket: "wepdfhub-admin.firebasestorage.app",
+  messagingSenderId: "888364577342",
+  appId: "1:888364577342:web:cbb2117a209b8ff561976f",
 };
 
 const app = initializeApp(firebaseConfig);
