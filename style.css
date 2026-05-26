@@ -1725,3 +1725,19 @@ body{
   margin-top:0 !important;
   padding-top:12px !important;
   }
+
+@media(max-width:768px){
+
+  .hero-preview{
+    display:none !important;
+  }
+
+  .hero-top{
+    grid-template-columns:1fr !important;
+  }
+
+  .hero-copy-block{
+    width:100%;
+  }
+
+}
