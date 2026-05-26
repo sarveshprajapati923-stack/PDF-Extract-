@@ -555,5 +555,13 @@ We continuously improve our PDF utilities to provide faster conversion, secure u
   </section>
 
   <script type="module" src="/firebase-tools.js"></script>
+
+  <script>
+fetch("/footer.html")
+.then(res => res.text())
+.then(data => {
+  document.getElementById("footer").innerHTML = data;
+});
+  </script>
 </body>
 </html>
