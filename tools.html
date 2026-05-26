@@ -154,6 +154,15 @@ body{
 }
 
 </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "WePDFHub",
+  "url": "https://wepdfhub.click"
+}
+  </script>
 </head>
 
 <body>
@@ -361,16 +370,24 @@ fileInput.addEventListener("change", async (e) => {
   }
 
 }); 
-   type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "WePDFHub",
-  "url": "https://wepdfhub.click"
-}
-
 
 </script>
+
+  <script>
+function toggleContent(btn){
+
+  const content = btn.nextElementSibling;
+
+  if(content.style.display === "block"){
+    content.style.display = "none";
+    btn.innerText = "Read More";
+  }else{
+    content.style.display = "block";
+    btn.innerText = "Show Less";
+  }
+
+}
+  </script>
 
 </body>
   </html>
