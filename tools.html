@@ -372,22 +372,20 @@ fileInput.addEventListener("change", async (e) => {
 }); 
 
 </script>
-
-  <script>
+  
+<script>
 function toggleContent(btn){
+const content = btn.nextElementSibling;
 
-  const content = btn.nextElementSibling;
-
-  if(content.style.display === "block"){
-    content.style.display = "none";
-    btn.innerText = "Read More";
-  }else{
-    content.style.display = "block";
-    btn.innerText = "Show Less";
-  }
-
+if(content.style.display === "block"){
+content.style.display = "none";
+btn.innerText = "Read More";
+}else{
+content.style.display = "block";
+btn.innerText = "Show Less";
 }
-  </script>
+}
+</script>
 
 </body>
   </html>
