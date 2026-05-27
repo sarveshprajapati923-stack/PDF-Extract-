@@ -1,86 +1,65 @@
 <header class="modern-header">
 
-  <!-- MOBILE SIDEBAR -->
-<div class="mobile-menu" id="mobileMenu">
-
-<div class="menu-top">
-<button class="close-menu" onclick="closeMenu()">✕</button>
-</div>
-
-<div class="menu-section">
-
-<h3>ORGANIZE PDF</h3>
-
-<a href="/tools.html?type=merge-pdf">⚡ Merge PDF</a>
-<a href="/tools.html?type=split-pdf">✂️ Split PDF</a>
-<a href="/tools.html?type=compress-pdf">🗜️ Compress PDF</a>
-<a href="/tools.html?type=rotate-pdf">🔄 Rotate PDF</a>
-
-</div>
-
-<div class="menu-section">
-
-<h3>CONVERT PDF</h3>
-
-<a href="/tools.html?type=image-to-pdf">🖼️ JPG to PDF</a>
-<a href="/tools.html?type=pdf-to-word">📄 PDF to Word</a>
-<a href="/tools.html?type=pdf-to-excel">📊 PDF to Excel</a>
-
-</div>
-
-<div class="menu-section">
-
-<h3>PDF SECURITY</h3>
-
-<a href="/tools.html?type=protect-pdf">🔒 Protect PDF</a>
-<a href="/tools.html?type=unlock-pdf">🔓 Unlock PDF</a>
-
-</div>
-
-</div>
-
   <!-- LEFT MENU -->
-
-  <button class="menu-btn" onclick="openMenu()">
-
+  <button class="menu-btn" onclick="openMenu()" aria-label="Open menu">
     <span></span>
     <span></span>
     <span></span>
-
   </button>
 
   <!-- BRAND -->
-
   <a href="/" class="brand-wrap">
-
     <img src="/favicon.png" alt="WePDFHub" class="brand-logo">
-
-    <h1 class="brand-name">
-      We<span>PDF</span>Hub
-    </h1>
-
+    <h1 class="brand-name">We<span>PDF</span>Hub</h1>
   </a>
 
   <!-- RIGHT GRID -->
-
-  <button class="apps-btn">
-
+  <button class="apps-btn" aria-label="Tools menu">
     <div class="apps-grid">
       <span></span><span></span><span></span>
       <span></span><span></span><span></span>
       <span></span><span></span><span></span>
     </div>
-
   </button>
 
 </header>
 
+<!-- MOBILE SIDEBAR -->
+<div class="mobile-menu" id="mobileMenu">
+
+  <div class="menu-top">
+    <button class="close-menu" onclick="closeMenu()" aria-label="Close menu">✕</button>
+  </div>
+
+  <div class="menu-section">
+    <h3>ORGANIZE PDF</h3>
+    <a href="/tools.html?type=merge-pdf">⚡ Merge PDF</a>
+    <a href="/tools.html?type=split-pdf">✂️ Split PDF</a>
+    <a href="/tools.html?type=compress-pdf">🗜️ Compress PDF</a>
+    <a href="/tools.html?type=rotate-pdf">🔄 Rotate PDF</a>
+  </div>
+
+  <div class="menu-section">
+    <h3>CONVERT PDF</h3>
+    <a href="/tools.html?type=image-to-pdf">🖼️ JPG to PDF</a>
+    <a href="/tools.html?type=pdf-to-word">📄 PDF to Word</a>
+    <a href="/tools.html?type=pdf-to-excel">📊 PDF to Excel</a>
+  </div>
+
+  <div class="menu-section">
+    <h3>PDF SECURITY</h3>
+    <a href="/tools.html?type=protect-pdf">🔒 Protect PDF</a>
+    <a href="/tools.html?type=unlock-pdf">🔓 Unlock PDF</a>
+  </div>
+
+</div>
+
 <script>
-function openMenu(){
-document.getElementById("mobileMenu").classList.add("active");
+function openMenu() {
+  document.getElementById("mobileMenu").classList.add("active");
 }
 
-function closeMenu(){
-document.getElementById("mobileMenu").classList.remove("active");
+function closeMenu() {
+  document.getElementById("mobileMenu").classList.remove("active");
 }
-  </script>
+</script>
