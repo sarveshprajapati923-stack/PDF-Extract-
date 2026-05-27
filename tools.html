@@ -398,5 +398,20 @@ fetch("/footer.html")
 });
   </script>
 
+  <script>
+document.addEventListener("click", function(e){
+
+  if(e.target.closest(".menu-btn")){
+    document.getElementById("mobileMenu")
+    .classList.add("active");
+  }
+
+  if(e.target.closest(".close-menu")){
+    document.getElementById("mobileMenu")
+    .classList.remove("active");
+  }
+
+});
+  </script>
 </body>
   </html>
