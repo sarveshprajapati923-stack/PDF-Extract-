@@ -1935,6 +1935,11 @@ font-size:18px;
 
   }
 
+.mobile-menu{
+left:-100%;
+transition:.35s ease;
+  }
+
 .mobile-menu.active{
   left:0;
 }
