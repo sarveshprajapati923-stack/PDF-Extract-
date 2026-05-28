@@ -575,5 +575,60 @@ document.addEventListener("click", function(e){
 
 });
 </script>
+
+  <!-- COOKIE CONSENT BANNER -->
+
+<div id="cookieBanner">
+
+<div class="cookie-wrap">
+
+<div class="cookie-text">
+🍪 WePDFHub uses cookies to improve your experience, analyze traffic using Google Analytics, and display personalized ads via Google AdSense. By clicking “Accept All”, you consent to our cookie usage. Read our
+<a href="/privacy-policy.html">Privacy Policy</a>.
+</div>
+
+<div class="cookie-buttons">
+
+<button class="cookie-btn accept-btn" id="acceptCookies">
+Accept All
+</button>
+
+<button class="cookie-btn decline-btn" id="declineCookies">
+Decline
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+const banner = document.getElementById("cookieBanner");
+
+if(!localStorage.getItem("cookieConsent")){
+banner.style.display = "block";
+}
+
+document.getElementById("acceptCookies")
+.addEventListener("click", function(){
+
+localStorage.setItem("cookieConsent", "accepted");
+banner.style.display = "none";
+
+});
+
+document.getElementById("declineCookies")
+.addEventListener("click", function(){
+
+localStorage.setItem("cookieConsent", "declined");
+banner.style.display = "none";
+
+});
+
+});
+</script>
 </body>
 </html>
