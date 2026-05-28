@@ -1,116 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YM91PVED2H"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-YM91PVED2H');
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-YM91PVED2H');
 </script>
 
-<title>About - WePDFHub</title>
-<meta name="description" content="WePDFHub - Fast, secure and free online PDF tools. Merge, split, compress and convert PDFs instantly.">
+<title>About Us | WePDFHub</title>
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0f172a;
-  color:#fff;
-}
+<meta name="description"
+content="Learn more about WePDFHub free online PDF tools platform for students, professionals and businesses.">
 
-.wrap{
-  padding:20px;
-  display:flex;
-  justify-content:center;
-}
-
-.hero{
-  max-width:800px;
-  background:#111c33;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
-  animation:fadeIn 0.6s ease-in-out;
-}
-
-h1{
-  font-size:28px;
-  margin-bottom:10px;
-}
-
-p{
-  line-height:1.6;
-  color:#cbd5e1;
-}
-
-.info-box{
-  margin-top:20px;
-  padding:15px;
-  border:1px solid #334155;
-  border-radius:12px;
-  background:#0b1224;
-}
-
-.btn{
-  display:inline-block;
-  margin-top:15px;
-  padding:10px 18px;
-  border:2px solid #38bdf8;
-  border-radius:10px;
-  color:#38bdf8;
-  text-decoration:none;
-  transition:0.3s;
-}
-
-.btn:hover{
-  background:#38bdf8;
-  color:#000;
-  transform:scale(1.05);
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
-}
-</style>
+<link rel="stylesheet" href="/style.css">
 
 </head>
 
 <body>
 
-<div class="wrap">
-  <section class="hero">
+<div id="header"></div>
 
-    <h1>About WePDFHub</h1>
+<section class="about-hero">
 
-    <p>
-      WePDFHub is a modern online platform that provides fast,
-      secure and easy-to-use PDF tools for everyone.
-      No software installation required.
-    </p>
+<h1>About WePDFHub</h1>
 
-    <p>
-      You can merge, split, compress, convert and manage PDF files
-      instantly from any device with a smooth experience.
-    </p>
+<p>
+WePDFHub is a free online PDF tools platform designed to make PDF editing simple, fast and secure for everyone.
+</p>
 
-    <div class="info-box">
-      <p><b>Launch Date:</b> 21 April 2026</p>
-      <p><b>Version:</b> 1.0.0</p>
-      <p><b>Status:</b> Active</p>
+</section>
 
-      <a href="/" class="btn">Go to Home</a>
-    </div>
+<div class="about-wrap">
 
-  </section>
+<section class="about-section">
+
+<h2>Our Story</h2>
+
+<p>
+WePDFHub was created to provide easy and accessible PDF tools without expensive software or complicated steps.
+</p>
+
+<p>
+Our platform helps students, professionals and businesses manage PDF files directly from the browser.
+</p>
+
+</section>
+
+<section class="about-section">
+
+<h2>Our Mission</h2>
+
+<p>
+Our mission is to make PDF editing free, simple and available for everyone worldwide.
+</p>
+
+</section>
+
+<section class="about-section">
+
+<h2>Why Choose WePDFHub?</h2>
+
+<div class="about-grid">
+
+<div class="about-card">
+<h3>⚡ Fast Processing</h3>
+<p>Process PDF files instantly online.</p>
 </div>
+
+<div class="about-card">
+<h3>🔒 Secure Files</h3>
+<p>Uploaded files are automatically deleted.</p>
+</div>
+
+<div class="about-card">
+<h3>📱 Mobile Friendly</h3>
+<p>Works smoothly on all devices.</p>
+</div>
+
+<div class="about-card">
+<h3>✅ No Signup</h3>
+<p>Use all tools without creating an account.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="about-section">
+
+<h2>Our Values</h2>
+
+<div class="values-list">
+
+<div class="value-box">
+<h3>Privacy</h3>
+<p>We respect user privacy and security.</p>
+</div>
+
+<div class="value-box">
+<h3>Simplicity</h3>
+<p>Easy-to-use modern PDF tools.</p>
+</div>
+
+<div class="value-box">
+<h3>Accessibility</h3>
+<p>Free tools available for everyone.</p>
+</div>
+
+<div class="value-box">
+<h3>Reliability</h3>
+<p>Fast and stable online services.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="about-cta">
+
+<h2>Start Using WePDFHub</h2>
+
+<p>
+Explore fast and secure online PDF tools directly from your browser.
+</p>
+
+<a href="/tools.html" class="about-btn">
+Explore Tools
+</a>
+
+</section>
+
+</div>
+
+<div id="footer"></div>
+
+<script>
+fetch("/header.html")
+.then(res => res.text())
+.then(data => {
+document.getElementById("header").innerHTML = data;
+});
+
+fetch("/footer.html")
+.then(res => res.text())
+.then(data => {
+document.getElementById("footer").innerHTML = data;
+});
+</script>
 
 </body>
 </html>
